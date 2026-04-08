@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>.NET Learning Guide</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --border: #e5e7eb;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      background: #111827;
+      color: #fff;
+      padding: 24px 18px 40px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .brand-sub {
+      color: #cbd5e1;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .menu-group {
+      margin-bottom: 18px;
+    }
+
+    .menu-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #93c5fd;
+      margin: 18px 0 8px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #e5e7eb;
+      text-decoration: none;
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 28px;
+      border-bottom: 2px solid var(--accent-soft);
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      margin-top: 26px;
+      font-size: 22px;
+    }
+
+    h4 {
+      margin-top: 18px;
+      font-size: 18px;
+    }
+
+    .note {
+      background: #f8fafc;
+      border-left: 4px solid var(--accent);
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 14px 0;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 16px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 14px;
+    }
+
+    code {
+      font-family: Consolas, Monaco, monospace;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eff6ff;
+    }
+
+    ul li, ol li { margin-bottom: 8px; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      background: var(--accent-soft);
+      color: #1d4ed8;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 10px 0 30px;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+      .content { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">.NET Learning Guide</div>
+      <div class="brand-sub">Topics covered from ASP.NET Web Forms to .NET Core Web API</div>
+
+      <div class="menu-group">
+        <div class="menu-title">Introduction</div>
+        <a href="#intro">Introduce Yourself</a>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">ASP.NET Web Forms</div>
+        <a href="#webforms-lifecycle">Page Life Cycle</a>
+        <a href="#webforms-state">State Management</a>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">ADO.NET & WCF</div>
+        <a href="#ado-dotnet">ADO.NET</a>
+        <a href="#wcf-basics">WCF Basics</a>
+        <a href="#wcf-contracts">WCF Contracts</a>
+        <a href="#wcf-example">WCF Examples</a>
+        <a href="#wcf-communication">WCF with Web Forms</a>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">ASP.NET MVC</div>
+        <a href="#mvc-basics">MVC Overview</a>
+        <a href="#mvc-state">State Management</a>
+        <a href="#mvc-validation">Validation</a>
+        <a href="#mvc-return-types">Controller Return Types</a>
+        <a href="#action-result">ActionResult</a>
+        <a href="#mvc-filters">Filters</a>
+        <a href="#filters-vs-middleware">Filters vs Middleware</a>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">ASP.NET Core</div>
+        <a href="#short-circuit">Short-Circuit</a>
+        <a href="#middleware-pipeline">Middleware Deep Dive</a>
+        <a href="#exception-flow">Exception Flow Diagram</a>
+        <a href="#routing">URL Routing</a>
+        <a href="#web-api">.NET Core Web API</a>
+        <a href="#dependency-injection">Dependency Injection</a>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="hero">
+        <h1>.NET Interview and Revision Notes</h1>
+        <p>This HTML guide organizes all the topics we covered into one place with simple explanations, examples, and interview-style summaries. It starts with ASP.NET Web Forms, moves through ADO.NET, WCF, MVC, and finishes with ASP.NET Core Web API, Middleware, Routing, and Dependency Injection.</p>
+        <div class="chips">
+          <span class="chip">Web Forms</span>
+          <span class="chip">ADO.NET</span>
+          <span class="chip">WCF</span>
+          <span class="chip">MVC</span>
+          <span class="chip">Middleware</span>
+          <span class="chip">Web API</span>
+          <span class="chip">DI</span>
+        </div>
+      </section>
+
+      <section id="intro" class="section">
+        <h2>Introduce Yourself</h2>
+        <p>I have over 11 years of experience in software design and development, with core expertise in .NET technologies. For the past 5 years, I have been working at Morningstar, contributing to a variety of projects across the .NET ecosystem.</p>
+        <p>My experience includes working on ASP.NET Web Forms, MVC applications, WCF services, and Web APIs. Currently, I am focused on designing and developing microservices using .NET, along with building CI/CD pipelines and managing deployments.</p>
+        <p>Over the last 2 years, I have been serving as a Lead Software Engineer, where I am actively involved in system architecture, requirement analysis, and delivering scalable cloud-based applications. I also contribute to project planning and team management. In addition, I am an AWS Certified Developer.</p>
+        <div class="note"><strong>Interview tip:</strong> Keep your introduction concise, structured, and aligned with the role you are applying for.</div>
+      </section>
+
+      <section id="webforms-lifecycle" class="section">
+        <h2>ASP.NET Web Forms: Page Life Cycle</h2>
+        <p>The ASP.NET Web Forms page life cycle is the sequence of events that occurs when a page is requested and processed. It is important because control values, events, and rendering happen in a fixed order.</p>
+        <ol>
+          <li><strong>Page Request:</strong> ASP.NET receives the request and loads or compiles the page.</li>
+          <li><strong>Start:</strong> Page properties are initialized and ASP.NET checks whether the page is a postback.</li>
+          <li><strong>Init:</strong> Controls are initialized and unique IDs are assigned.</li>
+          <li><strong>Load View State:</strong> ViewState values are restored.</li>
+          <li><strong>Load PostBack Data:</strong> Form data is loaded into controls.</li>
+          <li><strong>Load:</strong> Page and controls are fully available.</li>
+          <li><strong>PostBack Event Handling:</strong> Button click and other events are raised.</li>
+          <li><strong>PreRender:</strong> Last chance to modify the page before output.</li>
+          <li><strong>Save View State:</strong> ViewState is saved for the next request.</li>
+          <li><strong>Render:</strong> HTML is generated and sent to the browser.</li>
+          <li><strong>Unload:</strong> Cleanup happens.</li>
+        </ol>
+        <pre><code>if (!IsPostBack)
+{
+    // Load data only once
+}</code></pre>
+        <div class="note"><strong>Easy order:</strong> Request → Init → Load ViewState → Load → Events → PreRender → Render → Unload</div>
+      </section>
+
+      <section id="webforms-state" class="section">
+        <h2>ASP.NET Web Forms: State Management</h2>
+        <p>HTTP is stateless, so ASP.NET Web Forms provides multiple ways to preserve data across requests.</p>
+        <h3>Client-side State Management</h3>
+        <ul>
+          <li><strong>ViewState:</strong> Stores page and control values in a hidden field.</li>
+          <li><strong>ControlState:</strong> Similar to ViewState but cannot be disabled.</li>
+          <li><strong>Hidden Fields:</strong> Store small values inside the page.</li>
+          <li><strong>Cookies:</strong> Store data in the browser.</li>
+          <li><strong>Query String:</strong> Passes data in the URL.</li>
+        </ul>
+        <pre><code>ViewState["Name"] = "Ajay";
+string name = ViewState["Name"].ToString();</code></pre>
+        <h3>Server-side State Management</h3>
+        <ul>
+          <li><strong>Session:</strong> Per-user server-side storage.</li>
+          <li><strong>Application:</strong> Shared across all users.</li>
+          <li><strong>Cache:</strong> Temporary data to improve performance.</li>
+          <li><strong>Database:</strong> Persistent storage.</li>
+        </ul>
+        <pre><code>Session["UserName"] = "Ajay";
+string name = Session["UserName"].ToString();</code></pre>
+        <table>
+          <tr><th>Method</th><th>Scope</th><th>Storage</th></tr>
+          <tr><td>ViewState</td><td>Page</td><td>Browser</td></tr>
+          <tr><td>Session</td><td>Per user</td><td>Server</td></tr>
+          <tr><td>Application</td><td>All users</td><td>Server</td></tr>
+          <tr><td>Cookies</td><td>Across requests</td><td>Browser</td></tr>
+        </table>
+      </section>
+
+      <section id="ado-dotnet" class="section">
+        <h2>ADO.NET</h2>
+        <p>ADO.NET is a .NET data access technology used to connect to databases, execute commands, and retrieve or update data.</p>
+        <h3>Core Components</h3>
+        <ul>
+          <li><strong>Connection:</strong> Opens connection to the database.</li>
+          <li><strong>Command:</strong> Executes SQL statements or stored procedures.</li>
+          <li><strong>DataReader:</strong> Connected, fast, forward-only data access.</li>
+          <li><strong>DataAdapter:</strong> Bridges database and DataSet.</li>
+          <li><strong>DataSet/DataTable:</strong> In-memory representation of data.</li>
+        </ul>
+        <pre><code>using (SqlConnection conn = new SqlConnection("connection_string"))
+{
+    conn.Open();
+    SqlCommand cmd = new SqlCommand("INSERT INTO Employees(Name) VALUES(@Name)", conn);
+    cmd.Parameters.AddWithValue("@Name", "Ajay");
+    cmd.ExecuteNonQuery();
+}</code></pre>
+        <h3>Execute Methods</h3>
+        <table>
+          <tr><th>Method</th><th>Purpose</th></tr>
+          <tr><td>ExecuteReader()</td><td>Reads multiple rows</td></tr>
+          <tr><td>ExecuteScalar()</td><td>Returns single value</td></tr>
+          <tr><td>ExecuteNonQuery()</td><td>Insert, update, delete</td></tr>
+        </table>
+      </section>
+
+      <section id="wcf-basics" class="section">
+        <h2>WCF Basics</h2>
+        <p>WCF stands for Windows Communication Foundation. It is used to build service-oriented applications where different systems communicate over protocols like HTTP, TCP, and MSMQ.</p>
+        <h3>ABC of WCF</h3>
+        <ul>
+          <li><strong>Address:</strong> Where the service is located</li>
+          <li><strong>Binding:</strong> How to communicate</li>
+          <li><strong>Contract:</strong> What the service exposes</li>
+        </ul>
+        <div class="note"><strong>Memory trick:</strong> Address = Where, Binding = How, Contract = What</div>
+      </section>
+
+      <section id="wcf-contracts" class="section">
+        <h2>WCF Contracts</h2>
+        <ul>
+          <li><strong>Service Contract:</strong> Defines the overall service and the operations it exposes to clients.</li>
+          <li><strong>Operation Contract:</strong> Specifies the methods that are available for client calls within the service.</li>
+          <li><strong>Data Contract:</strong> Defines the structure of the data exchanged between the service and clients.</li>
+          <li><strong>Message Contract:</strong> Provides full control over the SOAP message format, including headers and body.</li>
+        </ul>
+        <pre><code>[ServiceContract]
+public interface ICalculatorService
+{
+    [OperationContract]
+    int Add(int a, int b);
+}</code></pre>
+      </section>
+
+      <section id="wcf-example" class="section">
+        <h2>WCF Examples</h2>
+        <h3>Service Contract and Operation Contract</h3>
+        <pre><code>[ServiceContract]
+public interface ICalculatorService
+{
+    [OperationContract]
+    int Add(int a, int b);
+
+    [OperationContract]
+    int Multiply(int a, int b);
+}</code></pre>
+        <h3>Data Contract</h3>
+        <pre><code>[DataContract]
+public class Employee
+{
+    [DataMember]
+    public int Id { get; set; }
+
+    [DataMember]
+    public string Name { get; set; }
+}</code></pre>
+        <h3>Message Contract</h3>
+        <pre><code>[MessageContract]
+public class EmployeeRequest
+{
+    [MessageHeader]
+    public string AuthToken;
+
+    [MessageBodyMember]
+    public int EmployeeId;
+}</code></pre>
+      </section>
+
+      <section id="wcf-communication" class="section">
+        <h2>How WCF and Web Forms Communicate</h2>
+        <p>In a Web Forms and WCF setup, the Web Forms application acts as the client and the WCF service acts as the service provider.</p>
+        <h3>Flow</h3>
+        <ol>
+          <li>User performs action on Web Forms page.</li>
+          <li>Code-behind calls WCF service using generated proxy.</li>
+          <li>WCF service processes request.</li>
+          <li>Response is returned to Web Forms app.</li>
+          <li>Web Forms displays the result.</li>
+        </ol>
+        <pre><code>protected void btnAdd_Click(object sender, EventArgs e)
+{
+    CalculatorServiceClient client = new CalculatorServiceClient();
+    int result = client.Add(10, 20);
+    lblResult.Text = result.ToString();
+    client.Close();
+}</code></pre>
+        <h3>How Web Forms Knows About WCF</h3>
+        <p>You add a <strong>Service Reference</strong> in the Web Forms project. Visual Studio then generates the proxy class and updates <code>web.config</code>.</p>
+        <pre><code>&lt;system.serviceModel&gt;
+  &lt;client&gt;
+    &lt;endpoint 
+      address="http://localhost:1234/CalculatorService.svc"
+      binding="basicHttpBinding"
+      contract="ServiceReference1.ICalculatorService" /&gt;
+  &lt;/client&gt;
+&lt;/system.serviceModel&gt;</code></pre>
+      </section>
+
+      <section id="mvc-basics" class="section">
+        <h2>ASP.NET MVC Overview</h2>
+        <p>MVC stands for Model-View-Controller. It separates application concerns and improves maintainability, testability, and structure.</p>
+        <ul>
+          <li><strong>Model:</strong> Data and business logic</li>
+          <li><strong>View:</strong> UI</li>
+          <li><strong>Controller:</strong> Handles requests and coordinates model and view</li>
+        </ul>
+        <pre><code>public class EmployeeController : Controller
+{
+    public ActionResult Index()
+    {
+        Employee emp = new Employee { Id = 1, Name = "Ajay" };
+        return View(emp);
+    }
+}</code></pre>
+      </section>
+
+      <section id="mvc-state" class="section">
+        <h2>MVC State Management</h2>
+        <p>ASP.NET MVC does not use ViewState. Instead, it provides multiple options to preserve data across requests.</p>
+        <table>
+          <tr><th>Method</th><th>Usage</th><th>Lifetime</th></tr>
+          <tr><td>ViewData</td><td>Controller to view</td><td>Current request</td></tr>
+          <tr><td>ViewBag</td><td>Controller to view</td><td>Current request</td></tr>
+          <tr><td>TempData</td><td>Redirect scenarios</td><td>Next request</td></tr>
+          <tr><td>Session</td><td>Per user data</td><td>Until session timeout</td></tr>
+          <tr><td>Cookies</td><td>Browser-side data</td><td>Until expiry</td></tr>
+        </table>
+        <pre><code>public ActionResult Save()
+{
+    TempData["Success"] = "Record saved successfully!";
+    return RedirectToAction("Index");
+}</code></pre>
+        <div class="note"><strong>Best practice:</strong> Use strongly typed models for main data instead of ViewBag or ViewData.</div>
+      </section>
+
+      <section id="mvc-validation" class="section">
+        <h2>MVC Validation</h2>
+        <p>Validation ensures the user enters correct data before saving it. MVC supports both client-side and server-side validation.</p>
+        <pre><code>public class Employee
+{
+    [Required(ErrorMessage = "Name is required")]
+    [StringLength(50)]
+    public string Name { get; set; }
+
+    [EmailAddress(ErrorMessage = "Invalid email format")]
+    public string Email { get; set; }
+
+    [Range(18, 60)]
+    public int Age { get; set; }
+}</code></pre>
+        <pre><code>[HttpPost]
+public ActionResult Create(Employee model)
+{
+    if (ModelState.IsValid)
+    {
+        return RedirectToAction("Success");
+    }
+
+    return View(model);
+}</code></pre>
+        <p>Validation messages are displayed in the view using helper methods like <code>ValidationMessageFor</code> and <code>ValidationSummary</code>.</p>
+      </section>
+
+      <section id="mvc-return-types" class="section">
+        <h2>Different Types of Return in Controller</h2>
+        <p>MVC controller actions can return different result types based on the response needed.</p>
+        <table>
+          <tr><th>Return Type</th><th>Purpose</th></tr>
+          <tr><td>ViewResult</td><td>Returns a full view</td></tr>
+          <tr><td>PartialViewResult</td><td>Returns a partial view</td></tr>
+          <tr><td>RedirectResult</td><td>Redirects to a URL</td></tr>
+          <tr><td>RedirectToRouteResult</td><td>Redirects to another action/controller</td></tr>
+          <tr><td>JsonResult</td><td>Returns JSON</td></tr>
+          <tr><td>ContentResult</td><td>Returns plain text</td></tr>
+          <tr><td>FileResult</td><td>Returns a file</td></tr>
+          <tr><td>EmptyResult</td><td>Returns nothing</td></tr>
+          <tr><td>HttpStatusCodeResult</td><td>Returns status code</td></tr>
+        </table>
+      </section>
+
+      <section id="action-result" class="section">
+        <h2>What is ActionResult?</h2>
+        <p>ActionResult is the base class for all types of responses that a controller action can return. It provides a common return type for views, JSON, files, redirects, and status codes.</p>
+        <pre><code>public ActionResult Index()
+{
+    return View();
+}</code></pre>
+        <pre><code>public ActionResult GetData(bool isJson)
+{
+    if (isJson)
+        return Json(new { Name = "Ajay" }, JsonRequestBehavior.AllowGet);
+
+    return View();
+}</code></pre>
+      </section>
+
+      <section id="mvc-filters" class="section">
+        <h2>Filters in MVC</h2>
+        <p>Filters run code before or after different stages of the MVC request pipeline. They are used for cross-cutting concerns like authorization, logging, exception handling, and caching.</p>
+        <h3>Types of Filters</h3>
+        <ul>
+          <li><strong>Authorization Filters</strong></li>
+          <li><strong>Action Filters</strong></li>
+          <li><strong>Result Filters</strong></li>
+          <li><strong>Exception Filters</strong></li>
+        </ul>
+        <pre><code>public class MyActionFilter : ActionFilterAttribute
+{
+    public override void OnActionExecuting(ActionExecutingContext filterContext)
+    {
+        // Before action executes
+    }
+
+    public override void OnActionExecuted(ActionExecutedContext filterContext)
+    {
+        // After action executes
+    }
+}</code></pre>
+      </section>
+
+      <section id="filters-vs-middleware" class="section">
+        <h2>Difference Between Filters and Middleware</h2>
+        <table>
+          <tr><th>Feature</th><th>Middleware</th><th>Filters</th></tr>
+          <tr><td>Runs where</td><td>ASP.NET Core request pipeline</td><td>MVC pipeline</td></tr>
+          <tr><td>Applies to</td><td>All requests</td><td>MVC actions only</td></tr>
+          <tr><td>Access to action/model state</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Common use</td><td>Global logging, auth, exceptions</td><td>Validation, action-level logic</td></tr>
+        </table>
+        <div class="note"><strong>Rule:</strong> Global request-level concern = Middleware. Controller/action-specific concern = Filter.</div>
+      </section>
+
+      <section id="short-circuit" class="section">
+        <h2>What is Short-Circuit?</h2>
+        <p>Short-circuiting means stopping further request processing in the pipeline and returning a response immediately.</p>
+        <pre><code>app.Use(async (context, next) =&gt;
+{
+    if (!context.Request.Headers.ContainsKey("AuthToken"))
+    {
+        context.Response.StatusCode = 401;
+        await context.Response.WriteAsync("Unauthorized");
+        return; // short-circuit
+    }
+
+    await next();
+});</code></pre>
+        <p>If <code>next()</code> is not called, the request does not continue to the next middleware or controller.</p>
+      </section>
+
+      <section id="middleware-pipeline" class="section">
+        <h2>Middleware Deep Dive</h2>
+        <p>Middleware is a component in ASP.NET Core that handles HTTP requests and responses in a pipeline.</p>
+        <h3>Basic Structure</h3>
+        <pre><code>public async Task Invoke(HttpContext context)
+{
+    // Before logic
+    await _next(context);
+    // After logic
+}</code></pre>
+        <h3>Registration</h3>
+        <p>Middleware is registered in <code>Program.cs</code>.</p>
+        <pre><code>var app = builder.Build();
+
+app.Use(async (context, next) =&gt;
+{
+    Console.WriteLine("Middleware 1 - Before");
+    await next();
+    Console.WriteLine("Middleware 1 - After");
+});
+
+app.MapGet("/", () =&gt; "Hello World!");
+
+app.Run();</code></pre>
+        <h3>Use vs Run vs Map</h3>
+        <ul>
+          <li><strong>Use:</strong> Adds middleware and usually calls next()</li>
+          <li><strong>Run:</strong> Terminal middleware, ends pipeline</li>
+          <li><strong>Map:</strong> Branches pipeline based on path</li>
+        </ul>
+        <h3>Common Built-in Middleware</h3>
+        <pre><code>app.UseExceptionHandler("/error");
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();</code></pre>
+      </section>
+
+      <section id="exception-flow" class="section">
+        <h2>Middleware Execution Diagram with Exception Case</h2>
+        <h3>Normal Flow</h3>
+        <pre><code>Request
+  |
+  v
+Middleware A - Before
+  |
+  v
+Middleware B - Before
+  |
+  v
+Endpoint
+  |
+  v
+Middleware B - After
+  |
+  v
+Middleware A - After
+  |
+  v
+Response</code></pre>
+        <h3>Exception Flow</h3>
+        <pre><code>Request
+  |
+  v
+Middleware A - Before
+  |
+  v
+UseRouting
+  |
+  v
+EXCEPTION THROWN
+  |
+  X
+Pipeline breaks</code></pre>
+        <p>If an exception occurs and it is not handled, code after <code>await next()</code> does not run. If exception middleware catches it, a controlled response can be returned.</p>
+      </section>
+
+      <section id="routing" class="section">
+        <h2>What is URL Routing?</h2>
+        <p>URL routing maps an incoming URL to a specific controller and action method.</p>
+        <pre><code>routes.MapRoute(
+    name: "Default",
+    url: "{controller}/{action}/{id}",
+    defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+);</code></pre>
+        <p>Example URL:</p>
+        <pre><code>/Product/Details/10</code></pre>
+        <p>This maps to <strong>ProductController</strong>, <strong>Details</strong>, and <strong>id = 10</strong>.</p>
+      </section>
+
+      <section id="web-api" class="section">
+        <h2>ASP.NET Core Web API</h2>
+        <p>ASP.NET Core Web API is used to build RESTful services that return data, usually JSON, for web, mobile, and other client applications.</p>
+        <pre><code>[ApiController]
+[Route("api/[controller]")]
+public class EmployeeController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get()
+    {
+        return Ok("Hello from API");
+    }
+}</code></pre>
+        <h3>HTTP Methods</h3>
+        <table>
+          <tr><th>Method</th><th>Purpose</th></tr>
+          <tr><td>GET</td><td>Retrieve data</td></tr>
+          <tr><td>POST</td><td>Create data</td></tr>
+          <tr><td>PUT</td><td>Update data</td></tr>
+          <tr><td>DELETE</td><td>Delete data</td></tr>
+        </table>
+        <div class="note"><strong>ControllerBase</strong> is used in Web API because APIs return data, not views.</div>
+      </section>
+
+      <section id="dependency-injection" class="section">
+        <h2>Dependency Injection</h2>
+        <p>Dependency Injection is a design pattern where dependencies are provided to a class instead of creating them inside the class. This improves testability, flexibility, and maintainability.</p>
+        <h3>Without DI</h3>
+        <pre><code>public class EmployeeController
+{
+    private EmployeeService _service = new EmployeeService();
+}</code></pre>
+        <h3>With DI</h3>
+        <pre><code>public class EmployeeController
+{
+    private readonly IEmployeeService _service;
+
+    public EmployeeController(IEmployeeService service)
+    {
+        _service = service;
+    }
+}</code></pre>
+        <h3>Registration in Program.cs</h3>
+        <pre><code>builder.Services.AddScoped&lt;IEmployeeService, EmployeeService&gt;();</code></pre>
+        <h3>Service Lifetimes</h3>
+        <table>
+          <tr><th>Lifetime</th><th>Meaning</th></tr>
+          <tr><td>Transient</td><td>New instance every time</td></tr>
+          <tr><td>Scoped</td><td>One instance per request</td></tr>
+          <tr><td>Singleton</td><td>Single instance for the whole application</td></tr>
+        </table>
+        <div class="note"><strong>Common interview point:</strong> DbContext should usually be registered as Scoped.</div>
+      </section>
+
+      <div class="footer">Prepared as a structured HTML revision guide for .NET interviews and learning.</div>
+    </main>
+  </div>
+</body>
+</html>
