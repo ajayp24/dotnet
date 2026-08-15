@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Docker &amp; Kubernetes — Lead .NET Interview Prep</title>
+<style>
+/* ── Reset & Base ────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #0d1117;
+  --surface:     #161b22;
+  --surface2:    #21262d;
+  --border:      #30363d;
+  --text:        #e6edf3;
+  --text-muted:  #8b949e;
+  --heading:     #58a6ff;
+  --keyword:     #ff7b72;
+  --string:      #a5d6ff;
+  --number:      #f2cc60;
+  --comment:     #8b949e;
+  --tag:         #7ee787;
+  --attr:        #79c0ff;
+  --tip-bg:      #1f3a2d;
+  --tip-border:  #3fb950;
+  --warn-bg:     #2d2006;
+  --warn-border: #d29922;
+  --sidebar-w:   280px;
+  --content-max: 860px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  display: flex;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  flex-shrink: 0;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  padding: 0 20px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+#toc { list-style: none; }
+
+#toc li a {
+  display: block;
+  padding: 5px 20px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.4;
+  border-left: 2px solid transparent;
+  transition: color .15s, border-color .15s, background .15s;
+}
+
+#toc li a:hover,
+#toc li a.active {
+  color: var(--heading);
+  border-left-color: var(--heading);
+  background: rgba(88,166,255,.07);
+}
+
+/* ── Main Content ────────────────────────────────────────────────────────── */
+#main {
+  flex: 1;
+  min-width: 0;
+  padding: 48px 40px 80px;
+}
+
+.content-wrap {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* ── Typography ──────────────────────────────────────────────────────────── */
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--heading);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 48px;
+}
+
+h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--heading);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin: 52px 0 20px;
+  scroll-margin-top: 24px;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #c9d1d9;
+  margin: 28px 0 12px;
+  scroll-margin-top: 24px;
+}
+
+h4 {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 20px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-size: 11px;
+}
+
+p { margin-bottom: 14px; }
+
+a { color: var(--heading); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+strong { color: #c9d1d9; font-weight: 600; }
+
+/* ── Code ────────────────────────────────────────────────────────────────── */
+code {
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+  font-size: 13px;
+  background: var(--surface2);
+  color: var(--string);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.code-block-wrap {
+  position: relative;
+  margin: 20px 0;
+}
+
+.code-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.code-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block;
+}
+.dot-dockerfile { background: #2188ff; }
+.dot-yaml       { background: #f2cc60; }
+.dot-bash       { background: #3fb950; }
+.dot-csharp     { background: #a371f7; }
+.dot-text       { background: #8b949e; }
+
+pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 0 8px 8px;
+  padding: 20px;
+  overflow-x: auto;
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+pre::-webkit-scrollbar { height: 4px; }
+pre::-webkit-scrollbar-track { background: transparent; }
+pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.copy-btn {
+  position: absolute;
+  top: 36px;
+  right: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s, color .15s;
+}
+.copy-btn:hover { background: var(--surface); color: var(--text); }
+.copy-btn.copied { color: var(--tag); border-color: var(--tag); }
+
+/* Syntax highlighting tokens */
+.kw  { color: var(--keyword); }
+.str { color: var(--string); }
+.num { color: var(--number); }
+.cm  { color: var(--comment); font-style: italic; }
+.tag-c { color: var(--tag); }
+.attr-c { color: var(--attr); }
+.sec { color: #d2a8ff; font-weight: 600; }
+.bold { font-weight: 700; }
+
+/* ── Tables ──────────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; margin: 20px 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+th {
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+td {
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+td code { font-size: 12px; }
+
+/* ── Callouts ────────────────────────────────────────────────────────────── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 20px 0;
+  font-size: 14px;
+  border-left: 3px solid;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.tip  { background: var(--tip-bg);  border-color: var(--tip-border); }
+.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+
+.tip .callout-title  { color: var(--tip-border); }
+.warn .callout-title { color: var(--warn-border); }
+
+.callout-title { font-weight: 700; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+
+/* ── Q&A ─────────────────────────────────────────────────────────────────── */
+.qa-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.qa-q {
+  background: var(--surface2);
+  padding: 12px 18px;
+  font-weight: 600;
+  color: var(--heading);
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.qa-q::before { content: "Q"; color: var(--keyword); font-weight: 800; flex-shrink: 0; }
+
+.qa-a {
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #c9d1d9;
+}
+
+/* ── Badge ───────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+.badge-blue   { background: rgba(88,166,255,.15);  color: #58a6ff; border: 1px solid rgba(88,166,255,.3); }
+.badge-green  { background: rgba(63,185,80,.15);   color: #3fb950; border: 1px solid rgba(63,185,80,.3); }
+.badge-red    { background: rgba(255,123,114,.15); color: #ff7b72; border: 1px solid rgba(255,123,114,.3); }
+.badge-yellow { background: rgba(210,175,75,.15);  color: #d2a84b; border: 1px solid rgba(210,175,75,.3); }
+
+/* ── Diagram ─────────────────────────────────────────────────────────────── */
+.diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  overflow-x: auto;
+  margin: 16px 0;
+  white-space: pre;
+  line-height: 1.7;
+}
+
+/* ── Comparison ──────────────────────────────────────────────────────────── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+@media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; } }
+
+.compare-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.compare-card-title {
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border-bottom: 1px solid var(--border);
+}
+
+.compare-card.bad .compare-card-title  { background: rgba(255,123,114,.1); color: var(--keyword); }
+.compare-card.good .compare-card-title { background: rgba(63,185,80,.1);   color: var(--tag); }
+
+.compare-card pre {
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  font-size: 12px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 800px) {
+  #sidebar { display: none; }
+  #main { padding: 24px 20px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+<nav id="sidebar">
+  <div class="sidebar-title">Docker &amp; Kubernetes</div>
+  <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+  <ul id="toc">
+    <li><a href="#s1">1. Dockerfile Best Practices</a></li>
+    <li><a href="#s2">2. Multi-stage Builds</a></li>
+    <li><a href="#s3">3. Image Layers &amp; Caching</a></li>
+    <li><a href="#s4">4. Volumes &amp; Networking</a></li>
+    <li><a href="#s5">5. Docker Compose</a></li>
+    <li><a href="#s6">6. Kubernetes Core Concepts</a></li>
+    <li><a href="#s7">7. ConfigMap &amp; Secret</a></li>
+    <li><a href="#s8">8. Liveness &amp; Readiness Probes</a></li>
+    <li><a href="#s9">9. HPA — Autoscaler</a></li>
+    <li><a href="#s10">10. Rolling Updates &amp; Rollback</a></li>
+    <li><a href="#s11">11. Resource Requests &amp; Limits</a></li>
+    <li><a href="#s12">12. Kubernetes Networking</a></li>
+    <li><a href="#s13">Full Production Manifests</a></li>
+    <li><a href="#s14">Interview Q&amp;A</a></li>
+  </ul>
+</nav>
+
+<!-- ── Main ───────────────────────────────────────────────────────────── -->
+<main id="main">
+<div class="content-wrap">
+
+<h1>Docker &amp; Kubernetes</h1>
+<p class="subtitle">Lead .NET Engineer Interview Prep &mdash; Complete configuration examples and production patterns</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s1">1. Dockerfile Best Practices</h2>
+
+<h3>Why Layer Order Matters</h3>
+<p>Docker builds images as a stack of layers. When a layer changes, <strong>all subsequent layers are invalidated and rebuilt</strong>. The golden rule: put things that change least at the top.</p>
+
+<div class="diagram">Layer order — slowest to rebuild at top, fastest at bottom:
+
+  FROM base-image          &lt;─ almost never changes
+  RUN install packages     &lt;─ changes rarely
+  COPY project files       &lt;─ changes when dependencies change
+  RUN dotnet restore       &lt;─ cached when project files unchanged
+  COPY source code         &lt;─ changes on every commit
+  RUN dotnet publish       &lt;─ always rebuilds after code changes</div>
+
+<h3>Best Practice Checklist</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Practice</th><th>Reason</th></tr></thead>
+  <tbody>
+    <tr><td>COPY <code>.csproj</code> files before source</td><td>NuGet restore is cached until dependencies change</td></tr>
+    <tr><td>Multi-stage build</td><td>Discard SDK / build tools from final image (800MB &rarr; 200MB)</td></tr>
+    <tr><td>.dockerignore</td><td>Prevent sending bin/, obj/, .git/ to Docker daemon</td></tr>
+    <tr><td>Non-root user</td><td>Reduce blast radius if container is compromised</td></tr>
+    <tr><td>HEALTHCHECK instruction</td><td>Docker can automatically restart unhealthy containers</td></tr>
+    <tr><td>Pin image tags</td><td><code>aspnet:8.0</code> not <code>aspnet:latest</code> &mdash; reproducible builds</td></tr>
+    <tr><td>Exec form ENTRYPOINT</td><td>SIGTERM goes directly to .NET process, not shell wrapper</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>.dockerignore</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-text"></span>.dockerignore</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># Build output (largest directories — always exclude)</span>
+<span class="str">**/bin</span>
+<span class="str">**/obj</span>
+<span class="str">**/TestResults</span>
+
+<span class="cm"># Version control</span>
+<span class="str">**/.git</span>
+<span class="str">**/.gitignore</span>
+<span class="str">**/.gitattributes</span>
+
+<span class="cm"># IDE files</span>
+<span class="str">**/.vs</span>
+<span class="str">**/.vscode</span>
+<span class="str">**/*.user</span>
+<span class="str">**/*.suo</span>
+
+<span class="cm"># Docker files themselves</span>
+<span class="str">**/Dockerfile*</span>
+<span class="str">**/.dockerignore</span>
+
+<span class="cm"># Secrets — never in images</span>
+<span class="str">.env</span>
+<span class="str">.env.*</span>
+
+<span class="cm"># Docs and node modules</span>
+<span class="str">**/README.md</span>
+<span class="str">**/node_modules</span></pre>
+</div>
+
+<h3>Before vs After — Naive vs Optimized</h3>
+<div class="compare-grid">
+  <div class="compare-card bad">
+    <div class="compare-card-title">BEFORE — Naive (do not use)</div>
+<pre><span class="cm"># Rebuilds everything on every code change</span>
+<span class="cm"># Ships 800MB SDK to production</span>
+<span class="cm"># Runs as root</span>
+<span class="kw">FROM</span> <span class="str">mcr.microsoft.com/dotnet/sdk:8.0</span>
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> dotnet restore
+<span class="kw">RUN</span> dotnet publish -c Release -o /out
+<span class="kw">ENTRYPOINT</span> [<span class="str">"dotnet"</span>, <span class="str">"/out/MyApi.dll"</span>]</pre>
+  </div>
+  <div class="compare-card good">
+    <div class="compare-card-title">AFTER — Optimized (use this)</div>
+<pre><span class="cm"># Multi-stage, non-root, health check</span>
+<span class="cm"># Ships ~200MB runtime image</span>
+<span class="kw">FROM</span> <span class="str">mcr.microsoft.com/dotnet/sdk:8.0</span> <span class="kw">AS</span> build
+<span class="kw">WORKDIR</span> /src
+<span class="kw">COPY</span> [<span class="str">"MyApi.csproj"</span>, <span class="str">"."</span>]
+<span class="kw">RUN</span> dotnet restore
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> dotnet publish -c Release -o /app
+
+<span class="kw">FROM</span> <span class="str">mcr.microsoft.com/dotnet/aspnet:8.0</span> <span class="kw">AS</span> final
+<span class="kw">RUN</span> adduser --system --group appuser
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> --from=build /app .
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=10s \
+  <span class="kw">CMD</span> curl -f http://localhost:8080/health || exit 1
+<span class="kw">USER</span> appuser
+<span class="kw">ENTRYPOINT</span> [<span class="str">"dotnet"</span>, <span class="str">"MyApi.dll"</span>]</pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s2">2. Multi-stage Builds</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Image</th><th>Size</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td><code>mcr.microsoft.com/dotnet/sdk:8.0</code></td><td>~800 MB</td><td>Build stage only &mdash; never production</td></tr>
+    <tr><td><code>mcr.microsoft.com/dotnet/aspnet:8.0</code></td><td>~200 MB</td><td>ASP.NET Core apps (most common)</td></tr>
+    <tr><td><code>mcr.microsoft.com/dotnet/runtime:8.0</code></td><td>~130 MB</td><td>Console apps / Worker services</td></tr>
+    <tr><td><code>mcr.microsoft.com/dotnet/aspnet:8.0-alpine</code></td><td>~120 MB</td><td>Smaller, musl libc (test globalization)</td></tr>
+    <tr><td><code>mcr.microsoft.com/dotnet/aspnet:8.0-jammy-chiseled</code></td><td>~100 MB</td><td>Distroless-style, no shell, most secure</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Complete .NET 8 Web API Multi-stage Dockerfile</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-dockerfile"></span>Dockerfile</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># ─────────────────────────────────────────────────────────────────────────────</span>
+<span class="cm"># Multi-stage Dockerfile for .NET 8 Web API</span>
+<span class="cm"># Build:  docker build -t myapi:latest .</span>
+<span class="cm"># Run:    docker run -p 8080:8080 myapi:latest</span>
+<span class="cm"># ─────────────────────────────────────────────────────────────────────────────</span>
+
+<span class="kw">ARG</span> <span class="attr-c">DOTNET_VERSION</span>=<span class="str">8.0</span>
+
+<span class="cm"># ── Stage 1: Restore ────────────────────────────────────────────────────────</span>
+<span class="kw">FROM</span> <span class="str">mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}</span> <span class="kw">AS</span> <span class="tag-c">restore</span>
+<span class="kw">WORKDIR</span> /src
+
+<span class="cm"># Copy solution + project files FIRST for dependency caching</span>
+<span class="kw">COPY</span> [<span class="str">"MyApi.sln"</span>, <span class="str">"."</span>]
+<span class="kw">COPY</span> [<span class="str">"src/MyApi/MyApi.csproj"</span>,                         <span class="str">"src/MyApi/"</span>]
+<span class="kw">COPY</span> [<span class="str">"src/MyApi.Application/MyApi.Application.csproj"</span>, <span class="str">"src/MyApi.Application/"</span>]
+<span class="kw">COPY</span> [<span class="str">"src/MyApi.Domain/MyApi.Domain.csproj"</span>,           <span class="str">"src/MyApi.Domain/"</span>]
+<span class="kw">COPY</span> [<span class="str">"src/MyApi.Infrastructure/MyApi.Infrastructure.csproj"</span>, <span class="str">"src/MyApi.Infrastructure/"</span>]
+<span class="kw">COPY</span> [<span class="str">"tests/MyApi.Tests/MyApi.Tests.csproj"</span>,           <span class="str">"tests/MyApi.Tests/"</span>]
+
+<span class="cm"># This layer is cached until any .csproj changes</span>
+<span class="kw">RUN</span> dotnet restore <span class="str">"MyApi.sln"</span>
+
+<span class="cm"># ── Stage 2: Build ──────────────────────────────────────────────────────────</span>
+<span class="kw">FROM</span> <span class="tag-c">restore</span> <span class="kw">AS</span> <span class="tag-c">build</span>
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> dotnet build <span class="str">"MyApi.sln"</span> -c Release --no-restore
+
+<span class="cm"># ── Stage 3: Test (skip with --target publish in CI) ────────────────────────</span>
+<span class="kw">FROM</span> <span class="tag-c">build</span> <span class="kw">AS</span> <span class="tag-c">test</span>
+<span class="kw">RUN</span> dotnet test <span class="str">"tests/MyApi.Tests/MyApi.Tests.csproj"</span> \
+    -c Release --no-build \
+    --logger <span class="str">"trx;LogFileName=results.trx"</span> \
+    --results-directory /TestResults
+
+<span class="cm"># ── Stage 4: Publish ────────────────────────────────────────────────────────</span>
+<span class="kw">FROM</span> <span class="tag-c">build</span> <span class="kw">AS</span> <span class="tag-c">publish</span>
+<span class="kw">RUN</span> dotnet publish <span class="str">"src/MyApi/MyApi.csproj"</span> \
+    -c Release --no-build \
+    --runtime linux-x64 \
+    --self-contained <span class="kw">false</span> \
+    -o /app/publish \
+    /p:UseAppHost=<span class="kw">false</span>
+
+<span class="cm"># ── Stage 5: Final Runtime Image ────────────────────────────────────────────</span>
+<span class="kw">FROM</span> <span class="str">mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}</span> <span class="kw">AS</span> <span class="tag-c">final</span>
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># Non-root user for security</span>
+<span class="kw">RUN</span> groupadd --system appgroup \
+    &amp;&amp; useradd --system --gid appgroup --no-create-home appuser
+
+<span class="kw">COPY</span> --from=<span class="tag-c">publish</span> --chown=<span class="str">appuser:appgroup</span> /app/publish .
+
+<span class="kw">ENV</span> <span class="attr-c">ASPNETCORE_URLS</span>=<span class="str">http://+:8080</span> \
+    <span class="attr-c">ASPNETCORE_ENVIRONMENT</span>=<span class="str">Production</span> \
+    <span class="attr-c">DOTNET_RUNNING_IN_CONTAINER</span>=<span class="str">true</span>
+
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    <span class="kw">CMD</span> curl -f http://localhost:8080/health/live || exit 1
+
+<span class="kw">USER</span> appuser
+<span class="kw">EXPOSE</span> <span class="num">8080</span>
+<span class="kw">ENTRYPOINT</span> [<span class="str">"dotnet"</span>, <span class="str">"MyApi.dll"</span>]</pre>
+</div>
+
+<div class="callout tip">
+  <span class="callout-icon">&#x1F4A1;</span>
+  <div>
+    <div class="callout-title">Interview tip — exec vs shell form</div>
+    Use exec form <code>ENTRYPOINT ["dotnet", "MyApi.dll"]</code> not shell form <code>ENTRYPOINT dotnet MyApi.dll</code>. Shell form wraps in <code>/bin/sh -c</code>, so SIGTERM goes to the shell, not your .NET process. Graceful shutdown requires exec form.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s3">3. Image Layers and Caching</h2>
+
+<h3>Cache Invalidation Rules</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-dockerfile"></span>Layer invalidation example</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># Layer 1 — cached as long as base image hash is unchanged</span>
+<span class="kw">FROM</span> <span class="str">mcr.microsoft.com/dotnet/sdk:8.0</span>
+
+<span class="cm"># Layer 2 — cached as long as command string is identical</span>
+<span class="kw">RUN</span> apt-get update &amp;&amp; apt-get install -y curl
+
+<span class="cm"># Layer 3 — INVALIDATED when any .csproj file changes</span>
+<span class="kw">COPY</span> **/*.csproj ./
+
+<span class="cm"># Layer 4 — INVALIDATED when layer 3 is invalidated (re-runs dotnet restore)</span>
+<span class="kw">RUN</span> dotnet restore
+
+<span class="cm"># Layer 5 — INVALIDATED on every source code change</span>
+<span class="kw">COPY</span> . .
+
+<span class="cm"># Layer 6 — always invalidated after layer 5</span>
+<span class="kw">RUN</span> dotnet publish -c Release -o /out</pre>
+</div>
+
+<h3>Inspecting Layer Sizes</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-bash"></span>bash</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># Show all layers with sizes</span>
+docker history myapi:latest
+
+<span class="cm"># Detailed JSON output of layer info</span>
+docker inspect myapi:latest | jq <span class="str">'.[0].RootFS.Layers'</span>
+
+<span class="cm"># Compare image sizes</span>
+docker images myapp/api --format <span class="str">"table {{.Repository}}\t{{.Tag}}\t{{.Size}}"</span></pre>
+</div>
+
+<div class="callout warn">
+  <span class="callout-icon">&#x26A0;&#xFE0F;</span>
+  <div>
+    <div class="callout-title">Pitfall — Alpine and globalization</div>
+    Alpine uses musl libc. .NET globalization features (ICU data, timezone handling) may behave unexpectedly. Add <code>ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1</code> for simple apps, or use Debian-based images for full globalization support.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s4">4. Volumes and Networking</h2>
+
+<h3>Volume Types</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Type</th><th>Syntax</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Named volume</strong></td><td><code>docker run -v postgres_data:/var/lib/postgresql/data</code></td><td>Persistent data managed by Docker</td></tr>
+    <tr><td><strong>Bind mount</strong></td><td><code>docker run -v $(pwd)/src:/app/src</code></td><td>Dev — mount source code live</td></tr>
+    <tr><td><strong>tmpfs</strong></td><td><code>docker run --tmpfs /tmp:rw,size=64m</code></td><td>In-memory, ephemeral (secrets, temp)</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Network Drivers</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Driver</th><th>Description</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td><code>bridge</code></td><td>Isolated network per container, NAT to host</td><td>Default; single-host dev</td></tr>
+    <tr><td><code>host</code></td><td>Shares host network stack, no NAT</td><td>High-performance; no isolation</td></tr>
+    <tr><td><code>none</code></td><td>No network interface</td><td>Fully isolated containers</td></tr>
+    <tr><td><code>overlay</code></td><td>Multi-host (Swarm/Kubernetes)</td><td>Production clustering</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout warn">
+  <span class="callout-icon">&#x26A0;&#xFE0F;</span>
+  <div>
+    <div class="callout-title">Pitfall — default bridge network</div>
+    The default bridge network does NOT support DNS resolution by container name. Always create a user-defined network (<code>docker network create mynet</code>) for service discovery between containers.
+  </div>
+</div>
+
+<h3>App + Postgres + Redis — docker-compose</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>docker-compose.yml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">version</span>: <span class="str">"3.9"</span>
+
+<span class="attr-c">services</span>:
+  <span class="sec">api</span>:
+    <span class="attr-c">build</span>:
+      <span class="attr-c">context</span>: <span class="str">.</span>
+      <span class="attr-c">dockerfile</span>: <span class="str">Dockerfile</span>
+      <span class="attr-c">target</span>: <span class="str">final</span>
+    <span class="attr-c">ports</span>:
+      - <span class="str">"8080:8080"</span>
+    <span class="attr-c">environment</span>:
+      <span class="attr-c">ASPNETCORE_ENVIRONMENT</span>: <span class="str">Development</span>
+      <span class="attr-c">ConnectionStrings__Default</span>: <span class="str">"Host=postgres;Database=mydb;Username=appuser;Password=${POSTGRES_PASSWORD}"</span>
+      <span class="attr-c">ConnectionStrings__Redis</span>: <span class="str">"redis:6379"</span>
+    <span class="attr-c">depends_on</span>:
+      <span class="attr-c">postgres</span>:
+        <span class="attr-c">condition</span>: <span class="str">service_healthy</span>
+      <span class="attr-c">redis</span>:
+        <span class="attr-c">condition</span>: <span class="str">service_healthy</span>
+    <span class="attr-c">networks</span>:
+      - <span class="str">backend</span>
+    <span class="attr-c">restart</span>: <span class="str">unless-stopped</span>
+
+  <span class="sec">postgres</span>:
+    <span class="attr-c">image</span>: <span class="str">postgres:16-alpine</span>
+    <span class="attr-c">environment</span>:
+      <span class="attr-c">POSTGRES_DB</span>: <span class="str">mydb</span>
+      <span class="attr-c">POSTGRES_USER</span>: <span class="str">appuser</span>
+      <span class="attr-c">POSTGRES_PASSWORD</span>: <span class="str">${POSTGRES_PASSWORD}</span>
+    <span class="attr-c">volumes</span>:
+      - <span class="str">postgres_data:/var/lib/postgresql/data</span>
+    <span class="attr-c">healthcheck</span>:
+      <span class="attr-c">test</span>: [<span class="str">"CMD-SHELL"</span>, <span class="str">"pg_isready -U appuser -d mydb"</span>]
+      <span class="attr-c">interval</span>: <span class="str">10s</span>
+      <span class="attr-c">timeout</span>: <span class="str">5s</span>
+      <span class="attr-c">retries</span>: <span class="num">5</span>
+      <span class="attr-c">start_period</span>: <span class="str">10s</span>
+    <span class="attr-c">networks</span>:
+      - <span class="str">backend</span>
+
+  <span class="sec">redis</span>:
+    <span class="attr-c">image</span>: <span class="str">redis:7-alpine</span>
+    <span class="attr-c">command</span>: <span class="str">redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}</span>
+    <span class="attr-c">volumes</span>:
+      - <span class="str">redis_data:/data</span>
+    <span class="attr-c">healthcheck</span>:
+      <span class="attr-c">test</span>: [<span class="str">"CMD"</span>, <span class="str">"redis-cli"</span>, <span class="str">"-a"</span>, <span class="str">"${REDIS_PASSWORD}"</span>, <span class="str">"ping"</span>]
+      <span class="attr-c">interval</span>: <span class="str">10s</span>
+      <span class="attr-c">timeout</span>: <span class="str">3s</span>
+      <span class="attr-c">retries</span>: <span class="num">5</span>
+    <span class="attr-c">networks</span>:
+      - <span class="str">backend</span>
+
+<span class="attr-c">volumes</span>:
+  <span class="attr-c">postgres_data</span>:
+  <span class="attr-c">redis_data</span>:
+
+<span class="attr-c">networks</span>:
+  <span class="sec">backend</span>:
+    <span class="attr-c">driver</span>: <span class="str">bridge</span></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s5">5. Docker Compose — Full Stack .NET + SQL Server + Redis</h2>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>docker-compose.yml — Production-style full stack</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">version</span>: <span class="str">"3.9"</span>
+
+<span class="attr-c">services</span>:
+
+  <span class="cm"># ── API ────────────────────────────────────────────────────────────────────</span>
+  <span class="sec">api</span>:
+    <span class="attr-c">build</span>:
+      <span class="attr-c">context</span>: <span class="str">.</span>
+      <span class="attr-c">dockerfile</span>: <span class="str">Dockerfile</span>
+      <span class="attr-c">target</span>: <span class="str">final</span>
+    <span class="attr-c">image</span>: <span class="str">myapp/api:${API_VERSION:-latest}</span>
+    <span class="attr-c">container_name</span>: <span class="str">myapp_api</span>
+    <span class="attr-c">ports</span>:
+      - <span class="str">"${API_PORT:-8080}:8080"</span>
+    <span class="attr-c">environment</span>:
+      <span class="attr-c">ASPNETCORE_ENVIRONMENT</span>: <span class="str">${ENVIRONMENT:-Development}</span>
+      <span class="attr-c">ASPNETCORE_URLS</span>: <span class="str">http://+:8080</span>
+      <span class="attr-c">ConnectionStrings__SqlServer</span>: >-
+        Server=sqlserver,1433;Database=MyAppDb;
+        User Id=sa;Password=${SQL_SA_PASSWORD};
+        TrustServerCertificate=true;
+      <span class="attr-c">ConnectionStrings__Redis</span>: <span class="str">"redis:6379,password=${REDIS_PASSWORD},abortConnect=false"</span>
+      <span class="attr-c">Jwt__Secret</span>: <span class="str">"${JWT_SECRET}"</span>
+    <span class="attr-c">env_file</span>:
+      - <span class="str">.env</span>
+    <span class="attr-c">depends_on</span>:
+      <span class="attr-c">sqlserver</span>:
+        <span class="attr-c">condition</span>: <span class="str">service_healthy</span>
+      <span class="attr-c">redis</span>:
+        <span class="attr-c">condition</span>: <span class="str">service_healthy</span>
+    <span class="attr-c">networks</span>:
+      - <span class="str">app_network</span>
+    <span class="attr-c">volumes</span>:
+      - <span class="str">api_logs:/app/logs</span>
+    <span class="attr-c">restart</span>: <span class="str">unless-stopped</span>
+    <span class="attr-c">healthcheck</span>:
+      <span class="attr-c">test</span>: [<span class="str">"CMD"</span>, <span class="str">"curl"</span>, <span class="str">"-f"</span>, <span class="str">"http://localhost:8080/health"</span>]
+      <span class="attr-c">interval</span>: <span class="str">30s</span>
+      <span class="attr-c">timeout</span>: <span class="str">10s</span>
+      <span class="attr-c">retries</span>: <span class="num">3</span>
+      <span class="attr-c">start_period</span>: <span class="str">40s</span>
+    <span class="attr-c">deploy</span>:
+      <span class="attr-c">resources</span>:
+        <span class="attr-c">limits</span>:
+          <span class="attr-c">cpus</span>: <span class="str">"1.0"</span>
+          <span class="attr-c">memory</span>: <span class="str">512M</span>
+        <span class="attr-c">reservations</span>:
+          <span class="attr-c">cpus</span>: <span class="str">"0.25"</span>
+          <span class="attr-c">memory</span>: <span class="str">128M</span>
+
+  <span class="cm"># ── SQL Server ─────────────────────────────────────────────────────────────</span>
+  <span class="sec">sqlserver</span>:
+    <span class="attr-c">image</span>: <span class="str">mcr.microsoft.com/mssql/server:2022-latest</span>
+    <span class="attr-c">container_name</span>: <span class="str">myapp_sqlserver</span>
+    <span class="attr-c">environment</span>:
+      <span class="attr-c">ACCEPT_EULA</span>: <span class="str">"Y"</span>
+      <span class="attr-c">SA_PASSWORD</span>: <span class="str">"${SQL_SA_PASSWORD}"</span>
+      <span class="attr-c">MSSQL_PID</span>: <span class="str">Developer</span>
+    <span class="attr-c">ports</span>:
+      - <span class="str">"1433:1433"</span>
+    <span class="attr-c">volumes</span>:
+      - <span class="str">sqlserver_data:/var/opt/mssql/data</span>
+      - <span class="str">sqlserver_log:/var/opt/mssql/log</span>
+    <span class="attr-c">healthcheck</span>:
+      <span class="attr-c">test</span>:
+        - <span class="str">"CMD-SHELL"</span>
+        - <span class="str">"/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${SQL_SA_PASSWORD} -C -Q 'SELECT 1' || exit 1"</span>
+      <span class="attr-c">interval</span>: <span class="str">15s</span>
+      <span class="attr-c">timeout</span>: <span class="str">10s</span>
+      <span class="attr-c">retries</span>: <span class="num">10</span>
+      <span class="attr-c">start_period</span>: <span class="str">30s</span>
+    <span class="attr-c">networks</span>:
+      - <span class="str">app_network</span>
+    <span class="attr-c">restart</span>: <span class="str">unless-stopped</span>
+
+  <span class="cm"># ── Redis ──────────────────────────────────────────────────────────────────</span>
+  <span class="sec">redis</span>:
+    <span class="attr-c">image</span>: <span class="str">redis:7-alpine</span>
+    <span class="attr-c">container_name</span>: <span class="str">myapp_redis</span>
+    <span class="attr-c">command</span>: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    <span class="attr-c">volumes</span>:
+      - <span class="str">redis_data:/data</span>
+    <span class="attr-c">healthcheck</span>:
+      <span class="attr-c">test</span>: [<span class="str">"CMD"</span>, <span class="str">"redis-cli"</span>, <span class="str">"-a"</span>, <span class="str">"${REDIS_PASSWORD}"</span>, <span class="str">"ping"</span>]
+      <span class="attr-c">interval</span>: <span class="str">10s</span>
+      <span class="attr-c">timeout</span>: <span class="str">5s</span>
+      <span class="attr-c">retries</span>: <span class="num">5</span>
+    <span class="attr-c">networks</span>:
+      - <span class="str">app_network</span>
+    <span class="attr-c">restart</span>: <span class="str">unless-stopped</span>
+
+<span class="attr-c">volumes</span>:
+  <span class="attr-c">sqlserver_data</span>:
+  <span class="attr-c">sqlserver_log</span>:
+  <span class="attr-c">redis_data</span>:
+  <span class="attr-c">api_logs</span>:
+
+<span class="attr-c">networks</span>:
+  <span class="sec">app_network</span>:
+    <span class="attr-c">driver</span>: <span class="str">bridge</span></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s6">6. Kubernetes Core Concepts</h2>
+
+<div class="diagram">Object Hierarchy:
+
+Cluster
+└── Namespace
+    ├── Deployment  →  manages →  ReplicaSet  →  manages →  Pod(s)
+    ├── Service     →  stable IP / DNS  →  routes to Pod(s)  (label selector)
+    ├── Ingress     →  HTTP routing  →  Service(s)
+    ├── ConfigMap   →  non-sensitive config  →  Pod(s)
+    ├── Secret      →  sensitive config  →  Pod(s)
+    └── HPA         →  scales  →  Deployment</div>
+
+<h3>Service Types</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Type</th><th>Description</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td><code>ClusterIP</code> <span class="badge badge-green">default</span></td><td>Internal cluster IP only</td><td>Service-to-service communication</td></tr>
+    <tr><td><code>NodePort</code></td><td>Exposes on each node at static port (30000-32767)</td><td>Dev / testing</td></tr>
+    <tr><td><code>LoadBalancer</code></td><td>Provisions cloud load balancer</td><td>Production external access</td></tr>
+    <tr><td><code>ExternalName</code></td><td>DNS alias to external hostname</td><td>Connect to external DB by name</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s7">7. ConfigMap and Secret</h2>
+
+<h3>ConfigMap — Non-sensitive Configuration</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>configmap.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">v1</span>
+<span class="attr-c">kind</span>: <span class="str">ConfigMap</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-config</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+<span class="attr-c">data</span>:
+  <span class="attr-c">ASPNETCORE_ENVIRONMENT</span>: <span class="str">"Production"</span>
+  <span class="attr-c">ASPNETCORE_URLS</span>: <span class="str">"http://+:8080"</span>
+  <span class="attr-c">Logging__LogLevel__Default</span>: <span class="str">"Information"</span>
+  <span class="attr-c">Logging__LogLevel__Microsoft__AspNetCore</span>: <span class="str">"Warning"</span>
+  <span class="attr-c">Cache__DefaultExpirationMinutes</span>: <span class="str">"15"</span>
+
+  <span class="cm"># Multi-line JSON file mounted as volume</span>
+  <span class="attr-c">appsettings.override.json</span>: |
+    {
+      "FeatureFlags": {
+        "EnableNewDashboard": true,
+        "MaxPageSize": 100
+      }
+    }</pre>
+</div>
+
+<h3>Secret — Sensitive Values</h3>
+<div class="callout warn">
+  <span class="callout-icon">&#x26A0;&#xFE0F;</span>
+  <div>
+    <div class="callout-title">Secrets are NOT encrypted by default</div>
+    Kubernetes Secrets are base64-encoded, not encrypted. Anyone with RBAC access can decode them with <code>kubectl get secret myapi-secrets -o jsonpath='{.data.password}' | base64 -d</code>. Use <strong>External Secrets Operator</strong> + AWS Secrets Manager / Azure Key Vault for real security.
+  </div>
+</div>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>secret.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">v1</span>
+<span class="attr-c">kind</span>: <span class="str">Secret</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-secrets</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+<span class="attr-c">type</span>: <span class="str">Opaque</span>
+<span class="attr-c">stringData</span>:
+  <span class="cm"># stringData: Kubernetes base64-encodes these automatically</span>
+  <span class="attr-c">ConnectionStrings__SqlServer</span>: <span class="str">"Server=sqlserver;Database=MyDb;User Id=sa;Password=secret;"</span>
+  <span class="attr-c">ConnectionStrings__Redis</span>: <span class="str">"redis:6379,password=redispassword"</span>
+  <span class="attr-c">Jwt__Secret</span>: <span class="str">"super-secret-jwt-key-minimum-32-chars!!"</span></pre>
+</div>
+
+<h3>Injecting into Pods</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>env injection patterns</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">containers</span>:
+  - <span class="attr-c">name</span>: <span class="str">myapi</span>
+
+    <span class="cm"># Option 1: All keys from ConfigMap as env vars</span>
+    <span class="attr-c">envFrom</span>:
+      - <span class="attr-c">configMapRef</span>:
+          <span class="attr-c">name</span>: <span class="str">myapi-config</span>
+      - <span class="attr-c">secretRef</span>:
+          <span class="attr-c">name</span>: <span class="str">myapi-secrets</span>
+
+    <span class="cm"># Option 2: Individual keys</span>
+    <span class="attr-c">env</span>:
+      - <span class="attr-c">name</span>: <span class="str">ConnectionStrings__SqlServer</span>
+        <span class="attr-c">valueFrom</span>:
+          <span class="attr-c">secretKeyRef</span>:
+            <span class="attr-c">name</span>: <span class="str">myapi-secrets</span>
+            <span class="attr-c">key</span>: <span class="str">ConnectionStrings__SqlServer</span>
+      - <span class="attr-c">name</span>: <span class="str">POD_NAME</span>
+        <span class="attr-c">valueFrom</span>:
+          <span class="attr-c">fieldRef</span>:
+            <span class="attr-c">fieldPath</span>: <span class="str">metadata.name</span>
+
+    <span class="cm"># Option 3: Mounted as files</span>
+    <span class="attr-c">volumeMounts</span>:
+      - <span class="attr-c">name</span>: <span class="str">config-volume</span>
+        <span class="attr-c">mountPath</span>: <span class="str">/app/config</span>
+        <span class="attr-c">readOnly</span>: <span class="kw">true</span>
+
+<span class="attr-c">volumes</span>:
+  - <span class="attr-c">name</span>: <span class="str">config-volume</span>
+    <span class="attr-c">configMap</span>:
+      <span class="attr-c">name</span>: <span class="str">myapi-config</span>
+      <span class="attr-c">items</span>:
+        - <span class="attr-c">key</span>: <span class="str">appsettings.override.json</span>
+          <span class="attr-c">path</span>: <span class="str">appsettings.override.json</span></pre>
+</div>
+
+<h3>External Secrets Operator (Production Pattern)</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>externalsecret.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">external-secrets.io/v1beta1</span>
+<span class="attr-c">kind</span>: <span class="str">ExternalSecret</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-external-secrets</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">refreshInterval</span>: <span class="str">1h</span>
+  <span class="attr-c">secretStoreRef</span>:
+    <span class="attr-c">name</span>: <span class="str">aws-secretsmanager-store</span>
+    <span class="attr-c">kind</span>: <span class="str">ClusterSecretStore</span>
+  <span class="attr-c">target</span>:
+    <span class="attr-c">name</span>: <span class="str">myapi-secrets</span>       <span class="cm"># creates this Kubernetes Secret</span>
+    <span class="attr-c">creationPolicy</span>: <span class="str">Owner</span>
+  <span class="attr-c">data</span>:
+    - <span class="attr-c">secretKey</span>: <span class="str">ConnectionStrings__SqlServer</span>
+      <span class="attr-c">remoteRef</span>:
+        <span class="attr-c">key</span>: <span class="str">production/myapi/database</span>
+        <span class="attr-c">property</span>: <span class="str">connection_string</span>
+    - <span class="attr-c">secretKey</span>: <span class="str">Jwt__Secret</span>
+      <span class="attr-c">remoteRef</span>:
+        <span class="attr-c">key</span>: <span class="str">production/myapi/jwt</span>
+        <span class="attr-c">property</span>: <span class="str">secret</span></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s8">8. Liveness and Readiness Probes</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Probe</th><th>Action on Failure</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Startup</strong></td><td>Restart if never succeeds</td><td>Give slow-starting apps time to init</td></tr>
+    <tr><td><strong>Liveness</strong></td><td>Restart the container</td><td>Detect deadlock / hung process</td></tr>
+    <tr><td><strong>Readiness</strong></td><td>Remove from Service endpoints</td><td>Dependency check; only route to healthy pods</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>ASP.NET Core Health Check Endpoints</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-csharp"></span>Program.cs</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// Register health checks</span>
+builder.Services.AddHealthChecks()
+    .AddSqlServer(
+        connectionString: builder.Configuration.GetConnectionString(<span class="str">"SqlServer"</span>)!,
+        name: <span class="str">"database"</span>,
+        tags: [<span class="str">"ready"</span>])
+    .AddRedis(
+        redisConnectionString: builder.Configuration.GetConnectionString(<span class="str">"Redis"</span>)!,
+        name: <span class="str">"redis"</span>,
+        tags: [<span class="str">"ready"</span>])
+    .AddCheck(<span class="str">"self"</span>, () =&gt; HealthCheckResult.Healthy(), tags: [<span class="str">"live"</span>]);
+
+<span class="cm">// Map endpoints</span>
+app.MapHealthChecks(<span class="str">"/health/live"</span>, <span class="kw">new</span> HealthCheckOptions
+{
+    Predicate = check =&gt; check.Tags.Contains(<span class="str">"live"</span>)
+});
+
+app.MapHealthChecks(<span class="str">"/health/ready"</span>, <span class="kw">new</span> HealthCheckOptions
+{
+    Predicate = check =&gt; check.Tags.Contains(<span class="str">"ready"</span>)
+});</pre>
+</div>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>probe configuration</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">containers</span>:
+  - <span class="attr-c">name</span>: <span class="str">myapi</span>
+    <span class="attr-c">image</span>: <span class="str">myapp/api:1.3.0</span>
+
+    <span class="cm"># Startup probe — handles slow initialization (up to 5 minutes)</span>
+    <span class="attr-c">startupProbe</span>:
+      <span class="attr-c">httpGet</span>:
+        <span class="attr-c">path</span>: <span class="str">/health/live</span>
+        <span class="attr-c">port</span>: <span class="num">8080</span>
+      <span class="attr-c">failureThreshold</span>: <span class="num">30</span>      <span class="cm"># 30 × 10s = 5 minutes max startup time</span>
+      <span class="attr-c">periodSeconds</span>: <span class="num">10</span>
+
+    <span class="cm"># Liveness — restart if deadlocked</span>
+    <span class="attr-c">livenessProbe</span>:
+      <span class="attr-c">httpGet</span>:
+        <span class="attr-c">path</span>: <span class="str">/health/live</span>
+        <span class="attr-c">port</span>: <span class="num">8080</span>
+      <span class="attr-c">periodSeconds</span>: <span class="num">15</span>
+      <span class="attr-c">timeoutSeconds</span>: <span class="num">5</span>
+      <span class="attr-c">failureThreshold</span>: <span class="num">3</span>
+
+    <span class="cm"># Readiness — only route traffic when DB + Redis are reachable</span>
+    <span class="attr-c">readinessProbe</span>:
+      <span class="attr-c">httpGet</span>:
+        <span class="attr-c">path</span>: <span class="str">/health/ready</span>
+        <span class="attr-c">port</span>: <span class="num">8080</span>
+      <span class="attr-c">periodSeconds</span>: <span class="num">10</span>
+      <span class="attr-c">timeoutSeconds</span>: <span class="num">5</span>
+      <span class="attr-c">failureThreshold</span>: <span class="num">3</span>
+      <span class="attr-c">successThreshold</span>: <span class="num">1</span></pre>
+</div>
+
+<div class="callout warn">
+  <span class="callout-icon">&#x26A0;&#xFE0F;</span>
+  <div>
+    <div class="callout-title">Pitfall — liveness probe too aggressive</div>
+    Setting <code>initialDelaySeconds</code> too low on liveness probes kills pods still warming up. Use <code>startupProbe</code> for slow-starting apps instead. Once startup probe succeeds, liveness and readiness probes take over.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s9">9. HPA — Horizontal Pod Autoscaler</h2>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>hpa.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">autoscaling/v2</span>
+<span class="attr-c">kind</span>: <span class="str">HorizontalPodAutoscaler</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-hpa</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">scaleTargetRef</span>:
+    <span class="attr-c">apiVersion</span>: <span class="str">apps/v1</span>
+    <span class="attr-c">kind</span>: <span class="str">Deployment</span>
+    <span class="attr-c">name</span>: <span class="str">myapi-deployment</span>
+
+  <span class="attr-c">minReplicas</span>: <span class="num">2</span>
+  <span class="attr-c">maxReplicas</span>: <span class="num">20</span>
+
+  <span class="attr-c">metrics</span>:
+    - <span class="attr-c">type</span>: <span class="str">Resource</span>
+      <span class="attr-c">resource</span>:
+        <span class="attr-c">name</span>: <span class="str">cpu</span>
+        <span class="attr-c">target</span>:
+          <span class="attr-c">type</span>: <span class="str">Utilization</span>
+          <span class="attr-c">averageUtilization</span>: <span class="num">70</span>
+    - <span class="attr-c">type</span>: <span class="str">Resource</span>
+      <span class="attr-c">resource</span>:
+        <span class="attr-c">name</span>: <span class="str">memory</span>
+        <span class="attr-c">target</span>:
+          <span class="attr-c">type</span>: <span class="str">Utilization</span>
+          <span class="attr-c">averageUtilization</span>: <span class="num">80</span>
+
+  <span class="attr-c">behavior</span>:
+    <span class="attr-c">scaleUp</span>:
+      <span class="attr-c">stabilizationWindowSeconds</span>: <span class="num">60</span>
+      <span class="attr-c">policies</span>:
+        - <span class="attr-c">type</span>: <span class="str">Percent</span>
+          <span class="attr-c">value</span>: <span class="num">100</span>          <span class="cm"># Double pods at most</span>
+          <span class="attr-c">periodSeconds</span>: <span class="num">60</span>
+      <span class="attr-c">selectPolicy</span>: <span class="str">Max</span>
+    <span class="attr-c">scaleDown</span>:
+      <span class="attr-c">stabilizationWindowSeconds</span>: <span class="num">300</span>  <span class="cm"># 5 min cooldown</span>
+      <span class="attr-c">policies</span>:
+        - <span class="attr-c">type</span>: <span class="str">Percent</span>
+          <span class="attr-c">value</span>: <span class="num">25</span>           <span class="cm"># Remove 25% per period</span>
+          <span class="attr-c">periodSeconds</span>: <span class="num">60</span>
+      <span class="attr-c">selectPolicy</span>: <span class="str">Min</span></pre>
+</div>
+
+<h3>KEDA — Scale on Queue Length</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>keda-scaledobject.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">keda.sh/v1alpha1</span>
+<span class="attr-c">kind</span>: <span class="str">ScaledObject</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myworker-scaledobject</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">scaleTargetRef</span>:
+    <span class="attr-c">name</span>: <span class="str">myworker-deployment</span>
+  <span class="attr-c">minReplicaCount</span>: <span class="num">0</span>          <span class="cm"># Scale to zero when queue empty</span>
+  <span class="attr-c">maxReplicaCount</span>: <span class="num">50</span>
+  <span class="attr-c">cooldownPeriod</span>: <span class="num">300</span>
+  <span class="attr-c">pollingInterval</span>: <span class="num">15</span>
+  <span class="attr-c">triggers</span>:
+    - <span class="attr-c">type</span>: <span class="str">azure-servicebus</span>
+      <span class="attr-c">metadata</span>:
+        <span class="attr-c">queueName</span>: <span class="str">order-processing-queue</span>
+        <span class="attr-c">namespace</span>: <span class="str">myapp-servicebus</span>
+        <span class="attr-c">messageCount</span>: <span class="str">"10"</span>      <span class="cm"># 1 replica per 10 messages</span>
+      <span class="attr-c">authenticationRef</span>:
+        <span class="attr-c">name</span>: <span class="str">azure-servicebus-trigger-auth</span></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s10">10. Rolling Updates and Rollback</h2>
+
+<div class="diagram">Rolling update — maxSurge=1, maxUnavailable=0, replicas=4:
+
+Before:   [v1] [v1] [v1] [v1]
+Step 1:   [v1] [v1] [v1] [v1] [v2]   ← v2 added (5 total)
+Step 2:   [v1] [v1] [v1] [v2]         ← one v1 removed
+Step 3:   [v1] [v1] [v2] [v2]
+Step 4:   [v1] [v2] [v2] [v2]
+After:    [v2] [v2] [v2] [v2]         ← complete, no downtime</div>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-bash"></span>kubectl rollout commands</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># Deploy new image version</span>
+kubectl set image deployment/myapi-deployment myapi=myapp/api:<span class="str">1.3.0</span> -n production
+
+<span class="cm"># Watch progress</span>
+kubectl rollout status deployment/myapi-deployment -n production
+
+<span class="cm"># View history</span>
+kubectl rollout history deployment/myapi-deployment -n production
+
+<span class="cm"># View specific revision details</span>
+kubectl rollout history deployment/myapi-deployment --revision=<span class="num">3</span> -n production
+
+<span class="cm"># Rollback to previous version</span>
+kubectl rollout undo deployment/myapi-deployment -n production
+
+<span class="cm"># Rollback to specific revision</span>
+kubectl rollout undo deployment/myapi-deployment --to-revision=<span class="num">2</span> -n production
+
+<span class="cm"># Pause mid-rollout (investigate an issue)</span>
+kubectl rollout pause deployment/myapi-deployment -n production
+
+<span class="cm"># Resume</span>
+kubectl rollout resume deployment/myapi-deployment -n production</pre>
+</div>
+
+<h3>Blue/Green Deployment</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>blue-green.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># Blue Deployment — currently live</span>
+<span class="attr-c">apiVersion</span>: <span class="str">apps/v1</span>
+<span class="attr-c">kind</span>: <span class="str">Deployment</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-blue</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">replicas</span>: <span class="num">4</span>
+  <span class="attr-c">selector</span>:
+    <span class="attr-c">matchLabels</span>: { <span class="attr-c">app</span>: <span class="str">myapi</span>, <span class="attr-c">version</span>: <span class="str">blue</span> }
+  <span class="attr-c">template</span>:
+    <span class="attr-c">metadata</span>:
+      <span class="attr-c">labels</span>: { <span class="attr-c">app</span>: <span class="str">myapi</span>, <span class="attr-c">version</span>: <span class="str">blue</span> }
+    <span class="attr-c">spec</span>:
+      <span class="attr-c">containers</span>:
+        - <span class="attr-c">name</span>: <span class="str">myapi</span>
+          <span class="attr-c">image</span>: <span class="str">myapp/api:1.2.0</span>
+---
+<span class="cm"># Green Deployment — new version (not live yet)</span>
+<span class="attr-c">apiVersion</span>: <span class="str">apps/v1</span>
+<span class="attr-c">kind</span>: <span class="str">Deployment</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-green</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">replicas</span>: <span class="num">4</span>
+  <span class="attr-c">selector</span>:
+    <span class="attr-c">matchLabels</span>: { <span class="attr-c">app</span>: <span class="str">myapi</span>, <span class="attr-c">version</span>: <span class="str">green</span> }
+  <span class="attr-c">template</span>:
+    <span class="attr-c">metadata</span>:
+      <span class="attr-c">labels</span>: { <span class="attr-c">app</span>: <span class="str">myapi</span>, <span class="attr-c">version</span>: <span class="str">green</span> }
+    <span class="attr-c">spec</span>:
+      <span class="attr-c">containers</span>:
+        - <span class="attr-c">name</span>: <span class="str">myapi</span>
+          <span class="attr-c">image</span>: <span class="str">myapp/api:1.3.0</span>
+---
+<span class="cm"># Service — switch traffic by changing selector</span>
+<span class="attr-c">apiVersion</span>: <span class="str">v1</span>
+<span class="attr-c">kind</span>: <span class="str">Service</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-service</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">selector</span>:
+    <span class="attr-c">app</span>: <span class="str">myapi</span>
+    <span class="attr-c">version</span>: <span class="str">blue</span>      <span class="cm"># Change to "green" to switch instantly</span>
+  <span class="attr-c">ports</span>:
+    - <span class="attr-c">port</span>: <span class="num">80</span>
+      <span class="attr-c">targetPort</span>: <span class="num">8080</span></pre>
+</div>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-bash"></span>Switch traffic atomically</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># Switch all traffic to green (atomic, instant)</span>
+kubectl patch service myapi-service -n production \
+  -p <span class="str">'{"spec":{"selector":{"version":"green"}}}'</span>
+
+<span class="cm"># Rollback instantly if issues found</span>
+kubectl patch service myapi-service -n production \
+  -p <span class="str">'{"spec":{"selector":{"version":"blue"}}}'</span></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s11">11. Resource Requests and Limits</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Purpose</th><th>Behavior when exceeded</th></tr></thead>
+  <tbody>
+    <tr><td><code>requests.cpu</code></td><td>Scheduler minimum — guaranteed CPU</td><td>Pod scheduled only on nodes with this capacity</td></tr>
+    <tr><td><code>limits.cpu</code></td><td>Maximum CPU</td><td>Throttled (slowed), NOT killed</td></tr>
+    <tr><td><code>requests.memory</code></td><td>Scheduler minimum — guaranteed memory</td><td>Pod scheduled only on nodes with this capacity</td></tr>
+    <tr><td><code>limits.memory</code></td><td>Maximum memory</td><td><strong>OOMKilled</strong> (exit code 137)</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>QoS Classes</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>QoS Class</th><th>Condition</th><th>Eviction Priority</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge badge-green">Guaranteed</span></td><td><code>requests == limits</code> for all resources</td><td>Last to be evicted</td></tr>
+    <tr><td><span class="badge badge-yellow">Burstable</span></td><td>Some resources have <code>requests &lt; limits</code></td><td>Evicted after BestEffort</td></tr>
+    <tr><td><span class="badge badge-red">BestEffort</span></td><td>No requests or limits set</td><td>First to be evicted</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>resource configuration + OOMKilled fix</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># ── Guaranteed QoS (requests == limits) ────────────────────────────────────</span>
+<span class="attr-c">resources</span>:
+  <span class="attr-c">requests</span>:
+    <span class="attr-c">cpu</span>: <span class="str">"500m"</span>
+    <span class="attr-c">memory</span>: <span class="str">"256Mi"</span>
+  <span class="attr-c">limits</span>:
+    <span class="attr-c">cpu</span>: <span class="str">"500m"</span>
+    <span class="attr-c">memory</span>: <span class="str">"256Mi"</span>
+
+<span class="cm"># ── Burstable QoS (limits > requests) ──────────────────────────────────────</span>
+<span class="attr-c">resources</span>:
+  <span class="attr-c">requests</span>:
+    <span class="attr-c">cpu</span>: <span class="str">"250m"</span>
+    <span class="attr-c">memory</span>: <span class="str">"128Mi"</span>
+  <span class="attr-c">limits</span>:
+    <span class="attr-c">cpu</span>: <span class="str">"1000m"</span>
+    <span class="attr-c">memory</span>: <span class="str">"512Mi"</span>
+
+<span class="cm"># ── .NET GC tuning to prevent OOMKilled ────────────────────────────────────</span>
+<span class="attr-c">env</span>:
+  - <span class="attr-c">name</span>: <span class="str">DOTNET_GCConserveMemory</span>
+    <span class="attr-c">value</span>: <span class="str">"5"</span>                  <span class="cm"># 0-9, higher = more conservative GC</span>
+  - <span class="attr-c">name</span>: <span class="str">DOTNET_GCHeapHardLimitPercent</span>
+    <span class="attr-c">value</span>: <span class="str">"75"</span>               <span class="cm"># Use 75% of container limit as hard cap</span></pre>
+</div>
+
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-bash"></span>Diagnose OOMKilled</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm"># Check if a pod was OOMKilled</span>
+kubectl describe pod myapi-pod-xyz -n production
+<span class="cm"># Look for: Reason: OOMKilled / Exit Code: 137</span>
+
+<span class="cm"># Check events for OOM</span>
+kubectl get events -n production --sort-by=.lastTimestamp | grep -i oom
+
+<span class="cm"># Check live memory usage</span>
+kubectl top pods -n production
+
+<span class="cm"># Check memory usage over time (requires metrics-server)</span>
+kubectl top pods -n production --sort-by=memory</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s12">12. Kubernetes Networking</h2>
+
+<h3>DNS Resolution</h3>
+<div class="diagram">DNS format:  &lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local
+
+Examples (from any pod in the cluster):
+  myapi-service.production.svc.cluster.local   → 10.96.45.123
+  postgres.production.svc.cluster.local        → 10.96.45.124
+  redis.production.svc.cluster.local           → 10.96.45.125
+
+Short form (within same namespace):
+  myapi-service         → resolves automatically
+  postgres              → resolves automatically
+
+Cross-namespace short form:
+  myapi-service.production   → resolves from other namespaces</div>
+
+<h3>NetworkPolicy — Allow Only Frontend to Backend</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>networkpolicy.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">networking.k8s.io/v1</span>
+<span class="attr-c">kind</span>: <span class="str">NetworkPolicy</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">allow-frontend-to-backend</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+<span class="attr-c">spec</span>:
+  <span class="cm"># Apply this policy to backend pods</span>
+  <span class="attr-c">podSelector</span>:
+    <span class="attr-c">matchLabels</span>:
+      <span class="attr-c">app</span>: <span class="str">myapi</span>
+      <span class="attr-c">tier</span>: <span class="str">backend</span>
+
+  <span class="attr-c">policyTypes</span>:
+    - <span class="str">Ingress</span>
+    - <span class="str">Egress</span>
+
+  <span class="attr-c">ingress</span>:
+    <span class="cm"># Allow traffic FROM frontend pods only</span>
+    - <span class="attr-c">from</span>:
+        - <span class="attr-c">podSelector</span>:
+            <span class="attr-c">matchLabels</span>:
+              <span class="attr-c">app</span>: <span class="str">frontend</span>
+              <span class="attr-c">tier</span>: <span class="str">web</span>
+      <span class="attr-c">ports</span>:
+        - <span class="attr-c">protocol</span>: <span class="str">TCP</span>
+          <span class="attr-c">port</span>: <span class="num">8080</span>
+
+    <span class="cm"># Allow Prometheus scraping from monitoring namespace</span>
+    - <span class="attr-c">from</span>:
+        - <span class="attr-c">namespaceSelector</span>:
+            <span class="attr-c">matchLabels</span>:
+              <span class="attr-c">kubernetes.io/metadata.name</span>: <span class="str">monitoring</span>
+          <span class="attr-c">podSelector</span>:
+            <span class="attr-c">matchLabels</span>:
+              <span class="attr-c">app</span>: <span class="str">prometheus</span>
+      <span class="attr-c">ports</span>:
+        - <span class="attr-c">protocol</span>: <span class="str">TCP</span>
+          <span class="attr-c">port</span>: <span class="num">9090</span>
+
+  <span class="attr-c">egress</span>:
+    <span class="cm"># Allow to SQL Server</span>
+    - <span class="attr-c">to</span>:
+        - <span class="attr-c">podSelector</span>:
+            <span class="attr-c">matchLabels</span>:
+              <span class="attr-c">app</span>: <span class="str">sqlserver</span>
+      <span class="attr-c">ports</span>:
+        - <span class="attr-c">protocol</span>: <span class="str">TCP</span>
+          <span class="attr-c">port</span>: <span class="num">1433</span>
+
+    <span class="cm"># Allow to Redis</span>
+    - <span class="attr-c">to</span>:
+        - <span class="attr-c">podSelector</span>:
+            <span class="attr-c">matchLabels</span>:
+              <span class="attr-c">app</span>: <span class="str">redis</span>
+      <span class="attr-c">ports</span>:
+        - <span class="attr-c">protocol</span>: <span class="str">TCP</span>
+          <span class="attr-c">port</span>: <span class="num">6379</span>
+
+    <span class="cm"># Allow DNS resolution (required!)</span>
+    - <span class="attr-c">to</span>:
+        - <span class="attr-c">namespaceSelector</span>: {}
+      <span class="attr-c">ports</span>:
+        - <span class="attr-c">protocol</span>: <span class="str">UDP</span>
+          <span class="attr-c">port</span>: <span class="num">53</span>
+        - <span class="attr-c">protocol</span>: <span class="str">TCP</span>
+          <span class="attr-c">port</span>: <span class="num">53</span></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s13">Full Production Deployment Manifests</h2>
+
+<h3>Complete Deployment YAML</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>deployment.yaml — production-ready</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">apps/v1</span>
+<span class="attr-c">kind</span>: <span class="str">Deployment</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-deployment</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+  <span class="attr-c">labels</span>:
+    <span class="attr-c">app</span>: <span class="str">myapi</span>
+    <span class="attr-c">version</span>: <span class="str">"1.3.0"</span>
+  <span class="attr-c">annotations</span>:
+    <span class="attr-c">kubernetes.io/change-cause</span>: <span class="str">"Release 1.3.0 — new dashboard feature"</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">replicas</span>: <span class="num">3</span>
+  <span class="attr-c">revisionHistoryLimit</span>: <span class="num">5</span>
+  <span class="attr-c">selector</span>:
+    <span class="attr-c">matchLabels</span>:
+      <span class="attr-c">app</span>: <span class="str">myapi</span>
+  <span class="attr-c">strategy</span>:
+    <span class="attr-c">type</span>: <span class="str">RollingUpdate</span>
+    <span class="attr-c">rollingUpdate</span>:
+      <span class="attr-c">maxSurge</span>: <span class="num">1</span>
+      <span class="attr-c">maxUnavailable</span>: <span class="num">0</span>
+  <span class="attr-c">template</span>:
+    <span class="attr-c">metadata</span>:
+      <span class="attr-c">labels</span>:
+        <span class="attr-c">app</span>: <span class="str">myapi</span>
+        <span class="attr-c">version</span>: <span class="str">"1.3.0"</span>
+      <span class="attr-c">annotations</span>:
+        <span class="attr-c">prometheus.io/scrape</span>: <span class="str">"true"</span>
+        <span class="attr-c">prometheus.io/port</span>: <span class="str">"8080"</span>
+        <span class="attr-c">prometheus.io/path</span>: <span class="str">"/metrics"</span>
+    <span class="attr-c">spec</span>:
+      <span class="attr-c">terminationGracePeriodSeconds</span>: <span class="num">30</span>
+
+      <span class="cm"># Spread pods across nodes</span>
+      <span class="attr-c">affinity</span>:
+        <span class="attr-c">podAntiAffinity</span>:
+          <span class="attr-c">preferredDuringSchedulingIgnoredDuringExecution</span>:
+            - <span class="attr-c">weight</span>: <span class="num">100</span>
+              <span class="attr-c">podAffinityTerm</span>:
+                <span class="attr-c">labelSelector</span>:
+                  <span class="attr-c">matchExpressions</span>:
+                    - <span class="attr-c">key</span>: <span class="str">app</span>
+                      <span class="attr-c">operator</span>: <span class="str">In</span>
+                      <span class="attr-c">values</span>: [<span class="str">myapi</span>]
+                <span class="attr-c">topologyKey</span>: <span class="str">kubernetes.io/hostname</span>
+
+      <span class="attr-c">containers</span>:
+        - <span class="attr-c">name</span>: <span class="str">myapi</span>
+          <span class="attr-c">image</span>: <span class="str">myapp/api:1.3.0</span>
+          <span class="attr-c">imagePullPolicy</span>: <span class="str">Always</span>
+          <span class="attr-c">ports</span>:
+            - <span class="attr-c">name</span>: <span class="str">http</span>
+              <span class="attr-c">containerPort</span>: <span class="num">8080</span>
+
+          <span class="attr-c">envFrom</span>:
+            - <span class="attr-c">configMapRef</span>:
+                <span class="attr-c">name</span>: <span class="str">myapi-config</span>
+
+          <span class="attr-c">env</span>:
+            - <span class="attr-c">name</span>: <span class="str">ConnectionStrings__SqlServer</span>
+              <span class="attr-c">valueFrom</span>:
+                <span class="attr-c">secretKeyRef</span>:
+                  <span class="attr-c">name</span>: <span class="str">myapi-secrets</span>
+                  <span class="attr-c">key</span>: <span class="str">ConnectionStrings__SqlServer</span>
+            - <span class="attr-c">name</span>: <span class="str">ConnectionStrings__Redis</span>
+              <span class="attr-c">valueFrom</span>:
+                <span class="attr-c">secretKeyRef</span>:
+                  <span class="attr-c">name</span>: <span class="str">myapi-secrets</span>
+                  <span class="attr-c">key</span>: <span class="str">ConnectionStrings__Redis</span>
+            - <span class="attr-c">name</span>: <span class="str">POD_NAME</span>
+              <span class="attr-c">valueFrom</span>:
+                <span class="attr-c">fieldRef</span>:
+                  <span class="attr-c">fieldPath</span>: <span class="str">metadata.name</span>
+            - <span class="attr-c">name</span>: <span class="str">DOTNET_GCHeapHardLimitPercent</span>
+              <span class="attr-c">value</span>: <span class="str">"75"</span>
+
+          <span class="attr-c">resources</span>:
+            <span class="attr-c">requests</span>:
+              <span class="attr-c">cpu</span>: <span class="str">"250m"</span>
+              <span class="attr-c">memory</span>: <span class="str">"128Mi"</span>
+            <span class="attr-c">limits</span>:
+              <span class="attr-c">cpu</span>: <span class="str">"1000m"</span>
+              <span class="attr-c">memory</span>: <span class="str">"512Mi"</span>
+
+          <span class="attr-c">startupProbe</span>:
+            <span class="attr-c">httpGet</span>:
+              <span class="attr-c">path</span>: <span class="str">/health/live</span>
+              <span class="attr-c">port</span>: <span class="num">8080</span>
+            <span class="attr-c">failureThreshold</span>: <span class="num">30</span>
+            <span class="attr-c">periodSeconds</span>: <span class="num">10</span>
+
+          <span class="attr-c">livenessProbe</span>:
+            <span class="attr-c">httpGet</span>:
+              <span class="attr-c">path</span>: <span class="str">/health/live</span>
+              <span class="attr-c">port</span>: <span class="num">8080</span>
+            <span class="attr-c">periodSeconds</span>: <span class="num">15</span>
+            <span class="attr-c">timeoutSeconds</span>: <span class="num">5</span>
+            <span class="attr-c">failureThreshold</span>: <span class="num">3</span>
+
+          <span class="attr-c">readinessProbe</span>:
+            <span class="attr-c">httpGet</span>:
+              <span class="attr-c">path</span>: <span class="str">/health/ready</span>
+              <span class="attr-c">port</span>: <span class="num">8080</span>
+            <span class="attr-c">periodSeconds</span>: <span class="num">10</span>
+            <span class="attr-c">timeoutSeconds</span>: <span class="num">5</span>
+            <span class="attr-c">failureThreshold</span>: <span class="num">3</span>
+            <span class="attr-c">successThreshold</span>: <span class="num">1</span>
+
+          <span class="attr-c">lifecycle</span>:
+            <span class="attr-c">preStop</span>:
+              <span class="attr-c">exec</span>:
+                <span class="attr-c">command</span>: [<span class="str">"/bin/sh"</span>, <span class="str">"-c"</span>, <span class="str">"sleep 5"</span>]
+
+          <span class="attr-c">volumeMounts</span>:
+            - <span class="attr-c">name</span>: <span class="str">tmp-dir</span>
+              <span class="attr-c">mountPath</span>: <span class="str">/tmp</span>
+
+          <span class="attr-c">securityContext</span>:
+            <span class="attr-c">runAsNonRoot</span>: <span class="kw">true</span>
+            <span class="attr-c">runAsUser</span>: <span class="num">1000</span>
+            <span class="attr-c">readOnlyRootFilesystem</span>: <span class="kw">true</span>
+            <span class="attr-c">allowPrivilegeEscalation</span>: <span class="kw">false</span>
+            <span class="attr-c">capabilities</span>:
+              <span class="attr-c">drop</span>: [<span class="str">ALL</span>]
+
+      <span class="attr-c">volumes</span>:
+        - <span class="attr-c">name</span>: <span class="str">tmp-dir</span>
+          <span class="attr-c">emptyDir</span>: {}
+
+      <span class="attr-c">securityContext</span>:
+        <span class="attr-c">fsGroup</span>: <span class="num">1000</span></pre>
+</div>
+
+<h3>Ingress with TLS</h3>
+<div class="code-block-wrap">
+  <div class="code-label"><span class="code-dot dot-yaml"></span>ingress.yaml</div>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="attr-c">apiVersion</span>: <span class="str">networking.k8s.io/v1</span>
+<span class="attr-c">kind</span>: <span class="str">Ingress</span>
+<span class="attr-c">metadata</span>:
+  <span class="attr-c">name</span>: <span class="str">myapi-ingress</span>
+  <span class="attr-c">namespace</span>: <span class="str">production</span>
+  <span class="attr-c">annotations</span>:
+    <span class="attr-c">kubernetes.io/ingress.class</span>: <span class="str">nginx</span>
+    <span class="attr-c">nginx.ingress.kubernetes.io/ssl-redirect</span>: <span class="str">"true"</span>
+    <span class="attr-c">nginx.ingress.kubernetes.io/proxy-body-size</span>: <span class="str">"10m"</span>
+    <span class="attr-c">nginx.ingress.kubernetes.io/proxy-read-timeout</span>: <span class="str">"60"</span>
+    <span class="attr-c">nginx.ingress.kubernetes.io/limit-rps</span>: <span class="str">"100"</span>
+    <span class="attr-c">cert-manager.io/cluster-issuer</span>: <span class="str">letsencrypt-prod</span>
+<span class="attr-c">spec</span>:
+  <span class="attr-c">tls</span>:
+    - <span class="attr-c">hosts</span>:
+        - <span class="str">api.myapp.com</span>
+      <span class="attr-c">secretName</span>: <span class="str">myapp-tls-secret</span>
+  <span class="attr-c">rules</span>:
+    - <span class="attr-c">host</span>: <span class="str">api.myapp.com</span>
+      <span class="attr-c">http</span>:
+        <span class="attr-c">paths</span>:
+          - <span class="attr-c">path</span>: <span class="str">/api</span>
+            <span class="attr-c">pathType</span>: <span class="str">Prefix</span>
+            <span class="attr-c">backend</span>:
+              <span class="attr-c">service</span>:
+                <span class="attr-c">name</span>: <span class="str">myapi-service</span>
+                <span class="attr-c">port</span>:
+                  <span class="attr-c">number</span>: <span class="num">80</span>
+          - <span class="attr-c">path</span>: <span class="str">/health</span>
+            <span class="attr-c">pathType</span>: <span class="str">Prefix</span>
+            <span class="attr-c">backend</span>:
+              <span class="attr-c">service</span>:
+                <span class="attr-c">name</span>: <span class="str">myapi-service</span>
+                <span class="attr-c">port</span>:
+                  <span class="attr-c">number</span>: <span class="num">80</span></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h2 id="s14">Interview Q&amp;A</h2>
+
+<div class="qa-block">
+  <div class="qa-q">What is the difference between a liveness and readiness probe?</div>
+  <div class="qa-a">
+    <strong>Liveness</strong> answers "is the container alive?" — failure restarts the container. Use it to detect deadlocks or hung processes.
+    <br><br>
+    <strong>Readiness</strong> answers "is the container ready to receive traffic?" — failure removes the pod from the Service endpoint list but does not restart it. Use it to check dependencies (database reachability, cache connectivity) and to drain during overload.
+    <br><br>
+    <strong>Startup probe</strong> handles slow-starting apps. It runs first; once it passes, liveness and readiness take over. Without it, liveness probes would kill a legitimate app that simply needs time to initialize.
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">How do you achieve zero-downtime deployments in Kubernetes?</div>
+  <div class="qa-a">
+    Set <code>maxUnavailable: 0</code> so pods never drop below desired count. Set <code>maxSurge: 1</code> so new pods are added before old ones terminate. Configure readiness probes so traffic only routes to healthy pods. Add a <code>preStop</code> lifecycle hook with a brief sleep (5-10s) to allow the load balancer time to drain existing connections. Ensure <code>terminationGracePeriodSeconds</code> is long enough for in-flight requests to complete.
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">What is OOMKilled and how do you fix it?</div>
+  <div class="qa-a">
+    OOMKilled (exit code 137) means the container exceeded its memory <code>limits</code> and was killed by the Linux OOM killer. Fix options: (1) increase the memory limit, (2) find and fix a memory leak using dotnet-monitor or heap dumps, (3) tune .NET GC with <code>DOTNET_GCHeapHardLimitPercent=75</code> to prevent GC from growing past 75% of the container limit, (4) add HPA to spread load so individual pods use less memory.
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">How is a Kubernetes Secret different from a ConfigMap? How do you secure secrets properly?</div>
+  <div class="qa-a">
+    ConfigMap stores plain-text non-sensitive configuration. Secret stores base64-encoded data — but base64 is encoding, not encryption. Anyone with RBAC read access to Secrets can decode them.
+    <br><br>
+    For real security: use <strong>External Secrets Operator</strong> to sync secrets from AWS Secrets Manager, Azure Key Vault, or HashiCorp Vault into Kubernetes Secrets. The plaintext never lives in etcd. Also enable etcd encryption at rest at the cluster level, restrict Secret RBAC with least-privilege roles, and avoid printing secrets in logs.
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">Explain QoS classes and when each is appropriate.</div>
+  <div class="qa-a">
+    <strong>Guaranteed</strong> (requests == limits): Pod is never evicted under memory pressure unless the node itself fails. Use for latency-sensitive APIs and stateful workloads.
+    <br><br>
+    <strong>Burstable</strong> (requests &lt; limits): Pod can use more than requested when capacity is available, but may be evicted under node pressure. Suitable for most services that benefit from bursty capacity.
+    <br><br>
+    <strong>BestEffort</strong> (no resources defined): First to be evicted under pressure. Never use for production workloads. Acceptable only for non-critical batch jobs that can tolerate interruption.
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">How does Docker layer caching work and how do you optimize it?</div>
+  <div class="qa-a">
+    Each Dockerfile instruction creates a layer identified by a hash of the instruction and its inputs. When a layer's hash changes, all subsequent layers are invalidated and rebuilt.
+    <br><br>
+    Optimize by ordering from most stable to most volatile: base image → OS packages → project/dependency files → <code>dotnet restore</code> → source code → build. Copy only <code>.csproj</code> files first and run restore — this layer is cached until dependencies change. Copy source code after, so code changes only invalidate the final build steps, not the slow restore.
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">What is the difference between CPU requests/limits and memory requests/limits?</div>
+  <div class="qa-a">
+    CPU is a <strong>compressible</strong> resource: if a container exceeds its limit, the kernel throttles it (the container slows down but keeps running). Memory is <strong>incompressible</strong>: if a container exceeds its limit, the Linux OOM killer terminates it (exit code 137, OOMKilled).
+    <br><br>
+    <strong>Requests</strong> are used by the scheduler to decide which node to place the pod on — the pod is guaranteed at least this amount. <strong>Limits</strong> are runtime enforcement — the maximum the container can consume.
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">Blue/Green vs Canary vs Rolling — when do you use each?</div>
+  <div class="qa-a">
+    <strong>Rolling</strong>: gradual replacement of old pods with new ones. Low risk, no extra infrastructure. Default for most deployments.
+    <br><br>
+    <strong>Blue/Green</strong>: two identical environments, instant traffic switch via Service selector update. Enables instant rollback. Requires 2x compute. Use when you need atomic cutover and instant rollback (e.g., schema migrations that are backward-incompatible only if you switch back slowly).
+    <br><br>
+    <strong>Canary</strong>: small percentage of traffic to new version. Validate with real traffic before full rollout. Use when you want data-driven confidence (error rates, latency) before committing. Requires Ingress weight support (NGINX canary annotations, Argo Rollouts, or Istio traffic splitting).
+  </div>
+</div>
+
+</div><!-- .content-wrap -->
+</main><!-- #main -->
+
+<script>
+// ── Copy Button Logic ─────────────────────────────────────────────────────
+function copyCode(btn) {
+  const pre = btn.nextElementSibling;
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ── Active TOC Link ───────────────────────────────────────────────────────
+const headings = document.querySelectorAll('h2[id]');
+const tocLinks = document.querySelectorAll('#toc a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + entry.target.id) {
+          link.classList.add('active');
+        }
+      });
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+
+headings.forEach(h => observer.observe(h));
+</script>
+</body>
+</html>

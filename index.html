@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead .NET Interview Prep</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --red: #ff7b72;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --cyan: #79c0ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+  }
+  header h1 {
+    font-size: 2rem;
+    color: var(--blue);
+    margin-bottom: .4rem;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .75rem;
+    font-size: .75rem;
+    color: var(--muted);
+  }
+  .badge.blue  { border-color: var(--blue);   color: var(--blue);   background: #1a2a3a; }
+  .badge.green { border-color: var(--green);  color: var(--green);  background: #1a2d1a; }
+  .badge.red   { border-color: var(--red);    color: var(--red);    background: #2d1a1a; }
+  .badge.yellow{ border-color: var(--yellow); color: var(--yellow); background: #2d2a1a; }
+  .badge.purple{ border-color: var(--purple); color: var(--purple); background: #2a1a2d; }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* ── Study Order Banner ── */
+  .study-order {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .week-card h3 {
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: .75rem;
+  }
+  .week-card.w1 { border-top: 3px solid var(--blue); }   .week-card.w1 h3 { color: var(--blue); }
+  .week-card.w2 { border-top: 3px solid var(--green); }  .week-card.w2 h3 { color: var(--green); }
+  .week-card.w3 { border-top: 3px solid var(--yellow); } .week-card.w3 h3 { color: var(--yellow); }
+  .week-card.w4 { border-top: 3px solid var(--purple); } .week-card.w4 h3 { color: var(--purple); }
+  .week-card ol { padding-left: 1.2rem; }
+  .week-card li { color: var(--muted); font-size: .875rem; margin-bottom: .3rem; line-height: 1.4; }
+  .week-card li a { color: var(--text); text-decoration: none; }
+  .week-card li a:hover { color: var(--blue); }
+
+  /* ── Section title ── */
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin: 2rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Topic Grid ── */
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    transition: border-color .2s, transform .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card:hover {
+    border-color: var(--blue);
+    transform: translateY(-2px);
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .topic-card.round1::before { background: var(--blue); }
+  .topic-card.round2::before { background: var(--cyan); }
+  .topic-card.round3::before { background: var(--green); }
+  .topic-card.round4::before { background: var(--yellow); }
+  .topic-card.round5::before { background: var(--purple); }
+
+  .topic-card {
+    position: relative;
+  }
+  .topic-card .card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .topic-card .topic-links {
+    position: relative;
+    z-index: 2;
+  }
+  .topic-card:hover .topic-title {
+    color: var(--blue);
+  }
+
+  .topic-num {
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+  .topic-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .topic-desc {
+    font-size: .85rem;
+    color: var(--muted);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .topic-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+  }
+  .tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .5rem;
+    font-size: .72rem;
+    color: var(--muted);
+  }
+  .topic-links {
+    display: flex;
+    gap: .5rem;
+    margin-top: .25rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .4rem .9rem;
+    border-radius: 6px;
+    font-size: .82rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity .2s;
+  }
+  .btn:hover { opacity: .8; }
+  .btn-primary {
+    background: var(--blue);
+    color: #000;
+  }
+  .btn-secondary {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  /* ── Checklist ── */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .checklist-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .checklist-card h3 {
+    font-size: .9rem;
+    color: var(--blue);
+    margin-bottom: .75rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .checklist-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+  .checklist-card li {
+    font-size: .83rem;
+    color: var(--muted);
+    display: flex;
+    align-items: flex-start;
+    gap: .5rem;
+    line-height: 1.4;
+  }
+  .checklist-card li::before {
+    content: '☐';
+    color: var(--border);
+    flex-shrink: 0;
+    margin-top: .05rem;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: .8rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    header h1 { font-size: 1.4rem; }
+    .topic-grid { grid-template-columns: 1fr; }
+    main { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lead .NET Software Engineer</h1>
+  <p>Complete Interview Preparation — 13 Topics · 26 Files · Real Code Examples</p>
+  <div class="badge-row">
+    <span class="badge blue">C# & .NET</span>
+    <span class="badge blue">ASP.NET Core</span>
+    <span class="badge green">System Design</span>
+    <span class="badge green">SQL</span>
+    <span class="badge yellow">AWS Cloud</span>
+    <span class="badge yellow">Docker / K8s</span>
+    <span class="badge red">Security</span>
+    <span class="badge purple">Leadership</span>
+    <span class="badge">Algorithms</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Study Order -->
+  <div class="section-title">Recommended Study Order</div>
+  <div class="study-order">
+    <div class="week-card w1">
+      <h3>Week 1 — Core .NET</h3>
+      <ol>
+        <li><a href="01-csharp-advanced/csharp-advanced.html">C# Advanced</a></li>
+        <li><a href="02-async-threading/async-threading.html">async/await & Threading</a></li>
+        <li><a href="03-aspnet-core/aspnet-core.html">ASP.NET Core</a></li>
+        <li><a href="04-ef-core/ef-core.html">Entity Framework Core</a></li>
+      </ol>
+    </div>
+    <div class="week-card w2">
+      <h3>Week 2 — Design & Data</h3>
+      <ol>
+        <li><a href="06-system-design/system-design.html">System Design</a> ← Most Important</li>
+        <li><a href="05-sql/sql.html">SQL</a></li>
+        <li><a href="11-coding-algorithms/coding-algorithms.html">Coding Algorithms</a></li>
+      </ol>
+    </div>
+    <div class="week-card w3">
+      <h3>Week 3 — Cloud & DevOps</h3>
+      <ol>
+        <li><a href="07-cloud-aws/cloud-aws.html">Cloud — AWS</a></li>
+        <li><a href="08-docker-kubernetes/docker-kubernetes.html">Docker & Kubernetes</a></li>
+        <li><a href="09-devops/devops.html">DevOps</a></li>
+      </ol>
+    </div>
+    <div class="week-card w4">
+      <h3>Week 4 — Polish</h3>
+      <ol>
+        <li><a href="12-performance/performance.html">Performance</a></li>
+        <li><a href="13-security/security.html">Security</a></li>
+        <li><a href="10-leadership/leadership.html">Leadership & Behavioral</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- All Topics -->
+  <div class="section-title">All Topics</div>
+  <div class="topic-grid">
+
+    <div class="topic-card round1">
+      <a class="card-link" href="01-csharp-advanced/csharp-advanced.html"></a>
+      <div class="topic-num">01 · Round 1 — C# Core</div>
+      <div class="topic-title">C# Advanced</div>
+      <div class="topic-desc">Delegates, Events, Lambda Expressions, Expression Trees, LINQ deferred vs immediate execution, Extension Methods, Generics (covariance/contravariance), Reflection, and Dynamic.</div>
+      <div class="topic-tags">
+        <span class="tag">Delegates</span><span class="tag">LINQ</span><span class="tag">Generics</span><span class="tag">Reflection</span><span class="tag">Expression Trees</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="01-csharp-advanced/csharp-advanced.html">Open HTML</a>
+        <a class="btn btn-secondary" href="01-csharp-advanced/csharp-advanced.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round1">
+      <a class="card-link" href="02-async-threading/async-threading.html"></a>
+      <div class="topic-num">02 · Round 1 — C# Core</div>
+      <div class="topic-title">async/await & Threading</div>
+      <div class="topic-desc">Task vs Thread internals, async state machine, SynchronizationContext, ConfigureAwait(false), deadlock patterns, CancellationToken, TPL, Span<T>/Memory<T>, IDisposable/IAsyncDisposable.</div>
+      <div class="topic-tags">
+        <span class="tag">Task</span><span class="tag">ConfigureAwait</span><span class="tag">Deadlock</span><span class="tag">Span<T></span><span class="tag">CancellationToken</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="02-async-threading/async-threading.html">Open HTML</a>
+        <a class="btn btn-secondary" href="02-async-threading/async-threading.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round2">
+      <a class="card-link" href="03-aspnet-core/aspnet-core.html"></a>
+      <div class="topic-num">03 · Round 1 — ASP.NET Core</div>
+      <div class="topic-title">ASP.NET Core</div>
+      <div class="topic-desc">Middleware pipeline, DI lifetimes & captive dependency, Minimal APIs, MVC, API Versioning, Filters, JWT/OAuth/OIDC, Health Checks, CORS, Rate Limiting, SignalR, Background Services.</div>
+      <div class="topic-tags">
+        <span class="tag">Middleware</span><span class="tag">DI</span><span class="tag">JWT</span><span class="tag">SignalR</span><span class="tag">Rate Limiting</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="03-aspnet-core/aspnet-core.html">Open HTML</a>
+        <a class="btn btn-secondary" href="03-aspnet-core/aspnet-core.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round2">
+      <a class="card-link" href="04-ef-core/ef-core.html"></a>
+      <div class="topic-num">04 · Round 1 — Data Access</div>
+      <div class="topic-title">Entity Framework Core</div>
+      <div class="topic-desc">Change Tracker states, Lazy/Eager/Explicit loading, N+1 problem, AsNoTracking, First/Single/Find, Transactions, Bulk operations (EF7+), Compiled Queries, Concurrency, Migrations.</div>
+      <div class="topic-tags">
+        <span class="tag">Change Tracker</span><span class="tag">N+1</span><span class="tag">AsNoTracking</span><span class="tag">Migrations</span><span class="tag">Concurrency</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="04-ef-core/ef-core.html">Open HTML</a>
+        <a class="btn btn-secondary" href="04-ef-core/ef-core.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round2">
+      <a class="card-link" href="05-sql/sql.html"></a>
+      <div class="topic-num">05 · Round 1 — Data</div>
+      <div class="topic-title">SQL</div>
+      <div class="topic-desc">Clustered/Non-clustered indexes, Execution Plans, Deadlocks, Isolation Levels, CTEs, Window Functions, Pagination (offset vs keyset), Stored Procs, Performance Tuning. 6 full coding problems.</div>
+      <div class="topic-tags">
+        <span class="tag">Indexes</span><span class="tag">Window Functions</span><span class="tag">CTEs</span><span class="tag">Isolation Levels</span><span class="tag">Pagination</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="05-sql/sql.html">Open HTML</a>
+        <a class="btn btn-secondary" href="05-sql/sql.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round3">
+      <a class="card-link" href="06-system-design/system-design.html"></a>
+      <div class="topic-num">06 · Most Important Round</div>
+      <div class="topic-title">System Design & Architecture</div>
+      <div class="topic-desc">SOLID with real violations, CQRS, Event Sourcing, Microservices patterns (Saga, Outbox, Circuit Breaker). Design: Order Management, Notification System, URL Shortener, Chat Application.</div>
+      <div class="topic-tags">
+        <span class="tag">SOLID</span><span class="tag">CQRS</span><span class="tag">Microservices</span><span class="tag">Event Sourcing</span><span class="tag">API Gateway</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="06-system-design/system-design.html">Open HTML</a>
+        <a class="btn btn-secondary" href="06-system-design/system-design.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round3">
+      <a class="card-link" href="07-cloud-aws/cloud-aws.html"></a>
+      <div class="topic-num">07 · Cloud</div>
+      <div class="topic-title">Cloud — AWS</div>
+      <div class="topic-desc">ECS/EKS/Fargate/Lambda, S3/CloudFront, IAM Roles, Secrets Manager vs Parameter Store, SQS/SNS fan-out, DynamoDB single-table, RDS, CloudWatch, Auto Scaling, VPC, Transit Gateway.</div>
+      <div class="topic-tags">
+        <span class="tag">ECS</span><span class="tag">SQS/SNS</span><span class="tag">IAM</span><span class="tag">VPC</span><span class="tag">DynamoDB</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="07-cloud-aws/cloud-aws.html">Open HTML</a>
+        <a class="btn btn-secondary" href="07-cloud-aws/cloud-aws.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round3">
+      <a class="card-link" href="08-docker-kubernetes/docker-kubernetes.html"></a>
+      <div class="topic-num">08 · Cloud</div>
+      <div class="topic-title">Docker & Kubernetes</div>
+      <div class="topic-desc">Multi-stage Dockerfile, layer caching, Docker Compose. K8s: Pods, Deployments, ConfigMap/Secret, Liveness/Readiness probes, HPA, Rolling Updates, Blue/Green, Canary, NetworkPolicy.</div>
+      <div class="topic-tags">
+        <span class="tag">Multi-stage</span><span class="tag">HPA</span><span class="tag">Probes</span><span class="tag">Rolling Update</span><span class="tag">KEDA</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="08-docker-kubernetes/docker-kubernetes.html">Open HTML</a>
+        <a class="btn btn-secondary" href="08-docker-kubernetes/docker-kubernetes.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round3">
+      <a class="card-link" href="09-devops/devops.html"></a>
+      <div class="topic-num">09 · DevOps</div>
+      <div class="topic-title">DevOps</div>
+      <div class="topic-desc">GitFlow vs GitHub Flow vs Trunk-Based. Full GitHub Actions CI/CD YAML (build→test→sonar→docker→ECS deploy). Azure DevOps. Feature Flags, Blue/Green, Canary, SonarQube, Artifact promotion.</div>
+      <div class="topic-tags">
+        <span class="tag">GitHub Actions</span><span class="tag">CI/CD</span><span class="tag">SonarQube</span><span class="tag">Feature Flags</span><span class="tag">Canary</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="09-devops/devops.html">Open HTML</a>
+        <a class="btn btn-secondary" href="09-devops/devops.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round4">
+      <a class="card-link" href="10-leadership/leadership.html"></a>
+      <div class="topic-num">10 · Leadership Round</div>
+      <div class="topic-title">Leadership & Behavioral</div>
+      <div class="topic-desc">12 complete STAR-structured answers: Tell me about yourself, Mentoring, Conflict, Estimation, Production Outage, Code Reviews, Quality Improvement, Missed Deadlines, Biggest Technical Decision.</div>
+      <div class="topic-tags">
+        <span class="tag">STAR Method</span><span class="tag">Mentoring</span><span class="tag">Outage</span><span class="tag">Estimation</span><span class="tag">Code Review</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="10-leadership/leadership.html">Open HTML</a>
+        <a class="btn btn-secondary" href="10-leadership/leadership.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round1">
+      <a class="card-link" href="11-coding-algorithms/coding-algorithms.html"></a>
+      <div class="topic-num">11 · Coding Round</div>
+      <div class="topic-title">Coding Algorithms</div>
+      <div class="topic-desc">15 problems with full C# solutions: Two Sum, LRU Cache, Merge Intervals, Top K Frequent, Binary Search, BFS/DFS, Tree Traversal, LeetCode DP. Complexity analysis + pattern reference guide.</div>
+      <div class="topic-tags">
+        <span class="tag">HashMap</span><span class="tag">Sliding Window</span><span class="tag">BFS/DFS</span><span class="tag">DP</span><span class="tag">LRU Cache</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="11-coding-algorithms/coding-algorithms.html">Open HTML</a>
+        <a class="btn btn-secondary" href="11-coding-algorithms/coding-algorithms.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round4">
+      <a class="card-link" href="12-performance/performance.html"></a>
+      <div class="topic-num">12 · Performance</div>
+      <div class="topic-title">Performance & Optimization</div>
+      <div class="topic-desc">GC generations, LOH, memory leak detection, ObjectPool, ArrayPool, Redis cache-aside, cache stampede, Response Compression, IHttpClientFactory, BenchmarkDotNet, Span<T> zero-alloc parsing.</div>
+      <div class="topic-tags">
+        <span class="tag">GC / LOH</span><span class="tag">ArrayPool</span><span class="tag">Redis</span><span class="tag">BenchmarkDotNet</span><span class="tag">Zero Alloc</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="12-performance/performance.html">Open HTML</a>
+        <a class="btn btn-secondary" href="12-performance/performance.md">Markdown</a>
+      </div> -->
+    </div>
+
+    <div class="topic-card round4">
+      <a class="card-link" href="13-security/security.html"></a>
+      <div class="topic-num">13 · Security</div>
+      <div class="topic-title">Security</div>
+      <div class="topic-desc">JWT deep-dive (alg:none attack, RS256 vs HS256), OAuth 2.0 flows + PKCE, OWASP Top 10 with .NET vulnerable/safe code, XSS, CSRF, SQL Injection, Secrets Management, BCrypt vs Argon2.</div>
+      <div class="topic-tags">
+        <span class="tag">JWT</span><span class="tag">OAuth</span><span class="tag">OWASP Top 10</span><span class="tag">XSS/CSRF</span><span class="tag">Secrets</span>
+      </div>
+      <!-- <div class="topic-links">
+        <a class="btn btn-primary" href="13-security/security.html">Open HTML</a>
+        <a class="btn btn-secondary" href="13-security/security.md">Markdown</a>
+      </div> -->
+    </div>
+
+  </div>
+
+  <!-- Quick Checklist -->
+  <div class="section-title">Quick Interview Checklist</div>
+  <div class="checklist-grid">
+
+    <div class="checklist-card">
+      <h3>⚡ C# & .NET</h3>
+      <ul>
+        <li>Explain async/await state machine</li>
+        <li>Task vs Thread — when to use each</li>
+        <li>What does ConfigureAwait(false) do?</li>
+        <li>Deferred vs immediate LINQ execution</li>
+        <li>IDisposable pattern + using declaration</li>
+        <li>Covariance vs Contravariance in generics</li>
+        <li>How do Expression Trees work in EF Core?</li>
+      </ul>
+    </div>
+
+    <div class="checklist-card">
+      <h3>🌐 ASP.NET Core</h3>
+      <ul>
+        <li>Middleware vs Filter — what is the difference?</li>
+        <li>Singleton vs Scoped vs Transient lifetimes</li>
+        <li>Captive dependency problem example</li>
+        <li>JWT validation steps (7 checks)</li>
+        <li>How does rate limiting work in .NET 7+?</li>
+        <li>Background Service vs Hosted Service</li>
+        <li>SignalR scale-out with Redis backplane</li>
+      </ul>
+    </div>
+
+    <div class="checklist-card">
+      <h3>🗄️ EF Core & SQL</h3>
+      <ul>
+        <li>N+1 problem — explain and fix</li>
+        <li>AsNoTracking() — when and why?</li>
+        <li>First() vs Single() vs Find()</li>
+        <li>Clustered vs Non-clustered index</li>
+        <li>Delete duplicate rows (SQL)</li>
+        <li>Nth highest salary query</li>
+        <li>Window functions vs GROUP BY</li>
+      </ul>
+    </div>
+
+    <div class="checklist-card">
+      <h3>🏗️ System Design</h3>
+      <ul>
+        <li>SOLID — real violation for each principle</li>
+        <li>CQRS — what is it and when to use?</li>
+        <li>Design a notification system (1M/day)</li>
+        <li>Design an order management system</li>
+        <li>Saga pattern for distributed transactions</li>
+        <li>Outbox pattern — what problem does it solve?</li>
+        <li>Circuit Breaker with Polly in .NET</li>
+      </ul>
+    </div>
+
+    <div class="checklist-card">
+      <h3>☁️ Cloud & DevOps</h3>
+      <ul>
+        <li>Zero-downtime deployment — full process</li>
+        <li>SQS vs SNS — when to use each</li>
+        <li>ECS vs EKS vs Lambda — decision matrix</li>
+        <li>Secrets Manager vs Parameter Store</li>
+        <li>Liveness vs Readiness probe difference</li>
+        <li>Blue/Green vs Canary deployment</li>
+        <li>GitHub Actions CI/CD pipeline structure</li>
+      </ul>
+    </div>
+
+    <div class="checklist-card">
+      <h3>👤 Leadership</h3>
+      <ul>
+        <li>Tell me about yourself (2-min pitch)</li>
+        <li>Production outage story (STAR)</li>
+        <li>Biggest technical decision + trade-offs</li>
+        <li>How you mentor junior developers</li>
+        <li>How you handle missed deadlines</li>
+        <li>How you conduct code reviews</li>
+        <li>Technical disagreement with manager</li>
+      </ul>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  Lead .NET Software Engineer Interview Prep &nbsp;·&nbsp; 13 Topics · 26 Files · Open any HTML file in browser
+</footer>
+
+</body>
+</html>

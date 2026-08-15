@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASP.NET Core — Lead .NET Interview Prep</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--border:#30363d;
+  --text:#e6edf3;--text-muted:#8b949e;--blue:#58a6ff;--red:#ff7b72;
+  --green:#3fb950;--orange:#d29922;--purple:#bc8cff;--string:#a5d6ff;--num:#79c0ff;
+  --sidebar-w:260px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.7;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding:0 0 2rem}
+.sidebar-header{padding:1.2rem 1rem;border-bottom:1px solid var(--border);background:var(--surface)}
+.sidebar-header h2{font-size:.75rem;font-weight:700;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase}
+.sidebar-header p{font-size:.7rem;color:var(--text-muted);margin-top:.25rem}
+.toc{padding:.5rem 0}
+.toc a{display:block;padding:.35rem 1rem;font-size:.8rem;color:var(--text-muted);text-decoration:none;border-left:2px solid transparent;transition:all .15s}
+.toc a:hover{color:var(--text);background:var(--surface2);border-left-color:var(--border)}
+.toc a.active{color:var(--blue);background:rgba(88,166,255,.07);border-left-color:var(--blue)}
+.toc .toc-num{color:var(--text-muted);font-size:.7rem;margin-right:.35rem}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;padding:2rem 2.5rem 4rem;max-width:calc(860px + var(--sidebar-w));width:100%}
+.content{max-width:860px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border);border-radius:12px;padding:2.5rem;margin-bottom:2.5rem}
+.hero h1{font-size:2rem;font-weight:700;color:var(--blue);margin-bottom:.5rem}
+.hero p{color:var(--text-muted);font-size:1.05rem}
+.hero-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.hero-tags span{background:var(--bg);border:1px solid var(--border);color:var(--text-muted);font-size:.75rem;padding:.25rem .65rem;border-radius:20px}
+
+/* SECTIONS */
+section{margin-bottom:3.5rem;scroll-margin-top:1.5rem}
+section h2{font-size:1.5rem;font-weight:700;color:var(--blue);padding-bottom:.6rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+section h2 .sec-num{background:var(--blue);color:#000;font-size:.75rem;font-weight:700;width:1.6rem;height:1.6rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+section h3{font-size:1.1rem;font-weight:600;color:var(--text);margin:1.5rem 0 .75rem}
+section p{margin-bottom:.85rem;color:var(--text)}
+
+/* CODE BLOCKS */
+.code-block{position:relative;margin:1rem 0 1.25rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);overflow:hidden}
+.code-label{background:var(--surface2);border-bottom:1px solid var(--border);padding:.35rem 1rem;font-size:.72rem;color:var(--text-muted);letter-spacing:.05em;font-family:'SF Mono',Consolas,'Courier New',monospace;display:flex;justify-content:space-between;align-items:center}
+.copy-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.7rem;padding:.2rem .6rem;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .15s}
+.copy-btn:hover{color:var(--text);border-color:var(--blue)}
+pre{overflow-x:auto;padding:1.1rem 1.2rem;font-size:.82rem;line-height:1.7;font-family:'SF Mono',Consolas,'Courier New',monospace}
+code{font-family:'SF Mono',Consolas,'Courier New',monospace}
+.kw{color:var(--red)}
+.str{color:var(--string)}
+.cmt{color:var(--text-muted);font-style:italic}
+.type{color:var(--num)}
+.num{color:var(--num)}
+.meth{color:#d2a8ff}
+.attr{color:var(--orange)}
+
+/* CARDS */
+.card{border-radius:8px;padding:1rem 1.2rem;margin:1rem 0;border-left:4px solid}
+.card-q{background:rgba(88,166,255,.06);border-color:var(--blue)}
+.card-q .card-label{color:var(--blue);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem}
+.card-q strong{color:var(--blue)}
+.card-pitfall{background:#1a0d0d;border-color:var(--red)}
+.card-pitfall .card-label{color:var(--red);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem}
+.card-tip{background:#0d1a0d;border-color:var(--green)}
+.card-tip .card-label{color:var(--green);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem}
+.card p{margin:.35rem 0;font-size:.9rem}
+.card code{background:var(--surface2);padding:.1rem .35rem;border-radius:3px;font-size:.8rem}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;margin:1rem 0 1.5rem;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+thead{background:var(--surface2)}
+th{padding:.65rem 1rem;text-align:left;color:var(--blue);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:.55rem 1rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+
+/* MISC */
+ul,ol{padding-left:1.5rem;margin-bottom:.85rem}
+li{margin:.3rem 0;font-size:.9rem}
+.badge{display:inline-block;font-size:.7rem;padding:.15rem .5rem;border-radius:12px;font-weight:600;margin-left:.4rem}
+.badge-new{background:rgba(63,185,80,.15);color:var(--green)}
+.badge-deprecated{background:rgba(255,123,114,.15);color:var(--red)}
+.order-list{display:flex;flex-direction:column;gap:.3rem;margin:1rem 0}
+.order-step{display:flex;align-items:center;gap:.75rem;padding:.5rem .85rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:.85rem}
+.order-step .step-n{background:var(--blue);color:#000;font-weight:700;font-size:.72rem;min-width:1.5rem;height:1.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.order-step.highlight{border-color:var(--orange);background:rgba(210,153,34,.06)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>ASP.NET Core</h2>
+    <p>Lead .NET Interview Prep</p>
+  </div>
+  <nav class="toc">
+    <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+    <a href="#middleware"><span class="toc-num">01</span>Middleware Pipeline</a>
+    <a href="#di"><span class="toc-num">02</span>Dependency Injection</a>
+    <a href="#minimal-apis"><span class="toc-num">03</span>Minimal APIs vs MVC</a>
+    <a href="#mvc"><span class="toc-num">04</span>MVC</a>
+    <a href="#versioning"><span class="toc-num">05</span>API Versioning</a>
+    <a href="#filters"><span class="toc-num">06</span>Filters</a>
+    <a href="#auth"><span class="toc-num">07</span>Authentication &amp; Authorization</a>
+    <a href="#jwt"><span class="toc-num">08</span>JWT Authentication</a>
+    <a href="#oauth"><span class="toc-num">09</span>OAuth 2.0 &amp; OIDC</a>
+    <a href="#health-checks"><span class="toc-num">10</span>Health Checks</a>
+    <a href="#cors"><span class="toc-num">11</span>CORS</a>
+    <a href="#rate-limiting"><span class="toc-num">12</span>Rate Limiting</a>
+    <a href="#logging"><span class="toc-num">13</span>Logging</a>
+    <a href="#background-services"><span class="toc-num">14</span>Background Services</a>
+    <a href="#signalr"><span class="toc-num">15</span>SignalR</a>
+    <a href="#quick-reference"><span class="toc-num">&#9733;</span>Quick Reference</a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+<div class="content">
+
+<!-- HERO -->
+<div class="hero">
+  <h1>ASP.NET Core</h1>
+  <p>Comprehensive interview preparation for Lead .NET Software Engineers — deep-dives, real C# code, pitfalls, and the questions you will actually be asked.</p>
+  <div class="hero-tags">
+    <span>.NET 8 / 9</span><span>ASP.NET Core</span><span>C# 12</span>
+    <span>Middleware</span><span>DI</span><span>JWT</span><span>SignalR</span>
+    <span>Minimal APIs</span><span>Rate Limiting</span><span>OAuth / OIDC</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1 — MIDDLEWARE
+═══════════════════════════════════════════════════════════════ -->
+<section id="middleware">
+<h2><span class="sec-num">1</span>Middleware Pipeline</h2>
+
+<p>Every HTTP request in ASP.NET Core flows through a <strong>pipeline of middleware components</strong>. Each component can inspect, modify, short-circuit, or pass the request to the next component. The pipeline is bidirectional — code runs both on the way in (request) and on the way out (response).</p>
+
+<h3>Use, Run, Map, MapWhen</h3>
+<div class="code-block">
+  <div class="code-label">csharp <button class="copy-btn">Copy</button></div>
+<pre><code><span class="cmt">// Use — calls next middleware (bidirectional)</span>
+app.<span class="meth">Use</span>(<span class="kw">async</span> (context, next) =>
+{
+    Console.<span class="meth">WriteLine</span>(<span class="str">"→ Before"</span>);
+    <span class="kw">await</span> next(context);          <span class="cmt">// pass to next component</span>
+    Console.<span class="meth">WriteLine</span>(<span class="str">"← After"</span>);  <span class="cmt">// runs on the way back out</span>
+});
+
+<span class="cmt">// Run — terminal, never calls next</span>
+app.<span class="meth">Run</span>(<span class="kw">async</span> context =>
+    <span class="kw">await</span> context.Response.<span class="meth">WriteAsync</span>(<span class="str">"Short-circuit!"</span>));
+
+<span class="cmt">// Map — branches pipeline on URL prefix</span>
+app.<span class="meth">Map</span>(<span class="str">"/admin"</span>, admin =>
+    admin.<span class="meth">Run</span>(<span class="kw">async</span> ctx =>
+        <span class="kw">await</span> ctx.Response.<span class="meth">WriteAsync</span>(<span class="str">"Admin area"</span>)));
+
+<span class="cmt">// MapWhen — branches on any condition</span>
+app.<span class="meth">MapWhen</span>(
+    ctx => ctx.Request.Query.<span class="meth">ContainsKey</span>(<span class="str">"debug"</span>),
+    debug => debug.<span class="meth">Run</span>(<span class="kw">async</span> ctx =>
+        <span class="kw">await</span> ctx.Response.<span class="meth">WriteAsync</span>(<span class="str">"Debug mode on"</span>)));
+
+<span class="cmt">// UseWhen — branches but REJOINS the main pipeline</span>
+app.<span class="meth">UseWhen</span>(
+    ctx => ctx.Request.Path.<span class="meth">StartsWithSegments</span>(<span class="str">"/api"</span>),
+    apiApp => apiApp.<span class="meth">UseMiddleware</span>&lt;<span class="type">ApiKeyMiddleware</span>&gt;());</code></pre>
+</div>
+
+<h3>Custom Middleware Class</h3>
+<div class="code-block">
+  <div class="code-label">csharp <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">RequestTimingMiddleware</span>
+{
+    <span class="kw">private readonly</span> <span class="type">RequestDelegate</span> _next;
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">RequestTimingMiddleware</span>&gt; _logger;
+
+    <span class="kw">public</span> <span class="type">RequestTimingMiddleware</span>(<span class="type">RequestDelegate</span> next,
+        <span class="type">ILogger</span>&lt;<span class="type">RequestTimingMiddleware</span>&gt; logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    <span class="kw">public async</span> <span class="type">Task</span> <span class="meth">InvokeAsync</span>(<span class="type">HttpContext</span> context)
+    {
+        <span class="kw">var</span> sw = <span class="type">Stopwatch</span>.<span class="meth">StartNew</span>();
+        <span class="kw">try</span>
+        {
+            <span class="kw">await</span> _next(context);
+        }
+        <span class="kw">finally</span>
+        {
+            sw.<span class="meth">Stop</span>();
+            _logger.<span class="meth">LogInformation</span>(
+                <span class="str">"{Method} {Path} → {Status} in {Ms}ms"</span>,
+                context.Request.Method,
+                context.Request.Path,
+                context.Response.StatusCode,
+                sw.ElapsedMilliseconds);
+        }
+    }
+}
+
+<span class="cmt">// Extension method — clean registration</span>
+<span class="kw">public static class</span> <span class="type">MiddlewareExtensions</span>
+{
+    <span class="kw">public static</span> <span class="type">IApplicationBuilder</span> <span class="meth">UseRequestTiming</span>(
+        <span class="kw">this</span> <span class="type">IApplicationBuilder</span> app)
+        => app.<span class="meth">UseMiddleware</span>&lt;<span class="type">RequestTimingMiddleware</span>&gt;();
+}</code></pre>
+</div>
+
+<h3>Correct Middleware Order in Program.cs</h3>
+<p>Order is critical. Wrong order = silent security bugs or broken behaviour.</p>
+<div class="order-list">
+  <div class="order-step"><span class="step-n">1</span><code>app.UseExceptionHandler()</code> — catch all unhandled exceptions first</div>
+  <div class="order-step"><span class="step-n">2</span><code>app.UseHsts()</code> — HTTPS security header</div>
+  <div class="order-step"><span class="step-n">3</span><code>app.UseHttpsRedirection()</code> — upgrade HTTP → HTTPS</div>
+  <div class="order-step"><span class="step-n">4</span><code>app.UseStaticFiles()</code> — serve files without hitting routing</div>
+  <div class="order-step"><span class="step-n">5</span><code>app.UseRouting()</code> — match URL to endpoint</div>
+  <div class="order-step highlight"><span class="step-n">6</span><code>app.UseCors()</code> — must be after routing, before auth</div>
+  <div class="order-step highlight"><span class="step-n">7</span><code>app.UseAuthentication()</code> — who are you?</div>
+  <div class="order-step highlight"><span class="step-n">8</span><code>app.UseAuthorization()</code> — what can you do?</div>
+  <div class="order-step"><span class="step-n">9</span><code>app.UseRequestTiming()</code> — custom middleware</div>
+  <div class="order-step"><span class="step-n">10</span><code>app.MapControllers()</code> — execute matched endpoint</div>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: Explain the request pipeline in ASP.NET Core. What happens when a request comes in?</strong></p>
+  <p><strong>A:</strong> Each request enters the pipeline and passes sequentially through middleware components. Each component runs code before calling <code>next()</code> (request phase), then runs more code after <code>next()</code> returns (response phase). <code>Run</code> terminates the pipeline. <code>Map</code> branches on URL prefix. The pipeline is configured in <code>Program.cs</code> using <code>WebApplicationBuilder</code> and order matters — authentication must run before authorization, routing before CORS, etc.</p>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What is the difference between Use, Run, and Map?</strong></p>
+  <p><strong>A:</strong> <code>Use</code> — calls next, bidirectional (runs on both request and response pass). <code>Run</code> — terminal, never calls next, short-circuits the pipeline. <code>Map</code> — branches the pipeline for a URL prefix, the branch does not rejoin. <code>UseWhen</code> — like Map but the branch rejoins after. <code>MapWhen</code> — like Map but branches on a predicate instead of a path.</p>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p><strong>UseAuthorization before UseAuthentication</strong> — authorization runs but the user principal is never populated, so all [Authorize] checks silently fail or throw. Always: Authentication then Authorization.</p>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p><strong>UseStaticFiles after UseRouting</strong> — static files bypass routing entirely; placing them after UseRouting means the routing middleware wastes cycles on every .js/.css request. Put UseStaticFiles early.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2 — DI
+═══════════════════════════════════════════════════════════════ -->
+<section id="di">
+<h2><span class="sec-num">2</span>Dependency Injection</h2>
+
+<p>ASP.NET Core ships with a built-in IoC container. Services are registered in <code>IServiceCollection</code> and resolved via <code>IServiceProvider</code>. The three lifetimes control <em>when</em> a new instance is created.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Lifetime</th><th>Created</th><th>Shared across</th><th>Use for</th></tr></thead>
+<tbody>
+<tr><td><strong>Singleton</strong></td><td>First request (or startup)</td><td>All requests, all users, app lifetime</td><td>Configuration, caches, HTTP clients, stateless services</td></tr>
+<tr><td><strong>Scoped</strong></td><td>Once per HTTP request</td><td>Entire request pipeline</td><td>DbContext, unit-of-work, per-request services</td></tr>
+<tr><td><strong>Transient</strong></td><td>Every injection</td><td>Nothing — each consumer gets its own</td><td>Lightweight stateless helpers, validators</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Registration <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="meth">AddSingleton</span>&lt;<span class="type">IEmailService</span>, <span class="type">SmtpEmailService</span>&gt;();
+builder.Services.<span class="meth">AddScoped</span>&lt;<span class="type">IOrderRepository</span>, <span class="type">OrderRepository</span>&gt;();
+builder.Services.<span class="meth">AddTransient</span>&lt;<span class="type">IPasswordHasher</span>, <span class="type">Pbkdf2PasswordHasher</span>&gt;();
+
+<span class="cmt">// Factory overload — conditional creation</span>
+builder.Services.<span class="meth">AddSingleton</span>&lt;<span class="type">IFeatureFlags</span>&gt;(sp =>
+{
+    <span class="kw">var</span> config = sp.<span class="meth">GetRequiredService</span>&lt;<span class="type">IConfiguration</span>&gt;();
+    <span class="kw">return</span> config.<span class="meth">GetValue</span>&lt;<span class="kw">bool</span>&gt;(<span class="str">"UseRemoteFlags"</span>)
+        ? <span class="kw">new</span> <span class="type">RemoteFeatureFlags</span>(sp)
+        : <span class="kw">new</span> <span class="type">LocalFeatureFlags</span>(config);
+});</code></pre>
+</div>
+
+<h3>Captive Dependency — Classic Bug</h3>
+<div class="code-block">
+  <div class="code-label">csharp — THE BUG <button class="copy-btn">Copy</button></div>
+<pre><code><span class="cmt">// Singleton captures a Scoped service — CAPTIVE DEPENDENCY!</span>
+builder.Services.<span class="meth">AddSingleton</span>&lt;<span class="type">IReportService</span>, <span class="type">ReportService</span>&gt;();
+builder.Services.<span class="meth">AddScoped</span>&lt;<span class="type">IDbContext</span>, <span class="type">AppDbContext</span>&gt;();
+
+<span class="kw">public class</span> <span class="type">ReportService</span>  <span class="cmt">// singleton...</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IDbContext</span> _db;  <span class="cmt">// ...holds scoped service = BUG</span>
+
+    <span class="kw">public</span> <span class="type">ReportService</span>(<span class="type">IDbContext</span> db)
+        => _db = db;  <span class="cmt">// same DbContext for ALL requests forever!</span>
+}
+
+<span class="cmt">// Runtime: InvalidOperationException in development
+// (scope validation is off in production by default — silent data corruption)</span></code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — THE FIX <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">ReportService</span>  <span class="cmt">// singleton</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IServiceScopeFactory</span> _scopeFactory;
+
+    <span class="kw">public</span> <span class="type">ReportService</span>(<span class="type">IServiceScopeFactory</span> scopeFactory)
+        => _scopeFactory = scopeFactory;  <span class="cmt">// IServiceScopeFactory is always singleton-safe</span>
+
+    <span class="kw">public async</span> <span class="type">Task</span>&lt;<span class="type">Report</span>&gt; <span class="meth">GenerateAsync</span>(<span class="type">Guid</span> id)
+    {
+        <span class="kw">using var</span> scope = _scopeFactory.<span class="meth">CreateScope</span>();
+        <span class="kw">var</span> db = scope.ServiceProvider.<span class="meth">GetRequiredService</span>&lt;<span class="type">IDbContext</span>&gt;();
+        <span class="cmt">// db is properly scoped — disposed when the using block exits</span>
+        <span class="kw">return await</span> db.Reports.<span class="meth">FindAsync</span>(id);
+    }
+}</code></pre>
+</div>
+
+<h3>Keyed Services (.NET 8+) <span class="badge badge-new">New in .NET 8</span></h3>
+<div class="code-block">
+  <div class="code-label">csharp <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="meth">AddKeyedSingleton</span>&lt;<span class="type">IPaymentProcessor</span>, <span class="type">StripeProcessor</span>&gt;(<span class="str">"stripe"</span>);
+builder.Services.<span class="meth">AddKeyedSingleton</span>&lt;<span class="type">IPaymentProcessor</span>, <span class="type">PayPalProcessor</span>&gt;(<span class="str">"paypal"</span>);
+
+<span class="kw">public class</span> <span class="type">CheckoutService</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IPaymentProcessor</span> _processor;
+
+    <span class="kw">public</span> <span class="type">CheckoutService</span>(
+        [<span class="type">FromKeyedServices</span>(<span class="str">"stripe"</span>)] <span class="type">IPaymentProcessor</span> processor)
+        => _processor = processor;
+}
+
+<span class="cmt">// Resolve programmatically</span>
+<span class="kw">var</span> paypal = sp.<span class="meth">GetRequiredKeyedService</span>&lt;<span class="type">IPaymentProcessor</span>&gt;(<span class="str">"paypal"</span>);</code></pre>
+</div>
+
+<h3>IOptions vs IOptionsSnapshot vs IOptionsMonitor</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Interface</th><th>Lifetime</th><th>Reloads config?</th><th>Use for</th></tr></thead>
+<tbody>
+<tr><td><code>IOptions&lt;T&gt;</code></td><td>Singleton</td><td>No — read once at startup</td><td>Immutable config (connection strings)</td></tr>
+<tr><td><code>IOptionsSnapshot&lt;T&gt;</code></td><td>Scoped</td><td>Yes — per request</td><td>Per-request config that may change</td></tr>
+<tr><td><code>IOptionsMonitor&lt;T&gt;</code></td><td>Singleton</td><td>Yes — live via OnChange callback</td><td>Background services, live feature flags</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">SmtpSettings</span>
+{
+    <span class="kw">public string</span> Host { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="type">string</span>.Empty;
+    <span class="kw">public int</span> Port { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public bool</span> UseSsl { <span class="kw">get</span>; <span class="kw">set</span>; }
+}
+
+<span class="cmt">// Register with validation</span>
+builder.Services.<span class="meth">AddOptions</span>&lt;<span class="type">SmtpSettings</span>&gt;()
+    .<span class="meth">Bind</span>(builder.Configuration.<span class="meth">GetSection</span>(<span class="str">"Smtp"</span>))
+    .<span class="meth">ValidateDataAnnotations</span>()
+    .<span class="meth">ValidateOnStart</span>();  <span class="cmt">// fail at startup, not on first use</span>
+
+<span class="cmt">// IOptionsMonitor — live reload in a singleton</span>
+<span class="kw">public class</span> <span class="type">EmailService</span>
+{
+    <span class="kw">private</span> <span class="type">SmtpSettings</span> _settings;
+
+    <span class="kw">public</span> <span class="type">EmailService</span>(<span class="type">IOptionsMonitor</span>&lt;<span class="type">SmtpSettings</span>&gt; monitor)
+    {
+        _settings = monitor.CurrentValue;
+        monitor.<span class="meth">OnChange</span>(updated => _settings = updated);
+    }
+}</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What happens if a Singleton service depends on a Scoped service?</strong></p>
+  <p><strong>A:</strong> This is the <em>captive dependency</em> problem. The Singleton is created once and holds a reference to the Scoped service forever. That Scoped instance (e.g., DbContext) leaks across all subsequent HTTP requests, causing data corruption, connection exhaustion, and concurrency bugs. In development ASP.NET Core throws <code>InvalidOperationException</code> (scope validation is enabled). Fix: inject <code>IServiceScopeFactory</code> and create a scope per operation.</p>
+</div>
+
+<div class="card card-tip">
+  <div class="card-label">Tip</div>
+  <p>Enable scope validation in production too: <code>builder.Host.UseDefaultServiceProvider(o => o.ValidateScopes = true)</code>. The performance cost is negligible and it catches captive dependencies before they cause data bugs.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3 — MINIMAL APIS
+═══════════════════════════════════════════════════════════════ -->
+<section id="minimal-apis">
+<h2><span class="sec-num">3</span>Minimal APIs vs MVC</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Feature</th><th>Minimal APIs</th><th>MVC Controllers</th></tr></thead>
+<tbody>
+<tr><td>Boilerplate</td><td>Minimal — lambda or static method</td><td>Class + inheritance + attributes</td></tr>
+<tr><td>Organization</td><td>Route groups, extension methods</td><td>Controllers, Areas</td></tr>
+<tr><td>Action filters</td><td>Endpoint filters (IEndpointFilter)</td><td>IActionFilter, full filter pipeline</td></tr>
+<tr><td>Model binding</td><td>Auto from params + [FromBody] etc.</td><td>Full model binder infrastructure</td></tr>
+<tr><td>Testability</td><td>Easy — plain methods</td><td>Easy — controller unit tests</td></tr>
+<tr><td>Best for</td><td>APIs, microservices, simple CRUD</td><td>Large apps, complex binding, Views</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Endpoint Filters (equivalent of Action Filters)</h3>
+<div class="code-block">
+  <div class="code-label">csharp <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">ValidationFilter</span>&lt;T&gt; : <span class="type">IEndpointFilter</span>
+{
+    <span class="kw">public async</span> <span class="type">ValueTask</span>&lt;<span class="kw">object</span>?&gt; <span class="meth">InvokeAsync</span>(
+        <span class="type">EndpointFilterInvocationContext</span> context,
+        <span class="type">EndpointFilterDelegate</span> next)
+    {
+        <span class="kw">var</span> arg = context.Arguments.<span class="meth">OfType</span>&lt;T&gt;().<span class="meth">FirstOrDefault</span>();
+        <span class="kw">if</span> (arg <span class="kw">is null</span>) <span class="kw">return</span> <span class="type">Results</span>.<span class="meth">BadRequest</span>(<span class="str">"Missing body"</span>);
+
+        <span class="kw">var</span> errors = <span class="kw">new</span> <span class="type">List</span>&lt;<span class="type">ValidationResult</span>&gt;();
+        <span class="kw">if</span> (!<span class="type">Validator</span>.<span class="meth">TryValidateObject</span>(arg,
+            <span class="kw">new</span> <span class="type">ValidationContext</span>(arg), errors, validateAllProperties: <span class="kw">true</span>))
+        {
+            <span class="kw">return</span> <span class="type">Results</span>.<span class="meth">ValidationProblem</span>(
+                errors.<span class="meth">ToDictionary</span>(
+                    e => e.MemberNames.<span class="meth">FirstOrDefault</span>() ?? <span class="str">"error"</span>,
+                    e => <span class="kw">new</span>[] { e.ErrorMessage ?? <span class="str">"Invalid"</span> }));
+        }
+        <span class="kw">return await</span> next(context);
+    }
+}</code></pre>
+</div>
+
+<h3>Full CRUD Minimal API</h3>
+<div class="code-block">
+  <div class="code-label">csharp — Program.cs <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">var</span> products = app.<span class="meth">MapGroup</span>(<span class="str">"/api/v1/products"</span>)
+    .<span class="meth">RequireAuthorization</span>()
+    .<span class="meth">WithTags</span>(<span class="str">"Products"</span>)
+    .<span class="meth">WithOpenApi</span>();
+
+products.<span class="meth">MapGet</span>(<span class="str">"/"</span>, <span class="kw">async</span> (
+    [<span class="type">FromQuery</span>] <span class="kw">int</span> page = <span class="num">1</span>,
+    [<span class="type">FromQuery</span>] <span class="kw">int</span> pageSize = <span class="num">20</span>,
+    <span class="type">IProductRepository</span> repo = <span class="kw">null</span>!) =>
+{
+    <span class="kw">var</span> result = <span class="kw">await</span> repo.<span class="meth">GetPagedAsync</span>(page, pageSize);
+    <span class="kw">return</span> <span class="type">Results</span>.<span class="meth">Ok</span>(result);
+});
+
+products.<span class="meth">MapGet</span>(<span class="str">"/{id:int}"</span>, <span class="kw">async</span> (<span class="kw">int</span> id, <span class="type">IProductRepository</span> repo) =>
+{
+    <span class="kw">var</span> product = <span class="kw">await</span> repo.<span class="meth">GetByIdAsync</span>(id);
+    <span class="kw">return</span> product <span class="kw">is null</span> ? <span class="type">Results</span>.<span class="meth">NotFound</span>() : <span class="type">Results</span>.<span class="meth">Ok</span>(product);
+}).<span class="meth">WithName</span>(<span class="str">"GetProduct"</span>);
+
+products.<span class="meth">MapPost</span>(<span class="str">"/"</span>, <span class="kw">async</span> (
+    <span class="type">CreateProductRequest</span> req,
+    <span class="type">IProductRepository</span> repo) =>
+{
+    <span class="kw">var</span> product = <span class="kw">await</span> repo.<span class="meth">CreateAsync</span>(req);
+    <span class="kw">return</span> <span class="type">Results</span>.<span class="meth">CreatedAtRoute</span>(<span class="str">"GetProduct"</span>, <span class="kw">new</span> { id = product.Id }, product);
+}).<span class="meth">AddEndpointFilter</span>&lt;<span class="type">ValidationFilter</span>&lt;<span class="type">CreateProductRequest</span>&gt;&gt;();
+
+products.<span class="meth">MapPut</span>(<span class="str">"/{id:int}"</span>, <span class="kw">async</span> (<span class="kw">int</span> id, <span class="type">UpdateProductRequest</span> req,
+    <span class="type">IProductRepository</span> repo) =>
+{
+    <span class="kw">var</span> updated = <span class="kw">await</span> repo.<span class="meth">UpdateAsync</span>(id, req);
+    <span class="kw">return</span> updated <span class="kw">is null</span> ? <span class="type">Results</span>.<span class="meth">NotFound</span>() : <span class="type">Results</span>.<span class="meth">Ok</span>(updated);
+});
+
+products.<span class="meth">MapDelete</span>(<span class="str">"/{id:int}"</span>, <span class="kw">async</span> (<span class="kw">int</span> id, <span class="type">IProductRepository</span> repo) =>
+    <span class="kw">await</span> repo.<span class="meth">DeleteAsync</span>(id)
+        ? <span class="type">Results</span>.<span class="meth">NoContent</span>()
+        : <span class="type">Results</span>.<span class="meth">NotFound</span>());</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: When would you choose Minimal APIs over MVC Controllers?</strong></p>
+  <p><strong>A:</strong> Minimal APIs for microservices, API-only projects, high-throughput scenarios (less reflection overhead), and when simplicity is valued. MVC Controllers for large apps requiring complex model binding, Views, Areas, the full filter pipeline with global attributes, or when the team is more familiar with traditional MVC patterns. Both support DI, middleware, OpenAPI, and authentication equally well.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4 — MVC
+═══════════════════════════════════════════════════════════════ -->
+<section id="mvc">
+<h2><span class="sec-num">4</span>MVC</h2>
+
+<div class="code-block">
+  <div class="code-label">csharp — Controller with typed results <button class="copy-btn">Copy</button></div>
+<pre><code>[<span class="type">ApiController</span>]
+[<span class="type">Route</span>(<span class="str">"api/[controller]"</span>)]
+<span class="kw">public class</span> <span class="type">OrdersController</span> : <span class="type">ControllerBase</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IOrderService</span> _orders;
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">OrdersController</span>&gt; _logger;
+
+    <span class="kw">public</span> <span class="type">OrdersController</span>(<span class="type">IOrderService</span> orders, <span class="type">ILogger</span>&lt;<span class="type">OrdersController</span>&gt; logger)
+        => (_orders, _logger) = (orders, logger);
+
+    [<span class="type">HttpGet</span>(<span class="str">"{id:guid}"</span>)]
+    [<span class="type">ProducesResponseType</span>&lt;<span class="type">OrderDto</span>&gt;(<span class="type">StatusCodes</span>.Status200OK)]
+    [<span class="type">ProducesResponseType</span>(<span class="type">StatusCodes</span>.Status404NotFound)]
+    <span class="kw">public async</span> <span class="type">Task</span>&lt;<span class="type">ActionResult</span>&lt;<span class="type">OrderDto</span>&gt;&gt; <span class="meth">GetOrder</span>(<span class="type">Guid</span> id)
+    {
+        <span class="kw">var</span> order = <span class="kw">await</span> _orders.<span class="meth">GetAsync</span>(id);
+        <span class="kw">return</span> order <span class="kw">is null</span> ? <span class="meth">NotFound</span>() : <span class="meth">Ok</span>(order);
+    }
+
+    [<span class="type">HttpPost</span>]
+    [<span class="type">ProducesResponseType</span>&lt;<span class="type">OrderDto</span>&gt;(<span class="type">StatusCodes</span>.Status201Created)]
+    [<span class="type">ProducesResponseType</span>&lt;<span class="type">ValidationProblemDetails</span>&gt;(<span class="type">StatusCodes</span>.Status400BadRequest)]
+    <span class="kw">public async</span> <span class="type">Task</span>&lt;<span class="type">ActionResult</span>&lt;<span class="type">OrderDto</span>&gt;&gt; <span class="meth">CreateOrder</span>(
+        [<span class="type">FromBody</span>] <span class="type">CreateOrderRequest</span> request)
+    {
+        <span class="cmt">// [ApiController] auto-validates and returns 400 if invalid
+        // No need for: if (!ModelState.IsValid) return BadRequest();</span>
+        <span class="kw">var</span> order = <span class="kw">await</span> _orders.<span class="meth">CreateAsync</span>(request);
+        <span class="kw">return</span> <span class="meth">CreatedAtAction</span>(<span class="kw">nameof</span>(<span class="meth">GetOrder</span>), <span class="kw">new</span> { id = order.Id }, order);
+    }
+}</code></pre>
+</div>
+
+<h3>FluentValidation</h3>
+<div class="code-block">
+  <div class="code-label">csharp <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">CreateOrderValidator</span> : <span class="type">AbstractValidator</span>&lt;<span class="type">CreateOrderRequest</span>&gt;
+{
+    <span class="kw">public</span> <span class="type">CreateOrderValidator</span>(<span class="type">IProductRepository</span> products)
+    {
+        <span class="meth">RuleFor</span>(x => x.CustomerEmail)
+            .<span class="meth">NotEmpty</span>()
+            .<span class="meth">EmailAddress</span>()
+            .<span class="meth">MaximumLength</span>(<span class="num">254</span>);
+
+        <span class="meth">RuleFor</span>(x => x.Items)
+            .<span class="meth">NotEmpty</span>().<span class="meth">WithMessage</span>(<span class="str">"Order must have at least one item"</span>)
+            .<span class="meth">Must</span>(items => items.<span class="meth">All</span>(i => i.Quantity > <span class="num">0</span>))
+            .<span class="meth">WithMessage</span>(<span class="str">"All quantities must be positive"</span>);
+
+        <span class="meth">RuleForEach</span>(x => x.Items).<span class="meth">ChildRules</span>(item =>
+            item.<span class="meth">RuleFor</span>(i => i.ProductId)
+                .<span class="meth">MustAsync</span>(<span class="kw">async</span> (id, ct) => <span class="kw">await</span> products.<span class="meth">ExistsAsync</span>(id, ct))
+                .<span class="meth">WithMessage</span>(<span class="str">"Product not found"</span>));
+    }
+}
+
+<span class="cmt">// Register</span>
+builder.Services.<span class="meth">AddFluentValidationAutoValidation</span>();
+builder.Services.<span class="meth">AddValidatorsFromAssemblyContaining</span>&lt;<span class="type">CreateOrderValidator</span>&gt;();</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What is model binding source order in ASP.NET Core?</strong></p>
+  <p><strong>A:</strong> Without attributes, MVC tries sources in order: Form fields → Route data → Query string. Attributes override: <code>[FromBody]</code> (JSON/XML body), <code>[FromRoute]</code>, <code>[FromQuery]</code>, <code>[FromHeader]</code>, <code>[FromForm]</code>, <code>[FromServices]</code>. With <code>[ApiController]</code>, complex types default to <code>[FromBody]</code> automatically.</p>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p>Manually checking <code>ModelState.IsValid</code> in an <code>[ApiController]</code> controller is redundant — the attribute triggers automatic 400 responses before your action runs. Remove the check; it only adds noise.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5 — API VERSIONING
+═══════════════════════════════════════════════════════════════ -->
+<section id="versioning">
+<h2><span class="sec-num">5</span>API Versioning</h2>
+
+<div class="code-block">
+  <div class="code-label">csharp — Configure all readers <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="meth">AddApiVersioning</span>(options =>
+{
+    options.DefaultApiVersion = <span class="kw">new</span> <span class="type">ApiVersion</span>(<span class="num">1</span>, <span class="num">0</span>);
+    options.AssumeDefaultVersionWhenUnspecified = <span class="kw">true</span>;
+    options.ReportApiVersions = <span class="kw">true</span>;  <span class="cmt">// api-supported-versions header</span>
+    options.ApiVersionReader = <span class="type">ApiVersionReader</span>.<span class="meth">Combine</span>(
+        <span class="kw">new</span> <span class="type">UrlSegmentApiVersionReader</span>(),             <span class="cmt">// /api/v1/products</span>
+        <span class="kw">new</span> <span class="type">HeaderApiVersionReader</span>(<span class="str">"X-Api-Version"</span>),   <span class="cmt">// header</span>
+        <span class="kw">new</span> <span class="type">QueryStringApiVersionReader</span>(<span class="str">"api-version"</span>) <span class="cmt">// ?api-version=1.0</span>
+    );
+}).<span class="meth">AddApiExplorer</span>(options =>
+{
+    options.GroupNameFormat = <span class="str">"'v'VVV"</span>;
+    options.SubstituteApiVersionInUrl = <span class="kw">true</span>;
+});</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — V1 → V2 migration without breaking clients <button class="copy-btn">Copy</button></div>
+<pre><code>[<span class="type">ApiController</span>]
+[<span class="type">ApiVersion</span>(<span class="str">"1.0"</span>, Deprecated = <span class="kw">true</span>)]  <span class="cmt">// clients warned but not broken</span>
+[<span class="type">Route</span>(<span class="str">"api/v{version:apiVersion}/products"</span>)]
+<span class="kw">public class</span> <span class="type">ProductsV1Controller</span> : <span class="type">ControllerBase</span>
+{
+    [<span class="type">HttpGet</span>]
+    <span class="kw">public</span> <span class="type">IActionResult</span> <span class="meth">Get</span>() =>
+        <span class="meth">Ok</span>(<span class="kw">new</span> { version = <span class="str">"v1"</span>, warning = <span class="str">"Deprecated — migrate to v2"</span> });
+}
+
+[<span class="type">ApiController</span>]
+[<span class="type">ApiVersion</span>(<span class="str">"2.0"</span>)]
+[<span class="type">Route</span>(<span class="str">"api/v{version:apiVersion}/products"</span>)]
+<span class="kw">public class</span> <span class="type">ProductsV2Controller</span> : <span class="type">ControllerBase</span>
+{
+    [<span class="type">HttpGet</span>]
+    <span class="kw">public</span> <span class="type">IActionResult</span> <span class="meth">Get</span>() =>
+        <span class="meth">Ok</span>(<span class="kw">new</span> { version = <span class="str">"v2"</span>, data = <span class="str">"enhanced schema"</span> });
+}
+
+<span class="cmt">// v1 clients: GET /api/v1/products — still works, gets Deprecated header
+// v2 clients: GET /api/v2/products — full new response
+// Unversioned clients: GET /api/products — routed to DefaultApiVersion (1.0)</span></code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: How do you version a REST API without breaking existing clients?</strong></p>
+  <p><strong>A:</strong> Keep the old version running, introduce a new URL segment (<code>/v2/</code>), mark the old one <code>Deprecated = true</code> (the framework adds <code>api-deprecated-versions</code> headers so clients can detect it). Clients on v1 continue working unchanged. Once deprecation period ends and usage metrics show zero v1 traffic, remove the old controller. Never change the contract of an existing version.</p>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p>Not setting <code>AssumeDefaultVersionWhenUnspecified = true</code> means existing clients without a version in their URL or headers will receive <code>400 Bad Request: API version is not specified</code> the moment you add versioning middleware.</p>
+</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6 — FILTERS
+═══════════════════════════════════════════════════════════════ -->
+<section id="filters">
+<h2><span class="sec-num">6</span>Filters</h2>
+
+<p>Filters run at specific stages of the MVC/Razor Pages request pipeline, <em>after</em> middleware resolves the endpoint but <em>before/after</em> the action executes.</p>
+
+<h3>Execution Order</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Order</th><th>Filter Type</th><th>Interface</th><th>Typical Use</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Authorization</td><td><code>IAuthorizationFilter</code></td><td>Early deny — reject unauthorized requests</td></tr>
+<tr><td>2</td><td>Resource</td><td><code>IResourceFilter</code></td><td>Caching — short-circuit before model binding</td></tr>
+<tr><td>3</td><td>Action (before)</td><td><code>IActionFilter</code></td><td>Logging, validation, mutation of args</td></tr>
+<tr><td>4</td><td>— Action executes —</td><td></td><td></td></tr>
+<tr><td>5</td><td>Action (after)</td><td><code>IActionFilter</code></td><td>Modify result before serialization</td></tr>
+<tr><td>6</td><td>Exception</td><td><code>IExceptionFilter</code></td><td>Translate exceptions → problem details</td></tr>
+<tr><td>7</td><td>Result (before)</td><td><code>IResultFilter</code></td><td>Add headers, wrap response</td></tr>
+<tr><td>8</td><td>— Result executes —</td><td></td><td></td></tr>
+<tr><td>9</td><td>Result (after)</td><td><code>IResultFilter</code></td><td>Audit, compression</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Logging Action Filter <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">LoggingActionFilter</span> : <span class="type">IActionFilter</span>
+{
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">LoggingActionFilter</span>&gt; _logger;
+    <span class="kw">public</span> <span class="type">LoggingActionFilter</span>(<span class="type">ILogger</span>&lt;<span class="type">LoggingActionFilter</span>&gt; logger)
+        => _logger = logger;
+
+    <span class="kw">public void</span> <span class="meth">OnActionExecuting</span>(<span class="type">ActionExecutingContext</span> context)
+    {
+        _logger.<span class="meth">LogInformation</span>(
+            <span class="str">"Executing {Action} args={@Args}"</span>,
+            context.ActionDescriptor.DisplayName,
+            context.ActionArguments);
+    }
+
+    <span class="kw">public void</span> <span class="meth">OnActionExecuted</span>(<span class="type">ActionExecutedContext</span> context)
+    {
+        <span class="kw">if</span> (context.Exception <span class="kw">is not null</span>)
+            _logger.<span class="meth">LogError</span>(context.Exception, <span class="str">"Action {Action} threw"</span>,
+                context.ActionDescriptor.DisplayName);
+    }
+}
+
+<span class="cmt">// Global registration</span>
+builder.Services.<span class="meth">AddControllers</span>(options =>
+{
+    options.Filters.<span class="meth">Add</span>&lt;<span class="type">LoggingActionFilter</span>&gt;();
+    options.Filters.<span class="meth">Add</span>&lt;<span class="type">GlobalExceptionFilter</span>&gt;();
+});</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Exception Filter with pattern matching <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">GlobalExceptionFilter</span> : <span class="type">IExceptionFilter</span>
+{
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">GlobalExceptionFilter</span>&gt; _logger;
+    <span class="kw">public</span> <span class="type">GlobalExceptionFilter</span>(<span class="type">ILogger</span>&lt;<span class="type">GlobalExceptionFilter</span>&gt; logger)
+        => _logger = logger;
+
+    <span class="kw">public void</span> <span class="meth">OnException</span>(<span class="type">ExceptionContext</span> context)
+    {
+        _logger.<span class="meth">LogError</span>(context.Exception, <span class="str">"Unhandled: {Action}"</span>,
+            context.ActionDescriptor.DisplayName);
+
+        <span class="kw">var</span> (status, title) = context.Exception <span class="kw">switch</span>
+        {
+            <span class="type">NotFoundException</span> e  => (<span class="num">404</span>, e.Message),
+            <span class="type">ValidationException</span> e => (<span class="num">422</span>, e.Message),
+            <span class="type">UnauthorizedAccessException</span> => (<span class="num">403</span>, <span class="str">"Access denied"</span>),
+            <span class="type">ConflictException</span> e   => (<span class="num">409</span>, e.Message),
+            _                      => (<span class="num">500</span>, <span class="str">"An unexpected error occurred"</span>)
+        };
+
+        context.Result = <span class="kw">new</span> <span class="type">ObjectResult</span>(<span class="kw">new</span> <span class="type">ProblemDetails</span>
+        {
+            Status   = status,
+            Title    = title,
+            Instance = context.HttpContext.Request.Path
+        }) { StatusCode = status };
+
+        context.ExceptionHandled = <span class="kw">true</span>;
+    }
+}</code></pre>
+</div>
+
+<h3>Middleware vs Filters</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Aspect</th><th>Middleware</th><th>Filters</th></tr></thead>
+<tbody>
+<tr><td>Scope</td><td>Every request (including static files, health checks)</td><td>Only MVC / Razor Pages endpoints</td></tr>
+<tr><td>Access to MVC context</td><td>No — only HttpContext</td><td>Yes — ActionDescriptor, ModelState, ActionArguments</td></tr>
+<tr><td>Order control</td><td>Program.cs registration order</td><td>Order property, scope (Global/Controller/Action)</td></tr>
+<tr><td>DI injection</td><td>Constructor or InvokeAsync params</td><td>Constructor (via ServiceFilter / TypeFilter)</td></tr>
+<tr><td>Best for</td><td>Cross-cutting HTTP concerns (auth, CORS, logging)</td><td>MVC-specific concerns (validation, result shaping)</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What is the execution order of filters, and how do you control it?</strong></p>
+  <p><strong>A:</strong> Authorization → Resource → (Model Binding) → Action (before) → Action executes → Action (after) → Exception → Result (before) → Result renders → Result (after). Control order via the <code>Order</code> property on the filter (lower = runs first on the way in, last on the way out). Scope also matters: Global filters wrap Controller filters, which wrap Action-level filters.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 7 — AUTH
+═══════════════════════════════════════════════════════════════ -->
+<section id="auth">
+<h2><span class="sec-num">7</span>Authentication &amp; Authorization</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Strategy</th><th>How it works</th><th>Best for</th></tr></thead>
+<tbody>
+<tr><td>Role-based</td><td><code>[Authorize(Roles = "Admin")]</code> — checks ClaimTypes.Role</td><td>Simple, coarse-grained access</td></tr>
+<tr><td>Claims-based</td><td>Check specific claim values on the principal</td><td>Fine-grained user attributes (subscription level)</td></tr>
+<tr><td>Policy-based</td><td>Named policy with requirements + handlers</td><td>Complex, reusable, testable rules</td></tr>
+<tr><td>Resource-based</td><td><code>IAuthorizationService.AuthorizeAsync(user, resource, policy)</code></td><td>Object ownership (can this user edit THIS document)</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Policy-based with custom requirement <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="meth">AddAuthorization</span>(options =>
+{
+    options.<span class="meth">AddPolicy</span>(<span class="str">"AdminOnly"</span>, p => p.<span class="meth">RequireRole</span>(<span class="str">"Admin"</span>));
+
+    options.<span class="meth">AddPolicy</span>(<span class="str">"PremiumUser"</span>, p =>
+        p.<span class="meth">RequireClaim</span>(<span class="str">"subscription"</span>, <span class="str">"premium"</span>, <span class="str">"enterprise"</span>));
+
+    options.<span class="meth">AddPolicy</span>(<span class="str">"MinAge18"</span>, p =>
+        p.Requirements.<span class="meth">Add</span>(<span class="kw">new</span> <span class="type">MinimumAgeRequirement</span>(<span class="num">18</span>)));
+
+    options.<span class="meth">AddPolicy</span>(<span class="str">"CanEdit"</span>, p =>
+        p.Requirements.<span class="meth">Add</span>(<span class="kw">new</span> <span class="type">ResourceOwnerRequirement</span>()));
+});
+
+<span class="cmt">// Register handler</span>
+builder.Services.<span class="meth">AddSingleton</span>&lt;<span class="type">IAuthorizationHandler</span>, <span class="type">MinimumAgeHandler</span>&gt;();
+
+<span class="kw">public class</span> <span class="type">MinimumAgeRequirement</span> : <span class="type">IAuthorizationRequirement</span>
+{
+    <span class="kw">public int</span> MinimumAge { <span class="kw">get</span>; }
+    <span class="kw">public</span> <span class="type">MinimumAgeRequirement</span>(<span class="kw">int</span> age) => MinimumAge = age;
+}
+
+<span class="kw">public class</span> <span class="type">MinimumAgeHandler</span> : <span class="type">AuthorizationHandler</span>&lt;<span class="type">MinimumAgeRequirement</span>&gt;
+{
+    <span class="kw">protected override</span> <span class="type">Task</span> <span class="meth">HandleRequirementAsync</span>(
+        <span class="type">AuthorizationHandlerContext</span> context,
+        <span class="type">MinimumAgeRequirement</span> requirement)
+    {
+        <span class="kw">var</span> claim = context.User.<span class="meth">FindFirst</span>(<span class="str">"birthdate"</span>);
+        <span class="kw">if</span> (claim <span class="kw">is null</span>) <span class="kw">return</span> <span class="type">Task</span>.CompletedTask;
+
+        <span class="kw">if</span> (<span class="type">DateTime</span>.<span class="meth">TryParse</span>(claim.Value, <span class="kw">out var</span> dob))
+        {
+            <span class="kw">var</span> age = <span class="type">DateTime</span>.Today.Year - dob.Year;
+            <span class="kw">if</span> (<span class="type">DateTime</span>.Today < dob.<span class="meth">AddYears</span>(age)) age--;
+            <span class="kw">if</span> (age >= requirement.MinimumAge) context.<span class="meth">Succeed</span>(requirement);
+        }
+        <span class="kw">return</span> <span class="type">Task</span>.CompletedTask;
+    }
+}</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Resource-based authorization <button class="copy-btn">Copy</button></div>
+<pre><code>[<span class="type">HttpPut</span>(<span class="str">"{id:guid}"</span>)]
+<span class="kw">public async</span> <span class="type">Task</span>&lt;<span class="type">IActionResult</span>&gt; <span class="meth">UpdateDocument</span>(
+    <span class="type">Guid</span> id,
+    <span class="type">UpdateDocumentRequest</span> request,
+    [<span class="type">FromServices</span>] <span class="type">IAuthorizationService</span> authService)
+{
+    <span class="kw">var</span> doc = <span class="kw">await</span> _repo.<span class="meth">GetByIdAsync</span>(id);
+    <span class="kw">if</span> (doc <span class="kw">is null</span>) <span class="kw">return</span> <span class="meth">NotFound</span>();
+
+    <span class="cmt">// Pass the ACTUAL resource — handler inspects doc.OwnerId vs User.Id</span>
+    <span class="kw">var</span> auth = <span class="kw">await</span> authService.<span class="meth">AuthorizeAsync</span>(<span class="type">User</span>, doc, <span class="str">"CanEdit"</span>);
+    <span class="kw">if</span> (!auth.Succeeded) <span class="kw">return</span> <span class="meth">Forbid</span>();
+
+    <span class="kw">await</span> _repo.<span class="meth">UpdateAsync</span>(id, request);
+    <span class="kw">return</span> <span class="meth">NoContent</span>();
+}</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What is the difference between authentication and authorization? How does ASP.NET Core separate them?</strong></p>
+  <p><strong>A:</strong> Authentication answers "who are you?" — it establishes identity (JWT, cookie, API key). Authorization answers "what can you do?" — it checks permissions against the established identity. ASP.NET Core separates them into two middleware: <code>UseAuthentication</code> populates <code>HttpContext.User</code>, then <code>UseAuthorization</code> evaluates policies against it. This separation allows you to swap auth schemes without changing authorization rules.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 8 — JWT
+═══════════════════════════════════════════════════════════════ -->
+<section id="jwt">
+<h2><span class="sec-num">8</span>JWT Authentication</h2>
+
+<p>A JWT consists of three base64url-encoded parts separated by dots: <code>header.payload.signature</code>. The header specifies algorithm (HS256, RS256), payload holds claims (sub, email, roles, exp), signature proves integrity.</p>
+
+<div class="code-block">
+  <div class="code-label">csharp — AddJwtBearer configuration <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services
+    .<span class="meth">AddAuthentication</span>(<span class="type">JwtBearerDefaults</span>.AuthenticationScheme)
+    .<span class="meth">AddJwtBearer</span>(options =>
+    {
+        options.TokenValidationParameters = <span class="kw">new</span> <span class="type">TokenValidationParameters</span>
+        {
+            ValidateIssuer           = <span class="kw">true</span>,
+            ValidIssuer              = builder.Configuration[<span class="str">"Jwt:Issuer"</span>],
+            ValidateAudience         = <span class="kw">true</span>,
+            ValidAudience            = builder.Configuration[<span class="str">"Jwt:Audience"</span>],
+            ValidateIssuerSigningKey = <span class="kw">true</span>,
+            IssuerSigningKey = <span class="kw">new</span> <span class="type">SymmetricSecurityKey</span>(
+                <span class="type">Encoding</span>.UTF8.<span class="meth">GetBytes</span>(builder.Configuration[<span class="str">"Jwt:SecretKey"</span>]!)),
+            ValidateLifetime = <span class="kw">true</span>,
+            ClockSkew        = <span class="type">TimeSpan</span>.<span class="meth">FromMinutes</span>(<span class="num">1</span>)
+        };
+
+        options.Events = <span class="kw">new</span> <span class="type">JwtBearerEvents</span>
+        {
+            OnAuthenticationFailed = context =>
+            {
+                <span class="kw">if</span> (context.Exception <span class="kw">is</span> <span class="type">SecurityTokenExpiredException</span>)
+                    context.Response.Headers.<span class="meth">Append</span>(<span class="str">"Token-Expired"</span>, <span class="str">"true"</span>);
+                <span class="kw">return</span> <span class="type">Task</span>.CompletedTask;
+            }
+        };
+    });</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Generate + Refresh tokens <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">JwtTokenService</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IConfiguration</span> _config;
+    <span class="kw">public</span> <span class="type">JwtTokenService</span>(<span class="type">IConfiguration</span> config) => _config = config;
+
+    <span class="kw">public string</span> <span class="meth">GenerateAccessToken</span>(<span class="type">ApplicationUser</span> user, <span class="type">IList</span>&lt;<span class="kw">string</span>&gt; roles)
+    {
+        <span class="kw">var</span> claims = <span class="kw">new</span> <span class="type">List</span>&lt;<span class="type">Claim</span>&gt;
+        {
+            <span class="kw">new</span>(<span class="type">JwtRegisteredClaimNames</span>.Sub,   user.Id.<span class="meth">ToString</span>()),
+            <span class="kw">new</span>(<span class="type">JwtRegisteredClaimNames</span>.Email, user.Email!),
+            <span class="kw">new</span>(<span class="type">JwtRegisteredClaimNames</span>.Jti,   <span class="type">Guid</span>.<span class="meth">NewGuid</span>().<span class="meth">ToString</span>()),
+            <span class="kw">new</span>(<span class="type">JwtRegisteredClaimNames</span>.Iat,
+                <span class="type">DateTimeOffset</span>.UtcNow.<span class="meth">ToUnixTimeSeconds</span>().<span class="meth">ToString</span>()),
+        };
+        claims.<span class="meth">AddRange</span>(roles.<span class="meth">Select</span>(r => <span class="kw">new</span> <span class="type">Claim</span>(<span class="type">ClaimTypes</span>.Role, r)));
+
+        <span class="kw">var</span> key   = <span class="kw">new</span> <span class="type">SymmetricSecurityKey</span>(<span class="type">Encoding</span>.UTF8.<span class="meth">GetBytes</span>(_config[<span class="str">"Jwt:SecretKey"</span>]!));
+        <span class="kw">var</span> creds = <span class="kw">new</span> <span class="type">SigningCredentials</span>(key, <span class="type">SecurityAlgorithms</span>.HmacSha256);
+
+        <span class="kw">var</span> token = <span class="kw">new</span> <span class="type">JwtSecurityToken</span>(
+            issuer:            _config[<span class="str">"Jwt:Issuer"</span>],
+            audience:          _config[<span class="str">"Jwt:Audience"</span>],
+            claims:            claims,
+            expires:           <span class="type">DateTime</span>.UtcNow.<span class="meth">AddMinutes</span>(<span class="num">15</span>),
+            signingCredentials: creds);
+
+        <span class="kw">return new</span> <span class="type">JwtSecurityTokenHandler</span>().<span class="meth">WriteToken</span>(token);
+    }
+
+    <span class="kw">public string</span> <span class="meth">GenerateRefreshToken</span>()
+    {
+        <span class="kw">var</span> bytes = <span class="kw">new byte</span>[<span class="num">64</span>];
+        <span class="type">RandomNumberGenerator</span>.<span class="meth">Fill</span>(bytes);  <span class="cmt">// cryptographically secure</span>
+        <span class="kw">return</span> <span class="type">Convert</span>.<span class="meth">ToBase64String</span>(bytes);
+    }
+}
+
+<span class="cmt">// Refresh endpoint</span>
+app.<span class="meth">MapPost</span>(<span class="str">"/auth/refresh"</span>, <span class="kw">async</span> (<span class="type">RefreshRequest</span> req, <span class="type">IAuthService</span> auth) =>
+{
+    <span class="kw">var</span> result = <span class="kw">await</span> auth.<span class="meth">RefreshAsync</span>(req.RefreshToken);
+    <span class="kw">return</span> result <span class="kw">is null</span>
+        ? <span class="type">Results</span>.<span class="meth">Unauthorized</span>()
+        : <span class="type">Results</span>.<span class="meth">Ok</span>(result);
+}).<span class="meth">AllowAnonymous</span>();</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: How does JWT validation work on the server side?</strong></p>
+  <p><strong>A:</strong> The middleware extracts the token from the <code>Authorization: Bearer &lt;token&gt;</code> header, base64url-decodes the header and payload, re-computes the HMAC signature using the server's secret key (or validates the RSA signature with the public key), compares it to the token's signature, then validates claims: issuer, audience, expiry (<code>exp</code>), not-before (<code>nbf</code>). If all checks pass, a <code>ClaimsPrincipal</code> is created and set on <code>HttpContext.User</code>. No database round-trip needed — that is the stateless advantage of JWTs.</p>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p><strong>Symmetric key in multi-server deployment</strong> — if you use HMAC-SHA256, every instance must share the exact same secret key. A mismatch means some servers reject tokens silently. Prefer RS256 (asymmetric): the issuing server holds the private key; all validating servers only need the public key (shareable via JWKS endpoint).</p>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p><strong>Storing JWTs in localStorage</strong> — XSS can exfiltrate the token. Prefer <code>httpOnly; Secure; SameSite=Strict</code> cookies which are inaccessible to JavaScript. Trade-off: requires CSRF protection.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 9 — OAUTH / OIDC
+═══════════════════════════════════════════════════════════════ -->
+<section id="oauth">
+<h2><span class="sec-num">9</span>OAuth 2.0 &amp; OpenID Connect</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Flow</th><th>Use case</th><th>PKCE?</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Authorization Code</td><td>Web app with server-side backend</td><td>Recommended</td><td>Active</td></tr>
+<tr><td>Authorization Code + PKCE</td><td>SPA, mobile, CLI (public clients)</td><td>Required</td><td>Active — preferred</td></tr>
+<tr><td>Client Credentials</td><td>Machine-to-machine (no user)</td><td>N/A</td><td>Active</td></tr>
+<tr><td>Implicit</td><td>Legacy SPA</td><td>N/A</td><td>Deprecated</td></tr>
+<tr><td>Resource Owner Password</td><td>Trusted first-party only</td><td>N/A</td><td>Discouraged</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — OIDC with PKCE (web app) <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services
+    .<span class="meth">AddAuthentication</span>(options =>
+    {
+        options.DefaultScheme          = <span class="type">CookieAuthenticationDefaults</span>.AuthenticationScheme;
+        options.DefaultChallengeScheme = <span class="type">OpenIdConnectDefaults</span>.AuthenticationScheme;
+    })
+    .<span class="meth">AddCookie</span>()
+    .<span class="meth">AddOpenIdConnect</span>(options =>
+    {
+        options.Authority     = <span class="str">"https://login.microsoftonline.com/{tenantId}/v2.0"</span>;
+        options.ClientId      = builder.Configuration[<span class="str">"AzureAd:ClientId"</span>];
+        options.ClientSecret  = builder.Configuration[<span class="str">"AzureAd:ClientSecret"</span>];
+        options.ResponseType  = <span class="type">OpenIdConnectResponseType</span>.Code;
+        options.UsePkce       = <span class="kw">true</span>;   <span class="cmt">// PKCE: code_verifier/code_challenge</span>
+        options.Scope.<span class="meth">Add</span>(<span class="str">"openid"</span>);
+        options.Scope.<span class="meth">Add</span>(<span class="str">"profile"</span>);
+        options.Scope.<span class="meth">Add</span>(<span class="str">"email"</span>);
+        options.SaveTokens    = <span class="kw">true</span>;
+        options.GetClaimsFromUserInfoEndpoint = <span class="kw">true</span>;
+    });</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Client Credentials (machine-to-machine) with caching <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">ApiTokenCache</span>
+{
+    <span class="kw">private string</span>? _token;
+    <span class="kw">private</span> <span class="type">DateTimeOffset</span> _expiry;
+    <span class="kw">private readonly</span> <span class="type">SemaphoreSlim</span> _lock = <span class="kw">new</span>(<span class="num">1</span>, <span class="num">1</span>);
+    <span class="kw">private readonly</span> <span class="type">HttpClient</span> _http;
+    <span class="kw">private readonly</span> <span class="type">IConfiguration</span> _config;
+
+    <span class="kw">public async</span> <span class="type">Task</span>&lt;<span class="kw">string</span>&gt; <span class="meth">GetTokenAsync</span>(<span class="type">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">if</span> (_token <span class="kw">is not null</span> && <span class="type">DateTimeOffset</span>.UtcNow < _expiry.<span class="meth">AddMinutes</span>(-<span class="num">1</span>))
+            <span class="kw">return</span> _token;
+
+        <span class="kw">await</span> _lock.<span class="meth">WaitAsync</span>(ct);
+        <span class="kw">try</span>
+        {
+            <span class="kw">var</span> resp = <span class="kw">await</span> _http.<span class="meth">PostAsync</span>(<span class="str">"/connect/token"</span>,
+                <span class="kw">new</span> <span class="type">FormUrlEncodedContent</span>(<span class="kw">new</span> <span class="type">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;
+                {
+                    [<span class="str">"grant_type"</span>]    = <span class="str">"client_credentials"</span>,
+                    [<span class="str">"client_id"</span>]     = _config[<span class="str">"OAuth:ClientId"</span>]!,
+                    [<span class="str">"client_secret"</span>] = _config[<span class="str">"OAuth:ClientSecret"</span>]!,
+                    [<span class="str">"scope"</span>]         = <span class="str">"api.read"</span>
+                }), ct);
+
+            <span class="kw">var</span> token = <span class="kw">await</span> resp.Content.<span class="meth">ReadFromJsonAsync</span>&lt;<span class="type">TokenResponse</span>&gt;(ct);
+            _token  = token!.AccessToken;
+            _expiry = <span class="type">DateTimeOffset</span>.UtcNow.<span class="meth">AddSeconds</span>(token.ExpiresIn);
+            <span class="kw">return</span> _token;
+        }
+        <span class="kw">finally</span> { _lock.<span class="meth">Release</span>(); }
+    }
+}</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What is the difference between OAuth 2.0 and OpenID Connect?</strong></p>
+  <p><strong>A:</strong> OAuth 2.0 is an <em>authorization</em> framework — it grants a client limited access to a resource on behalf of a user (access tokens). OpenID Connect (OIDC) is an identity layer <em>built on top of</em> OAuth 2.0 — it adds authentication via an ID token (JWT) that contains user identity claims (sub, name, email). OAuth alone cannot tell you <em>who</em> the user is; OIDC can.</p>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What is PKCE and why is it necessary?</strong></p>
+  <p><strong>A:</strong> Proof Key for Code Exchange. In Authorization Code flow, a public client (SPA, mobile app) cannot safely store a client secret. Without PKCE, an attacker who intercepts the authorization code can exchange it for tokens. PKCE solves this: the client generates a random <code>code_verifier</code>, hashes it to a <code>code_challenge</code> (SHA-256), sends the challenge with the auth request, and must prove possession of the verifier when exchanging the code. An intercepted code is worthless without the verifier.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 10 — HEALTH CHECKS
+═══════════════════════════════════════════════════════════════ -->
+<section id="health-checks">
+<h2><span class="sec-num">10</span>Health Checks</h2>
+
+<div class="code-block">
+  <div class="code-label">csharp — Registration <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="meth">AddHealthChecks</span>()
+    .<span class="meth">AddDbContextCheck</span>&lt;<span class="type">AppDbContext</span>&gt;(<span class="str">"database"</span>, tags: <span class="kw">new</span>[] { <span class="str">"ready"</span> })
+    .<span class="meth">AddRedis</span>(_config[<span class="str">"Redis:Connection"</span>]!, <span class="str">"redis"</span>, tags: <span class="kw">new</span>[] { <span class="str">"ready"</span> })
+    .<span class="meth">AddUrlGroup</span>(<span class="kw">new</span> <span class="type">Uri</span>(<span class="str">"https://api.stripe.com"</span>), <span class="str">"stripe"</span>, tags: <span class="kw">new</span>[] { <span class="str">"ready"</span> })
+    .<span class="meth">AddCheck</span>&lt;<span class="type">OrderBacklogHealthCheck</span>&gt;(<span class="str">"order-backlog"</span>, tags: <span class="kw">new</span>[] { <span class="str">"ready"</span> });
+
+<span class="cmt">// Liveness — is the process alive? (no checks, fast)</span>
+app.<span class="meth">MapHealthChecks</span>(<span class="str">"/health/live"</span>, <span class="kw">new</span> <span class="type">HealthCheckOptions</span>
+{
+    Predicate = _ => <span class="kw">false</span>,
+    ResponseWriter = <span class="type">HealthCheckResponseWriter</span>.WriteJson
+});
+
+<span class="cmt">// Readiness — are all dependencies healthy?</span>
+app.<span class="meth">MapHealthChecks</span>(<span class="str">"/health/ready"</span>, <span class="kw">new</span> <span class="type">HealthCheckOptions</span>
+{
+    Predicate = check => check.Tags.<span class="meth">Contains</span>(<span class="str">"ready"</span>),
+    ResponseWriter = <span class="type">HealthCheckResponseWriter</span>.WriteJson
+}).<span class="meth">AllowAnonymous</span>();</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Custom IHealthCheck <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">OrderBacklogHealthCheck</span> : <span class="type">IHealthCheck</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IOrderRepository</span> _repo;
+    <span class="kw">public</span> <span class="type">OrderBacklogHealthCheck</span>(<span class="type">IOrderRepository</span> repo) => _repo = repo;
+
+    <span class="kw">public async</span> <span class="type">Task</span>&lt;<span class="type">HealthCheckResult</span>&gt; <span class="meth">CheckHealthAsync</span>(
+        <span class="type">HealthCheckContext</span> context,
+        <span class="type">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">try</span>
+        {
+            <span class="kw">var</span> count = <span class="kw">await</span> _repo.<span class="meth">GetPendingCountAsync</span>(ct);
+            <span class="kw">return</span> count <span class="kw">switch</span>
+            {
+                < <span class="num">500</span>  => <span class="type">HealthCheckResult</span>.<span class="meth">Healthy</span>($<span class="str">"Pending: {count}"</span>),
+                < <span class="num">2000</span> => <span class="type">HealthCheckResult</span>.<span class="meth">Degraded</span>($<span class="str">"High backlog: {count}"</span>),
+                _      => <span class="type">HealthCheckResult</span>.<span class="meth">Unhealthy</span>($<span class="str">"Critical backlog: {count}"</span>)
+            };
+        }
+        <span class="kw">catch</span> (<span class="type">Exception</span> ex)
+        {
+            <span class="kw">return</span> <span class="type">HealthCheckResult</span>.<span class="meth">Unhealthy</span>(<span class="str">"DB unreachable"</span>, ex);
+        }
+    }
+}</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">yaml — Kubernetes probes <button class="copy-btn">Copy</button></div>
+<pre><code>livenessProbe:
+  httpGet:
+    path: /health/live
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  failureThreshold: 3</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What is the difference between liveness and readiness probes in Kubernetes, and how do you implement them?</strong></p>
+  <p><strong>A:</strong> Liveness probe answers "is the process alive?" — if it fails, Kubernetes restarts the pod. It should be a fast check (no external dependencies) to avoid restart loops. Readiness probe answers "is this pod ready to receive traffic?" — if it fails, Kubernetes removes the pod from the Service's load balancer endpoints until it recovers. Map them to separate <code>MapHealthChecks</code> endpoints with different tag predicates: liveness uses <code>Predicate = _ =&gt; false</code> (no checks, instant), readiness filters for tagged dependency checks.</p>
+</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 11 — CORS
+═══════════════════════════════════════════════════════════════ -->
+<section id="cors">
+<h2><span class="sec-num">11</span>CORS</h2>
+
+<p>Browsers enforce the Same-Origin Policy: a script from <code>app.example.com</code> cannot fetch <code>api.example.com</code> unless the server explicitly permits it via CORS headers. ASP.NET Core handles preflight OPTIONS requests automatically once a policy is configured.</p>
+
+<div class="code-block">
+  <div class="code-label">csharp — Named policies <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="meth">AddCors</span>(options =>
+{
+    options.<span class="meth">AddPolicy</span>(<span class="str">"Frontend"</span>, policy =>
+        policy
+            .<span class="meth">WithOrigins</span>(<span class="str">"https://app.example.com"</span>, <span class="str">"https://admin.example.com"</span>)
+            .<span class="meth">AllowAnyMethod</span>()
+            .<span class="meth">AllowAnyHeader</span>()
+            .<span class="meth">AllowCredentials</span>()          <span class="cmt">// requires WithOrigins, not AllowAnyOrigin</span>
+            .<span class="meth">WithExposedHeaders</span>(<span class="str">"X-Correlation-ID"</span>, <span class="str">"X-Total-Count"</span>));
+
+    options.<span class="meth">AddPolicy</span>(<span class="str">"PublicReadOnly"</span>, policy =>
+        policy
+            .<span class="meth">AllowAnyOrigin</span>()       <span class="cmt">// cannot combine with AllowCredentials</span>
+            .<span class="meth">WithMethods</span>(<span class="str">"GET"</span>, <span class="str">"OPTIONS"</span>)
+            .<span class="meth">WithHeaders</span>(<span class="str">"Content-Type"</span>));
+});
+
+<span class="cmt">// Apply globally</span>
+app.<span class="meth">UseCors</span>(<span class="str">"Frontend"</span>);
+
+<span class="cmt">// Per-endpoint override in Minimal APIs</span>
+products.<span class="meth">MapGet</span>(<span class="str">"/"</span>, <span class="meth">GetProducts</span>).<span class="meth">RequireCors</span>(<span class="str">"PublicReadOnly"</span>);
+
+<span class="cmt">// Per-controller in MVC</span>
+[<span class="type">EnableCors</span>(<span class="str">"Frontend"</span>)]
+<span class="kw">public class</span> <span class="type">OrdersController</span> : <span class="type">ControllerBase</span> { }
+
+[<span class="type">DisableCors</span>]  <span class="cmt">// opt-out a specific action</span>
+<span class="kw">public</span> <span class="type">IActionResult</span> <span class="meth">InternalOnly</span>() => <span class="meth">Ok</span>();</code></pre>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p><strong>AllowAnyOrigin() + AllowCredentials()</strong> is rejected by browsers (and ASP.NET Core will throw at startup). Credentials (cookies, Authorization header) require an explicit origin list via <code>WithOrigins()</code>. This is a CORS spec restriction, not a framework limitation.</p>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What triggers a CORS preflight request and what does it check?</strong></p>
+  <p><strong>A:</strong> A preflight OPTIONS request is sent by the browser before "non-simple" requests — those using methods other than GET/HEAD/POST, non-standard headers (like <code>Authorization</code>, <code>Content-Type: application/json</code>), or credentials. The browser sends <code>Origin</code>, <code>Access-Control-Request-Method</code>, and <code>Access-Control-Request-Headers</code>. The server must respond with matching <code>Access-Control-Allow-*</code> headers. Only if the preflight succeeds does the browser send the actual request. Preflight responses should be cached via <code>Access-Control-Max-Age</code>.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 12 — RATE LIMITING
+═══════════════════════════════════════════════════════════════ -->
+<section id="rate-limiting">
+<h2><span class="sec-num">12</span>Rate Limiting <span class="badge badge-new">.NET 7+</span></h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Limiter</th><th>How it works</th><th>Burst friendly?</th><th>Best for</th></tr></thead>
+<tbody>
+<tr><td>Fixed Window</td><td>N requests per window, resets hard at window end</td><td>No — burst at window start</td><td>Simple per-minute API limits</td></tr>
+<tr><td>Sliding Window</td><td>Segments the window — smoother averaging</td><td>Partially</td><td>Smoother throttling without hard resets</td></tr>
+<tr><td>Token Bucket</td><td>Tokens refill at steady rate, burst uses stored tokens</td><td>Yes</td><td>APIs that allow short bursts</td></tr>
+<tr><td>Concurrency</td><td>Limits simultaneous in-flight requests, not rate</td><td>N/A</td><td>CPU/DB protection from parallel overload</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — All four limiters + per-user policy <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="meth">AddRateLimiter</span>(options =>
+{
+    <span class="cmt">// Fixed window</span>
+    options.<span class="meth">AddFixedWindowLimiter</span>(<span class="str">"fixed"</span>, opt =>
+    {
+        opt.Window              = <span class="type">TimeSpan</span>.<span class="meth">FromMinutes</span>(<span class="num">1</span>);
+        opt.PermitLimit         = <span class="num">100</span>;
+        opt.QueueProcessingOrder = <span class="type">QueueProcessingOrder</span>.OldestFirst;
+        opt.QueueLimit          = <span class="num">10</span>;
+    });
+
+    <span class="cmt">// Sliding window</span>
+    options.<span class="meth">AddSlidingWindowLimiter</span>(<span class="str">"sliding"</span>, opt =>
+    {
+        opt.Window           = <span class="type">TimeSpan</span>.<span class="meth">FromMinutes</span>(<span class="num">1</span>);
+        opt.SegmentsPerWindow = <span class="num">6</span>;   <span class="cmt">// 10-second segments</span>
+        opt.PermitLimit      = <span class="num">100</span>;
+    });
+
+    <span class="cmt">// Token bucket — allows bursts</span>
+    options.<span class="meth">AddTokenBucketLimiter</span>(<span class="str">"token-bucket"</span>, opt =>
+    {
+        opt.TokenLimit          = <span class="num">100</span>;
+        opt.TokensPerPeriod     = <span class="num">20</span>;
+        opt.ReplenishmentPeriod = <span class="type">TimeSpan</span>.<span class="meth">FromSeconds</span>(<span class="num">10</span>);
+        opt.AutoReplenishment   = <span class="kw">true</span>;
+    });
+
+    <span class="cmt">// Concurrency — cap simultaneous requests</span>
+    options.<span class="meth">AddConcurrencyLimiter</span>(<span class="str">"concurrent"</span>, opt =>
+    {
+        opt.PermitLimit = <span class="num">10</span>;
+        opt.QueueLimit  = <span class="num">5</span>;
+    });
+
+    <span class="cmt">// Per-user with partition</span>
+    options.<span class="meth">AddPolicy</span>(<span class="str">"PerUser"</span>, context =>
+        <span class="type">RateLimitPartition</span>.<span class="meth">GetFixedWindowLimiter</span>(
+            partitionKey: context.User.<span class="meth">FindFirstValue</span>(<span class="type">ClaimTypes</span>.NameIdentifier)
+                          ?? context.Request.Headers.Host.ToString(),
+            factory: _ => <span class="kw">new</span> <span class="type">FixedWindowRateLimiterOptions</span>
+            {
+                Window      = <span class="type">TimeSpan</span>.<span class="meth">FromMinutes</span>(<span class="num">1</span>),
+                PermitLimit = <span class="num">60</span>
+            }));
+
+    options.OnRejected = <span class="kw">async</span> (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = <span class="num">429</span>;
+        <span class="kw">if</span> (context.Lease.<span class="meth">TryGetMetadata</span>(
+            <span class="type">MetadataName</span>.RetryAfter, <span class="kw">out var</span> retryAfter))
+            context.HttpContext.Response.Headers.RetryAfter =
+                retryAfter.TotalSeconds.<span class="meth">ToString</span>();
+        <span class="kw">await</span> context.HttpContext.Response
+            .<span class="meth">WriteAsync</span>(<span class="str">"Rate limit exceeded. Please retry later."</span>, token);
+    };
+});
+
+app.<span class="meth">UseRateLimiter</span>();
+
+<span class="cmt">// Apply to routes</span>
+products.<span class="meth">MapPost</span>(<span class="str">"/"</span>, <span class="meth">CreateProduct</span>).<span class="meth">RequireRateLimiting</span>(<span class="str">"PerUser"</span>);
+app.<span class="meth">MapGet</span>(<span class="str">"/api/public"</span>, <span class="meth">PublicHandler</span>).<span class="meth">RequireRateLimiting</span>(<span class="str">"token-bucket"</span>);</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: How does a token bucket differ from a fixed window limiter?</strong></p>
+  <p><strong>A:</strong> Fixed window allows N requests per window and resets hard — a client can send all N at the start of a window, then nothing until the next window. Token bucket fills at a constant rate (e.g., 20 tokens/10 seconds) up to a maximum (100). A client can burst up to the bucket size, then is limited to the fill rate. This is more forgiving for legitimate bursty traffic patterns while still enforcing a steady-state rate. Token bucket is generally preferred for public APIs.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 13 — LOGGING
+═══════════════════════════════════════════════════════════════ -->
+<section id="logging">
+<h2><span class="sec-num">13</span>Logging</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Level</th><th>Value</th><th>Use for</th></tr></thead>
+<tbody>
+<tr><td>Trace</td><td>0</td><td>Extremely verbose diagnostics (never production)</td></tr>
+<tr><td>Debug</td><td>1</td><td>Development-time diagnostics</td></tr>
+<tr><td>Information</td><td>2</td><td>Normal flow events (request in, order created)</td></tr>
+<tr><td>Warning</td><td>3</td><td>Unexpected but handled situations</td></tr>
+<tr><td>Error</td><td>4</td><td>Failures that need investigation</td></tr>
+<tr><td>Critical</td><td>5</td><td>System failure requiring immediate action</td></tr>
+<tr><td>None</td><td>6</td><td>Disable logging entirely</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Serilog setup <button class="copy-btn">Copy</button></div>
+<pre><code>builder.Host.<span class="meth">UseSerilog</span>((context, services, config) =>
+    config
+        .<span class="meth">ReadFrom</span>.<span class="meth">Configuration</span>(context.Configuration)
+        .<span class="meth">ReadFrom</span>.<span class="meth">Services</span>(services)
+        .<span class="meth">Enrich</span>.<span class="meth">FromLogContext</span>()
+        .<span class="meth">Enrich</span>.<span class="meth">WithMachineName</span>()
+        .<span class="meth">Enrich</span>.<span class="meth">WithEnvironmentName</span>()
+        .<span class="meth">WriteTo</span>.<span class="meth">Console</span>(<span class="kw">new</span> <span class="type">JsonFormatter</span>())
+        .<span class="meth">WriteTo</span>.<span class="meth">Seq</span>(<span class="str">"http://seq:5341"</span>)
+        .<span class="meth">WriteTo</span>.<span class="meth">File</span>(<span class="str">"logs/app-.log"</span>, rollingInterval: <span class="type">RollingInterval</span>.Day));</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Structured logging + scopes <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">OrderService</span>
+{
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">OrderService</span>&gt; _logger;
+
+    <span class="kw">public async</span> <span class="type">Task</span>&lt;<span class="type">Order</span>&gt; <span class="meth">CreateAsync</span>(<span class="type">CreateOrderRequest</span> req)
+    {
+        <span class="cmt">// Scope pushes properties into every log entry inside using block</span>
+        <span class="kw">using var</span> scope = _logger.<span class="meth">BeginScope</span>(<span class="kw">new</span> <span class="type">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">object</span>&gt;
+        {
+            [<span class="str">"CustomerId"</span>]    = req.CustomerId,
+            [<span class="str">"CorrelationId"</span>] = <span class="type">Activity</span>.Current?.Id ?? <span class="type">Guid</span>.<span class="meth">NewGuid</span>().<span class="meth">ToString</span>()
+        });
+
+        <span class="cmt">// Structured: {ItemCount} becomes a queryable field in Seq/ELK</span>
+        _logger.<span class="meth">LogInformation</span>(<span class="str">"Creating order with {ItemCount} items"</span>, req.Items.Count);
+
+        <span class="kw">try</span>
+        {
+            <span class="kw">var</span> order = <span class="kw">await</span> _repo.<span class="meth">CreateAsync</span>(req);
+            _logger.<span class="meth">LogInformation</span>(<span class="str">"Order {OrderId} created"</span>, order.Id);
+            <span class="kw">return</span> order;
+        }
+        <span class="kw">catch</span> (<span class="type">Exception</span> ex)
+        {
+            _logger.<span class="meth">LogError</span>(ex, <span class="str">"Failed to create order for customer {CustomerId}"</span>,
+                req.CustomerId);
+            <span class="kw">throw</span>;
+        }
+    }
+}
+
+<span class="cmt">// High-performance logging — avoids string allocation when level is disabled</span>
+<span class="kw">public static partial class</span> <span class="type">Log</span>
+{
+    [<span class="type">LoggerMessage</span>(<span class="type">EventId</span> = <span class="num">1001</span>, <span class="type">Level</span> = <span class="type">LogLevel</span>.Information,
+        Message = <span class="str">"Processing order {OrderId} for customer {CustomerId}"</span>)]
+    <span class="kw">public static partial void</span> <span class="meth">ProcessingOrder</span>(
+        <span class="type">ILogger</span> logger, <span class="type">Guid</span> orderId, <span class="type">Guid</span> customerId);
+}
+<span class="cmt">// Usage: Log.ProcessingOrder(_logger, order.Id, order.CustomerId);</span></code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Correlation ID middleware <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">CorrelationIdMiddleware</span>
+{
+    <span class="kw">private const string</span> Header = <span class="str">"X-Correlation-ID"</span>;
+    <span class="kw">private readonly</span> <span class="type">RequestDelegate</span> _next;
+    <span class="kw">public</span> <span class="type">CorrelationIdMiddleware</span>(<span class="type">RequestDelegate</span> next) => _next = next;
+
+    <span class="kw">public async</span> <span class="type">Task</span> <span class="meth">InvokeAsync</span>(<span class="type">HttpContext</span> ctx)
+    {
+        <span class="kw">var</span> id = ctx.Request.Headers[Header].FirstOrDefault()
+                 ?? <span class="type">Guid</span>.<span class="meth">NewGuid</span>().<span class="meth">ToString</span>();
+        ctx.Response.Headers[Header] = id;
+
+        <span class="kw">using</span> (<span class="type">LogContext</span>.<span class="meth">PushProperty</span>(<span class="str">"CorrelationId"</span>, id))
+            <span class="kw">await</span> _next(ctx);
+    }
+}</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: Why use structured logging instead of string interpolation?</strong></p>
+  <p><strong>A:</strong> String interpolation (<code>$"Order {id} created"</code>) produces a plain string — unsearchable beyond text. Structured logging (<code>"Order {OrderId} created", id</code>) preserves <code>OrderId</code> as a typed, indexed property in the log store (Seq, ELK, Application Insights). You can then query <code>OrderId = "abc-123"</code> or aggregate order volumes, rather than running slow full-text searches. Additionally, when the log level is disabled, structured logging with <code>LoggerMessage.Define</code> skips the allocation entirely.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 14 — BACKGROUND SERVICES
+═══════════════════════════════════════════════════════════════ -->
+<section id="background-services">
+<h2><span class="sec-num">14</span>Background Services / Hosted Services</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Interface</th><th>Use when</th><th>Key difference</th></tr></thead>
+<tbody>
+<tr><td><code>IHostedService</code></td><td>One-time startup/shutdown work (DB migration, cache warm-up)</td><td>You implement StartAsync + StopAsync directly — full control</td></tr>
+<tr><td><code>BackgroundService</code></td><td>Long-running loops (polling, queue consumption)</td><td>Abstract base — only implement ExecuteAsync; handles cancellation wiring</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — One-time startup: IHostedService <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">DatabaseMigrationService</span> : <span class="type">IHostedService</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IServiceScopeFactory</span> _factory;
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">DatabaseMigrationService</span>&gt; _logger;
+
+    <span class="kw">public</span> <span class="type">DatabaseMigrationService</span>(<span class="type">IServiceScopeFactory</span> factory,
+        <span class="type">ILogger</span>&lt;<span class="type">DatabaseMigrationService</span>&gt; logger)
+        => (_factory, _logger) = (factory, logger);
+
+    <span class="kw">public async</span> <span class="type">Task</span> <span class="meth">StartAsync</span>(<span class="type">CancellationToken</span> ct)
+    {
+        _logger.<span class="meth">LogInformation</span>(<span class="str">"Applying EF migrations..."</span>);
+        <span class="kw">using var</span> scope = _factory.<span class="meth">CreateScope</span>();
+        <span class="kw">var</span> db = scope.ServiceProvider.<span class="meth">GetRequiredService</span>&lt;<span class="type">AppDbContext</span>&gt;();
+        <span class="kw">await</span> db.Database.<span class="meth">MigrateAsync</span>(ct);
+        _logger.<span class="meth">LogInformation</span>(<span class="str">"Migrations applied"</span>);
+    }
+
+    <span class="kw">public</span> <span class="type">Task</span> <span class="meth">StopAsync</span>(<span class="type">CancellationToken</span> ct) => <span class="type">Task</span>.CompletedTask;
+}</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Recurring loop: BackgroundService <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">OrderProcessorService</span> : <span class="type">BackgroundService</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IServiceScopeFactory</span> _factory;
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">OrderProcessorService</span>&gt; _logger;
+
+    <span class="kw">public</span> <span class="type">OrderProcessorService</span>(<span class="type">IServiceScopeFactory</span> factory,
+        <span class="type">ILogger</span>&lt;<span class="type">OrderProcessorService</span>&gt; logger)
+        => (_factory, _logger) = (factory, logger);
+
+    <span class="kw">protected override async</span> <span class="type">Task</span> <span class="meth">ExecuteAsync</span>(<span class="type">CancellationToken</span> stoppingToken)
+    {
+        _logger.<span class="meth">LogInformation</span>(<span class="str">"Order processor started"</span>);
+
+        <span class="kw">while</span> (!stoppingToken.IsCancellationRequested)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">await</span> <span class="meth">ProcessBatchAsync</span>(stoppingToken);
+            }
+            <span class="kw">catch</span> (<span class="type">OperationCanceledException</span>)
+            {
+                <span class="kw">break</span>;  <span class="cmt">// graceful shutdown — do not log as error</span>
+            }
+            <span class="kw">catch</span> (<span class="type">Exception</span> ex)
+            {
+                _logger.<span class="meth">LogError</span>(ex, <span class="str">"Batch processing error. Retrying in 30s."</span>);
+            }
+
+            <span class="kw">await</span> <span class="type">Task</span>.<span class="meth">Delay</span>(<span class="type">TimeSpan</span>.<span class="meth">FromSeconds</span>(<span class="num">30</span>), stoppingToken);
+        }
+
+        _logger.<span class="meth">LogInformation</span>(<span class="str">"Order processor stopped"</span>);
+    }
+
+    <span class="kw">private async</span> <span class="type">Task</span> <span class="meth">ProcessBatchAsync</span>(<span class="type">CancellationToken</span> ct)
+    {
+        <span class="cmt">// Must create a scope — BackgroundService is a singleton</span>
+        <span class="kw">using var</span> scope = _factory.<span class="meth">CreateScope</span>();
+        <span class="kw">var</span> repo      = scope.ServiceProvider.<span class="meth">GetRequiredService</span>&lt;<span class="type">IOrderRepository</span>&gt;();
+        <span class="kw">var</span> processor = scope.ServiceProvider.<span class="meth">GetRequiredService</span>&lt;<span class="type">IOrderProcessor</span>&gt;();
+
+        <span class="kw">var</span> orders = <span class="kw">await</span> repo.<span class="meth">GetPendingAsync</span>(<span class="num">50</span>, ct);
+        <span class="kw">foreach</span> (<span class="kw">var</span> order <span class="kw">in</span> orders)
+            <span class="kw">await</span> processor.<span class="meth">ProcessAsync</span>(order, ct);
+    }
+}
+
+<span class="cmt">// Registration</span>
+builder.Services.<span class="meth">AddHostedService</span>&lt;<span class="type">DatabaseMigrationService</span>&gt;();
+builder.Services.<span class="meth">AddHostedService</span>&lt;<span class="type">OrderProcessorService</span>&gt;();</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: Why can't you inject IDbContext directly into a BackgroundService?</strong></p>
+  <p><strong>A:</strong> BackgroundService is registered as a singleton (it lives for the application lifetime). DbContext is Scoped — it must be disposed after each unit of work. Injecting Scoped into Singleton is the captive dependency bug. The fix is to inject <code>IServiceScopeFactory</code> and create a new scope per batch/operation, so the DbContext is properly created, used, and disposed within each iteration.</p>
+</div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Pitfall</div>
+  <p>If <code>ExecuteAsync</code> throws before the first <code>await</code>, the exception propagates synchronously and crashes the host at startup. Always wrap the body of ExecuteAsync in a try/catch or ensure the first statement is an <code>await</code>.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 15 — SIGNALR
+═══════════════════════════════════════════════════════════════ -->
+<section id="signalr">
+<h2><span class="sec-num">15</span>SignalR</h2>
+
+<p>SignalR provides real-time, bidirectional communication between server and clients. It negotiates the best available transport: WebSockets → Server-Sent Events → Long Polling.</p>
+
+<div class="code-block">
+  <div class="code-label">csharp — Hub with groups <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">OrderStatusHub</span> : <span class="type">Hub</span>
+{
+    <span class="kw">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">OrderStatusHub</span>&gt; _logger;
+    <span class="kw">public</span> <span class="type">OrderStatusHub</span>(<span class="type">ILogger</span>&lt;<span class="type">OrderStatusHub</span>&gt; logger) => _logger = logger;
+
+    <span class="kw">public override async</span> <span class="type">Task</span> <span class="meth">OnConnectedAsync</span>()
+    {
+        _logger.<span class="meth">LogInformation</span>(<span class="str">"Connected: {ConnectionId} user={UserId}"</span>,
+            Context.ConnectionId, Context.UserIdentifier);
+        <span class="kw">await base</span>.<span class="meth">OnConnectedAsync</span>();
+    }
+
+    <span class="kw">public override async</span> <span class="type">Task</span> <span class="meth">OnDisconnectedAsync</span>(<span class="type">Exception</span>? ex)
+    {
+        _logger.<span class="meth">LogInformation</span>(<span class="str">"Disconnected: {ConnectionId}"</span>, Context.ConnectionId);
+        <span class="kw">await base</span>.<span class="meth">OnDisconnectedAsync</span>(ex);
+    }
+
+    <span class="cmt">// Client calls this to subscribe to order updates</span>
+    <span class="kw">public async</span> <span class="type">Task</span> <span class="meth">SubscribeToOrder</span>(<span class="type">Guid</span> orderId)
+    {
+        <span class="kw">await</span> Groups.<span class="meth">AddToGroupAsync</span>(Context.ConnectionId, $<span class="str">"order-{orderId}"</span>);
+        <span class="kw">await</span> Clients.Caller.<span class="meth">SendAsync</span>(<span class="str">"Subscribed"</span>, orderId);
+    }
+
+    <span class="kw">public async</span> <span class="type">Task</span> <span class="meth">UnsubscribeFromOrder</span>(<span class="type">Guid</span> orderId)
+        => <span class="kw">await</span> Groups.<span class="meth">RemoveFromGroupAsync</span>(Context.ConnectionId, $<span class="str">"order-{orderId}"</span>);
+}
+
+<span class="cmt">// Registration with Redis scale-out backplane</span>
+builder.Services.<span class="meth">AddSignalR</span>()
+    .<span class="meth">AddStackExchangeRedis</span>(_config[<span class="str">"Redis:Connection"</span>]!, opts =>
+        opts.Configuration.ChannelPrefix = <span class="type">RedisChannel</span>.<span class="meth">Literal</span>(<span class="str">"myapp"</span>));
+
+app.<span class="meth">MapHub</span>&lt;<span class="type">OrderStatusHub</span>&gt;(<span class="str">"/hubs/orders"</span>).<span class="meth">RequireAuthorization</span>();</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">csharp — Push from service via IHubContext <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="type">OrderNotifier</span>
+{
+    <span class="kw">private readonly</span> <span class="type">IHubContext</span>&lt;<span class="type">OrderStatusHub</span>&gt; _hub;
+    <span class="kw">public</span> <span class="type">OrderNotifier</span>(<span class="type">IHubContext</span>&lt;<span class="type">OrderStatusHub</span>&gt; hub) => _hub = hub;
+
+    <span class="kw">public async</span> <span class="type">Task</span> <span class="meth">NotifyStatusChangedAsync</span>(<span class="type">Guid</span> orderId, <span class="kw">string</span> status)
+    {
+        <span class="cmt">// All subscribers in the group receive the message</span>
+        <span class="kw">await</span> _hub.Clients
+            .<span class="meth">Group</span>($<span class="str">"order-{orderId}"</span>)
+            .<span class="meth">SendAsync</span>(<span class="str">"OrderStatusChanged"</span>,
+                <span class="kw">new</span> { OrderId = orderId, Status = status, Timestamp = <span class="type">DateTime</span>.UtcNow });
+    }
+
+    <span class="kw">public async</span> <span class="type">Task</span> <span class="meth">NotifyUserAsync</span>(<span class="kw">string</span> userId, <span class="kw">string</span> message)
+        => <span class="kw">await</span> _hub.Clients.<span class="meth">User</span>(userId).<span class="meth">SendAsync</span>(<span class="str">"Notification"</span>, message);
+}</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">javascript — Client <button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">const</span> connection = <span class="kw">new</span> signalR.HubConnectionBuilder()
+    .withUrl(<span class="str">"/hubs/orders"</span>, {
+        accessTokenFactory: () => localStorage.getItem(<span class="str">"token"</span>)
+    })
+    .withAutomaticReconnect([<span class="num">0</span>, <span class="num">2000</span>, <span class="num">10000</span>, <span class="num">30000</span>])
+    .build();
+
+connection.on(<span class="str">"OrderStatusChanged"</span>, (data) => {
+    console.log(<span class="str">`Order ${data.orderId}: ${data.status}`</span>);
+    updateUI(data);
+});
+
+connection.onreconnecting(() => console.log(<span class="str">"Reconnecting..."</span>));
+connection.onreconnected(() => resubscribeToOrders());
+
+<span class="kw">await</span> connection.start();
+<span class="kw">await</span> connection.invoke(<span class="str">"SubscribeToOrder"</span>, orderId);</code></pre>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: How do you scale SignalR across multiple servers?</strong></p>
+  <p><strong>A:</strong> Without a backplane, a message sent by server A only reaches clients connected to server A. <code>AddStackExchangeRedis()</code> adds a Redis Pub/Sub backplane: when any server publishes a group message, Redis distributes it to all servers, which forward it to their local connected clients. Azure SignalR Service is the managed alternative — it handles connection management and scaling entirely, so your servers become stateless. For very high scale, Azure SignalR Service is preferred over self-managed Redis.</p>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p><strong>Q: What transport protocols does SignalR support and how does it choose?</strong></p>
+  <p><strong>A:</strong> SignalR negotiates in order of preference: 1) WebSockets (full-duplex, preferred), 2) Server-Sent Events (server-to-client streaming, HTTP), 3) Long Polling (polling fallback, works everywhere). WebSockets require HTTP/1.1 upgrade support. The client calls <code>/negotiate</code>, the server responds with available transports, and the client picks the best. You can force a specific transport with <code>.withUrl(url, { transport: signalR.HttpTransportType.WebSockets })</code>.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     QUICK REFERENCE
+═══════════════════════════════════════════════════════════════ -->
+<section id="quick-reference">
+<h2><span class="sec-num">★</span>Quick Reference</h2>
+
+<h3>Top 10 Interview Questions — Lead Level</h3>
+<ol style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem">
+  <li><strong>Explain the ASP.NET Core request pipeline and middleware order.</strong> Pipeline is bidirectional; Use = pass through, Run = terminal, Map = branch. Order: ExceptionHandler → HTTPS → StaticFiles → Routing → CORS → Authentication → Authorization → custom → endpoint.</li>
+  <li><strong>What is the captive dependency problem?</strong> Singleton holding a Scoped service — the scoped instance is never released, shared across requests. Fix: inject IServiceScopeFactory, create a scope per operation.</li>
+  <li><strong>How does JWT validation work?</strong> Extract token → decode header/payload (base64url) → recompute/verify signature → validate claims (iss, aud, exp). Stateless — no DB round trip needed.</li>
+  <li><strong>Policy-based vs Role-based authorization?</strong> Roles are simple strings; policies compose requirements + handlers, are testable, and can use any claim or resource context.</li>
+  <li><strong>How do you version an API without breaking clients?</strong> Keep old version, add new URL segment (/v2/), mark old as Deprecated = true. Monitor traffic; remove only when zero clients remain.</li>
+  <li><strong>Middleware vs Filters — when to use each?</strong> Middleware: any HTTP concern, runs for all requests. Filters: MVC-only, have access to action metadata, model state, and result objects.</li>
+  <li><strong>Why can't BackgroundService inject IDbContext directly?</strong> BackgroundService is singleton; DbContext is scoped. Captive dependency — leaks connection state. Use IServiceScopeFactory.</li>
+  <li><strong>How do you scale SignalR?</strong> Redis backplane (AddStackExchangeRedis) for cross-server messaging, or Azure SignalR Service for fully managed scale-out.</li>
+  <li><strong>What is PKCE and when is it required?</strong> Code verifier/challenge exchange that prevents authorization code interception by public clients (SPA, mobile). Required for Authorization Code flow without client secret.</li>
+  <li><strong>Difference between IOptions, IOptionsSnapshot, IOptionsMonitor?</strong> Singleton+never-reloads vs Scoped+per-request vs Singleton+live-OnChange callback.</li>
+</ol>
+
+<h3>Common Pitfalls Summary</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Pitfall</th><th>Symptom</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>Captive dependency</td><td>Data corruption, shared DbContext</td><td>IServiceScopeFactory in singleton</td></tr>
+<tr><td>UseAuthorization before UseAuthentication</td><td>All [Authorize] silently fails</td><td>Authentication → Authorization always</td></tr>
+<tr><td>AllowAnyOrigin + AllowCredentials</td><td>Startup exception or browser error</td><td>WithOrigins() for credentialed requests</td></tr>
+<tr><td>Checking ModelState.IsValid with [ApiController]</td><td>Dead code — auto-handled</td><td>Remove the check</td></tr>
+<tr><td>JWT in localStorage</td><td>XSS token theft</td><td>httpOnly; Secure cookie</td></tr>
+<tr><td>Symmetric JWT key in multi-server</td><td>Intermittent 401s</td><td>RS256 asymmetric or shared key management</td></tr>
+<tr><td>No AssumeDefaultVersionWhenUnspecified</td><td>400 on existing clients after versioning added</td><td>Set = true during migration</td></tr>
+<tr><td>BackgroundService without try/catch</td><td>Host crash on first exception</td><td>Wrap ExecuteAsync body in try/catch loop</td></tr>
+<tr><td>UseStaticFiles after UseRouting</td><td>Routing overhead on static file requests</td><td>UseStaticFiles early in pipeline</td></tr>
+<tr><td>IOptions in singleton depending on runtime config</td><td>Config changes never reflected</td><td>IOptionsMonitor for live reload</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+</div><!-- end .content -->
+</main>
+
+<script>
+// Copy buttons
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const code = btn.closest('.code-block').querySelector('pre').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.style.color = '#3fb950';
+      btn.style.borderColor = '#3fb950';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 2000);
+    });
+  });
+});
+
+// Active TOC via IntersectionObserver
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const link = document.querySelector(`.toc a[href="#${entry.target.id}"]`);
+    if (link) link.classList.toggle('active', entry.isIntersecting);
+  });
+}, { rootMargin: '-60px 0px -70% 0px', threshold: 0 });
+
+document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security — Lead .NET Interview Prep</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --heading: #58a6ff;
+    --keyword: #ff7b72;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --orange: #e3b341;
+    --code-bg: #0d1117;
+    --sidebar-width: 270px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 0;
+    flex-shrink: 0;
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    padding: 0 20px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0 8px;
+  }
+
+  .toc-list li { margin: 2px 0; }
+
+  .toc-list a {
+    display: block;
+    padding: 5px 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+
+  .toc-list a:hover {
+    background: var(--surface2);
+    color: var(--heading);
+  }
+
+  .toc-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .badge-critical { background: rgba(255,123,114,0.2); color: var(--keyword); }
+  .badge-high { background: rgba(210,153,34,0.2); color: var(--orange); }
+  .badge-medium { background: rgba(63,185,80,0.2); color: var(--green); }
+
+  /* MAIN CONTENT */
+  .main {
+    flex: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 48px;
+    min-width: 0;
+  }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 6px;
+  }
+
+  .page-subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  h2 {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--heading);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+    scroll-margin-top: 20px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--orange);
+    margin: 28px 0 12px;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--purple);
+    margin: 20px 0 8px;
+  }
+
+  p { margin-bottom: 14px; }
+
+  strong { color: #e6edf3; }
+
+  a { color: var(--heading); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--heading);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 14px 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .copy-btn {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover {
+    background: var(--heading);
+    color: var(--bg);
+    border-color: var(--heading);
+  }
+
+  .copy-btn.copied {
+    background: var(--green);
+    color: var(--bg);
+    border-color: var(--green);
+  }
+
+  pre {
+    padding: 16px;
+    overflow-x: auto;
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #e6edf3;
+  }
+
+  /* VULNERABLE vs SAFE */
+  .code-block.vulnerable {
+    border-left: 4px solid var(--keyword);
+  }
+
+  .code-block.safe {
+    border-left: 4px solid var(--green);
+  }
+
+  .code-block.vulnerable .code-header {
+    background: rgba(255,123,114,0.1);
+  }
+
+  .code-block.safe .code-header {
+    background: rgba(63,185,80,0.1);
+  }
+
+  .code-label-vulnerable {
+    color: var(--keyword);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+
+  .code-label-safe {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+
+  /* CARDS */
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    background: var(--surface);
+  }
+
+  .card-q {
+    border-left: 3px solid var(--heading);
+  }
+
+  .card-pitfall {
+    border-left: 3px solid var(--keyword);
+    background: rgba(255,123,114,0.05);
+  }
+
+  .card-tip {
+    border-left: 3px solid var(--green);
+    background: rgba(63,185,80,0.05);
+  }
+
+  .card-warning {
+    border-left: 3px solid var(--orange);
+    background: rgba(227,179,65,0.05);
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .card-q .card-label { color: var(--heading); }
+  .card-pitfall .card-label { color: var(--keyword); }
+  .card-tip .card-label { color: var(--green); }
+  .card-warning .card-label { color: var(--orange); }
+
+  .card-question {
+    font-weight: 600;
+    color: #e6edf3;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .card-answer {
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+  }
+
+  .checklist li {
+    padding: 5px 0 5px 26px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    color: var(--heading);
+    font-size: 14px;
+  }
+
+  /* OWASP BADGES */
+  .owasp-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  .owasp-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .owasp-id {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  .owasp-name {
+    font-weight: 700;
+    color: #e6edf3;
+    font-size: 15px;
+  }
+
+  .severity-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sev-critical { background: rgba(255,123,114,0.2); color: var(--keyword); border: 1px solid rgba(255,123,114,0.4); }
+  .sev-high { background: rgba(227,179,65,0.2); color: var(--orange); border: 1px solid rgba(227,179,65,0.4); }
+  .sev-medium { background: rgba(63,185,80,0.2); color: var(--green); border: 1px solid rgba(63,185,80,0.4); }
+
+  .owasp-body { padding: 16px 18px; }
+
+  /* JWT DIAGRAM */
+  .jwt-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 13px;
+  }
+
+  .jwt-part {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin: 4px;
+    font-weight: 600;
+  }
+
+  .jwt-header { background: rgba(255,123,114,0.2); color: var(--keyword); border: 1px solid rgba(255,123,114,0.4); }
+  .jwt-payload { background: rgba(63,185,80,0.2); color: var(--green); border: 1px solid rgba(63,185,80,0.4); }
+  .jwt-sig { background: rgba(188,140,255,0.2); color: var(--purple); border: 1px solid rgba(188,140,255,0.4); }
+
+  .jwt-dot { color: var(--text-muted); margin: 0 2px; font-size: 18px; vertical-align: middle; }
+
+  /* FLOW DIAGRAM */
+  .flow-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .flow-arrow { color: var(--heading); }
+  .flow-entity { color: var(--orange); font-weight: 600; }
+  .flow-data { color: var(--green); }
+  .flow-comment { color: var(--text-muted); }
+
+  /* TAG */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 2px;
+  }
+
+  .tag-blue { background: rgba(88,166,255,0.15); color: var(--heading); border: 1px solid rgba(88,166,255,0.3); }
+  .tag-red { background: rgba(255,123,114,0.15); color: var(--keyword); border: 1px solid rgba(255,123,114,0.3); }
+  .tag-green { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+
+  /* COMPARISON GRID */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 14px 0;
+  }
+
+  @media (max-width: 700px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 24px 20px; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+  /* CHECKLIST SECTION */
+  .checklist-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .checklist-section h4 {
+    margin-top: 16px;
+  }
+
+  .checklist-section h4:first-child { margin-top: 0; }
+
+  /* INLINE CODE */
+  code {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 12.5px;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #e6edf3;
+  }
+
+  ul, ol {
+    padding-left: 24px;
+    margin-bottom: 14px;
+  }
+
+  li { margin-bottom: 4px; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-title">Security — .NET Lead</div>
+  <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+  <ul class="toc-list">
+    <li><a href="#s1">1. JWT Deep Dive</a></li>
+    <li><a href="#s2">2. OAuth 2.0 Flows</a></li>
+    <li><a href="#s3">3. OpenID Connect</a></li>
+    <li><a href="#s4">4. HTTPS &amp; TLS</a></li>
+    <li><a href="#s5">5. OWASP Top 10</a></li>
+    <li><a href="#s5a01">&#8193;A01: Access Control <span class="toc-badge badge-critical">Critical</span></a></li>
+    <li><a href="#s5a02">&#8193;A02: Crypto Failures <span class="toc-badge badge-critical">Critical</span></a></li>
+    <li><a href="#s5a03">&#8193;A03: SQL Injection <span class="toc-badge badge-critical">Critical</span></a></li>
+    <li><a href="#s5a05">&#8193;A05: Misconfiguration <span class="toc-badge badge-high">High</span></a></li>
+    <li><a href="#s5a06">&#8193;A06: Components <span class="toc-badge badge-high">High</span></a></li>
+    <li><a href="#s5a07">&#8193;A07: Auth Failures <span class="toc-badge badge-high">High</span></a></li>
+    <li><a href="#s5a09">&#8193;A09: Logging <span class="toc-badge badge-medium">Medium</span></a></li>
+    <li><a href="#s5a10">&#8193;A10: SSRF <span class="toc-badge badge-high">High</span></a></li>
+    <li><a href="#s6">6. XSS</a></li>
+    <li><a href="#s7">7. CSRF</a></li>
+    <li><a href="#s8">8. SQL Injection</a></li>
+    <li><a href="#s9">9. Secrets Management</a></li>
+    <li><a href="#s10">10. Encryption &amp; Hashing</a></li>
+    <li><a href="#s11">11. Input Validation</a></li>
+    <li><a href="#s12">12. Interview Q&amp;A</a></li>
+    <li><a href="#s13">13. OWASP Checklist</a></li>
+  </ul>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+  <h1 class="page-title">Security</h1>
+  <p class="page-subtitle">Lead .NET Software Engineer Interview Prep &mdash; JWT, OAuth 2.0, OIDC, HTTPS/TLS, OWASP Top 10, XSS, CSRF, SQL Injection, Secrets, Encryption</p>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 1: JWT -->
+  <!-- ============================================================ -->
+  <div class="section" id="s1">
+    <h2>1. JWT Deep Dive</h2>
+
+    <h3>Structure</h3>
+    <p>A JWT is three Base64URL-encoded segments joined by dots:</p>
+
+    <div class="jwt-diagram">
+      <span class="jwt-part jwt-header">HEADER</span>
+      <span class="jwt-dot">.</span>
+      <span class="jwt-part jwt-payload">PAYLOAD</span>
+      <span class="jwt-dot">.</span>
+      <span class="jwt-part jwt-sig">SIGNATURE</span>
+      <br><br>
+      <span style="color:var(--text-muted); font-size:12px;">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9 . eyJzdWIiOiJ1c2VyMTIzIiwiZXhwIjoxN... . RSA_SIGNATURE</span>
+    </div>
+
+    <h3>Header</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JSON — Header</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre>{
+  "alg": "RS256",   // Algorithm: RS256 (asymmetric) or HS256 (symmetric)
+  "typ": "JWT"
+}</pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Algorithm</th><th>Type</th><th>Key Required</th><th>Best For</th></tr>
+        <tr><td><code>HS256</code></td><td>Symmetric</td><td>Shared secret</td><td>Single-service, internal use</td></tr>
+        <tr><td><code>RS256</code></td><td>Asymmetric (RSA)</td><td>Private (sign) + Public (verify)</td><td>Distributed systems, third-party auth</td></tr>
+        <tr><td><code>ES256</code></td><td>Asymmetric (EC)</td><td>Private + Public</td><td>Mobile/IoT — smaller key size</td></tr>
+      </table>
+    </div>
+
+    <div class="card card-pitfall">
+      <div class="card-label">Pitfall</div>
+      <p>HS256 requires every service that validates tokens to know the secret. RS256 distributes the public key only — the auth server holds the private key exclusively.</p>
+    </div>
+
+    <h3>Payload Claims</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JSON — Payload</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre>{
+  "sub": "user-123",              // Subject — who the token is about
+  "iss": "https://auth.myapp.com", // Issuer — who created the token
+  "aud": "api.myapp.com",          // Audience — who should accept it
+  "exp": 1723000000,               // Expiry (Unix timestamp) — VALIDATE
+  "iat": 1722996400,               // Issued At
+  "jti": "unique-token-id",        // JWT ID (for revocation tracking)
+  "roles": ["admin", "editor"],    // Custom claims
+  "email": "user@example.com"
+}</pre>
+    </div>
+
+    <h3>JWT Validation Checklist</h3>
+    <ul class="checklist">
+      <li><strong>Signature</strong> — verify with the correct key</li>
+      <li><strong>Algorithm (<code>alg</code>)</strong> — must match your whitelist; reject <code>none</code></li>
+      <li><strong>Expiry (<code>exp</code>)</strong> — token must not be expired</li>
+      <li><strong>Not Before (<code>nbf</code>)</strong> — if present, must be in the past</li>
+      <li><strong>Issuer (<code>iss</code>)</strong> — must match your expected issuer exactly</li>
+      <li><strong>Audience (<code>aud</code>)</strong> — must include your API's identifier</li>
+      <li><strong>Token Type</strong> — ID token is not an access token</li>
+    </ul>
+
+    <h3>Common JWT Attacks</h3>
+    <h4>Attack 1: alg:none Attack</h4>
+    <p>Attacker changes <code>"alg": "none"</code> and strips the signature. Vulnerable servers skip validation.</p>
+
+    <div class="compare-grid">
+      <div class="code-block vulnerable">
+        <div class="code-header">
+          <span class="code-label-vulnerable">Vulnerable</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>// Trusting alg from the token itself
+var token = handler.ReadJwtToken(raw);
+string alg = token.Header.Alg;
+// NEVER use this to pick your validator!</pre>
+      </div>
+      <div class="code-block safe">
+        <div class="code-header">
+          <span class="code-label-safe">Safe</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>// Always whitelist the expected algorithm
+var p = new TokenValidationParameters
+{
+    ValidAlgorithms = new[] { "RS256" },
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = rsaPublicKey
+};</pre>
+      </div>
+    </div>
+
+    <h4>Attack 2: HS/RS Confusion Attack</h4>
+    <p>If a server accepting RS256 also accepts HS256, an attacker signs a token with the <em>public key</em> as the HMAC secret. The server validates it as HS256 using the public key and it passes.</p>
+    <div class="card card-tip">
+      <div class="card-label">Fix</div>
+      <p>Explicitly whitelist <strong>only</strong> the expected algorithm. Never auto-detect from the token header.</p>
+    </div>
+
+    <h3>Access Token + Refresh Token Pattern</h3>
+    <div class="flow-box"><span class="flow-entity">Client</span> <span class="flow-arrow">→</span> POST /auth/login  <span class="flow-comment">← { access_token (15 min), refresh_token (7 days) }</span>
+
+<span class="flow-entity">Client</span> <span class="flow-arrow">→</span> API calls with access_token in Authorization: Bearer header
+
+<span class="flow-comment">// When access_token expires:</span>
+<span class="flow-entity">Client</span> <span class="flow-arrow">→</span> POST /auth/refresh { refresh_token }
+         <span class="flow-arrow">←</span> <span class="flow-data">{ access_token: new 15-min token }</span>
+<span class="flow-comment">// Refresh tokens are stored server-side → can be revoked</span></div>
+
+    <h3>Token Storage: httpOnly Cookie vs localStorage</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Storage</th><th>XSS Risk</th><th>CSRF Risk</th><th>Recommendation</th></tr>
+        <tr><td><code>localStorage</code></td><td style="color:var(--keyword)">HIGH — JS readable</td><td>None</td><td>Avoid for auth tokens</td></tr>
+        <tr><td><code>sessionStorage</code></td><td style="color:var(--keyword)">HIGH — JS readable</td><td>None</td><td>Avoid for auth tokens</td></tr>
+        <tr><td>httpOnly Cookie</td><td style="color:var(--green)">None — JS cannot read</td><td>YES (mitigate with SameSite)</td><td><strong>Preferred</strong></td></tr>
+      </table>
+    </div>
+
+    <h3>C# — Generate and Validate JWT (RS256)</h3>
+    <div class="code-block safe">
+      <div class="code-header">
+        <span class="code-label-safe">Safe — Complete Implementation</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre>// NuGet: Microsoft.IdentityModel.Tokens, System.IdentityModel.Tokens.Jwt
+public class JwtService
+{
+    private readonly JwtSettings _settings;
+
+    public string GenerateToken(string userId, string email, IEnumerable&lt;string&gt; roles)
+    {
+        using var rsa = RSA.Create();
+        rsa.ImportFromPem(_settings.PrivateKeyPem);
+        var credentials = new SigningCredentials(
+            new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+
+        var claims = new List&lt;Claim&gt;
+        {
+            new(JwtRegisteredClaimNames.Sub, userId),
+            new(JwtRegisteredClaimNames.Email, email),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+        foreach (var role in roles)
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+        var token = new JwtSecurityToken(
+            issuer: _settings.Issuer,
+            audience: _settings.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(15),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public ClaimsPrincipal? ValidateToken(string token)
+    {
+        using var rsa = RSA.Create();
+        rsa.ImportFromPem(_settings.PublicKeyPem);
+
+        try
+        {
+            return new JwtSecurityTokenHandler().ValidateToken(
+                token,
+                new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new RsaSecurityKey(rsa),
+                    ValidAlgorithms = new[] { SecurityAlgorithms.RsaSha256 },
+                    ValidateIssuer = true, ValidIssuer = _settings.Issuer,
+                    ValidateAudience = true, ValidAudience = _settings.Audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromSeconds(30)
+                }, out _);
+        }
+        catch (SecurityTokenException) { return null; }
+    }
+}
+
+// Program.cs — Add JWT auth middleware
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =&gt;
+    {
+        options.Authority = "https://auth.myapp.com";
+        options.Audience = "api.myapp.com";
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidAlgorithms = new[] { "RS256" },
+            ClockSkew = TimeSpan.FromSeconds(30)
+        };
+    });</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2: OAuth 2.0 -->
+  <!-- ============================================================ -->
+  <div class="section" id="s2">
+    <h2>2. OAuth 2.0 Flows</h2>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Flow</th><th>Use Case</th><th>Client Secret?</th><th>Token in URL?</th></tr>
+        <tr><td>Authorization Code</td><td>Web apps with backend server</td><td>Yes</td><td>No</td></tr>
+        <tr><td>Auth Code + PKCE</td><td>SPA, Mobile (no secret)</td><td>No</td><td>No</td></tr>
+        <tr><td>Client Credentials</td><td>Machine-to-machine</td><td>Yes</td><td>No</td></tr>
+        <tr><td>Implicit</td><td><em>Deprecated</em></td><td>No</td><td><strong>Yes — dangerous</strong></td></tr>
+        <tr><td>Device Flow</td><td>TV, CLI, IoT</td><td>Optional</td><td>No</td></tr>
+      </table>
+    </div>
+
+    <h3>Authorization Code Flow</h3>
+    <div class="flow-box"><span class="flow-entity">1. User</span> <span class="flow-arrow">→</span> clicks Login
+<span class="flow-entity">2. Browser</span> <span class="flow-arrow">→</span> https://auth.myapp.com/authorize
+          ?client_id=myapp
+          &amp;redirect_uri=https://myapp.com/callback
+          &amp;response_type=code
+          &amp;scope=openid profile
+          &amp;<span class="flow-data">state=CSRF_TOKEN</span>   <span class="flow-comment">← prevents CSRF</span>
+
+<span class="flow-entity">3. Auth Server</span> <span class="flow-arrow">→</span> user logs in, redirects to:
+   https://myapp.com/callback?<span class="flow-data">code=AUTH_CODE</span>&amp;state=CSRF_TOKEN
+
+<span class="flow-entity">4. Backend</span> POST /token
+   client_id + <span class="flow-data">client_secret</span>   <span class="flow-comment">← never in browser!</span>
+   + code=AUTH_CODE
+   <span class="flow-arrow">←</span> { access_token, refresh_token, id_token }</div>
+
+    <h3>PKCE — For SPAs and Mobile Apps</h3>
+    <div class="code-block safe">
+      <div class="code-header">
+        <span class="code-label-safe">Safe — Generate PKCE Challenge</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre>public static (string verifier, string challenge) GeneratePkce()
+{
+    var bytes = RandomNumberGenerator.GetBytes(96);
+    var verifier = Base64UrlEncoder.Encode(bytes);
+    var hash = SHA256.HashData(Encoding.ASCII.GetBytes(verifier));
+    var challenge = Base64UrlEncoder.Encode(hash);
+    // Send challenge in /authorize, send verifier in /token
+    return (verifier, challenge);
+}</pre>
+    </div>
+
+    <h3>Client Credentials (Machine-to-Machine)</h3>
+    <div class="code-block safe">
+      <div class="code-header">
+        <span class="code-label-safe">Safe — .NET API Calling Downstream API</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre>// Manual client credentials token fetch
+public class TokenService
+{
+    private readonly HttpClient _httpClient;
+
+    public async Task&lt;string&gt; GetTokenAsync()
+    {
+        var response = await _httpClient.PostAsync(
+            "https://auth.myapp.com/token",
+            new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair&lt;string, string&gt;("grant_type", "client_credentials"),
+                new KeyValuePair&lt;string, string&gt;("client_id", "my-service"),
+                new KeyValuePair&lt;string, string&gt;("client_secret",
+                    Environment.GetEnvironmentVariable("CLIENT_SECRET")!),
+                new KeyValuePair&lt;string, string&gt;("scope", "downstream-api")
+            }));
+
+        var json = await response.Content.ReadFromJsonAsync&lt;TokenResponse&gt;();
+        return json!.AccessToken;
+    }
+}</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: OIDC -->
+  <!-- ============================================================ -->
+  <div class="section" id="s3">
+    <h2>3. OpenID Connect (OIDC)</h2>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th></th><th>OAuth 2.0</th><th>OIDC</th></tr>
+        <tr><td>Purpose</td><td>Authorization</td><td>Authentication + Authorization</td></tr>
+        <tr><td>Token</td><td>Access Token</td><td>ID Token + Access Token</td></tr>
+        <tr><td>User Info</td><td>Not defined</td><td>ID Token claims + UserInfo endpoint</td></tr>
+      </table>
+    </div>
+
+    <h3>ID Token vs Access Token</h3>
+    <div class="card card-warning">
+      <div class="card-label">Key Rule</div>
+      <p><strong>ID Token</strong> — tells YOUR APP who the user is. Never send it to APIs. It is for your client only.<br>
+      <strong>Access Token</strong> — send to APIs. APIs validate it, check scopes. May be opaque or JWT.</p>
+    </div>
+
+    <h3>Discovery Endpoint</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">JSON — /.well-known/openid-configuration</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre>GET https://auth.myapp.com/.well-known/openid-configuration
+{
+  "issuer": "https://auth.myapp.com",
+  "authorization_endpoint": "https://auth.myapp.com/authorize",
+  "token_endpoint": "https://auth.myapp.com/token",
+  "userinfo_endpoint": "https://auth.myapp.com/userinfo",
+  "jwks_uri": "https://auth.myapp.com/.well-known/jwks.json",
+  "scopes_supported": ["openid", "profile", "email"],
+  "id_token_signing_alg_values_supported": ["RS256"]
+}</pre>
+    </div>
+
+    <h3>SSO with Azure AD in ASP.NET Core</h3>
+    <div class="code-block safe">
+      <div class="code-header">
+        <span class="code-label-safe">Safe — OIDC with Azure AD</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre>builder.Services
+    .AddAuthentication(options =&gt;
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddOpenIdConnect(options =&gt;
+    {
+        options.Authority = "https://login.microsoftonline.com/{tenantId}/v2.0";
+        options.ClientId = "your-client-id";
+        options.ClientSecret = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET");
+        options.ResponseType = "code";
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+        options.SaveTokens = true;
+        options.GetClaimsFromUserInfoEndpoint = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            NameClaimType = "name",
+            RoleClaimType = "roles"
+        };
+    });</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 4: HTTPS/TLS -->
+  <!-- ============================================================ -->
+  <div class="section" id="s4">
+    <h2>4. HTTPS and TLS</h2>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Feature</th><th>TLS 1.2</th><th>TLS 1.3</th></tr>
+        <tr><td>Handshake Round Trips</td><td>2 RTT</td><td>1 RTT (or 0-RTT resumption)</td></tr>
+        <tr><td>Cipher Suites</td><td>Many (some weak)</td><td>Only modern (AES-GCM, ChaCha20)</td></tr>
+        <tr><td>Perfect Forward Secrecy</td><td>Optional</td><td>Mandatory</td></tr>
+        <tr><td>Security</td><td>Good</td><td>Better — removes deprecated algos</td></tr>
+        <tr><td>.NET Support</td><td>Full</td><td>.NET 5+ / Windows 10+</td></tr>
+      </table>
+    </div>
+
+    <div class="card card-pitfall">
+      <div class="card-label">Pitfall</div>
+      <p>Mandate TLS 1.2+ minimum. TLS 1.0 and 1.1 are deprecated and vulnerable (POODLE, BEAST attacks). Disable them in Kestrel, IIS, and load balancer configuration.</p>
+    </div>
+
+    <h3>Enforce HTTPS in ASP.NET Core</h3>
+    <div class="code-block safe">
+      <div class="code-header">
+        <span class="code-label-safe">Safe — Program.cs</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre>var app = builder.Build();
+
+// Redirect HTTP → HTTPS
+app.UseHttpsRedirection();
+
+// HSTS — tells browsers to always use HTTPS (production only)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts(); // Sends: Strict-Transport-Security: max-age=31536000
+}
+
+// Security headers
+app.Use(async (context, next) =&gt;
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("Content-Security-Policy",
+        "default-src 'self'; script-src 'self'; frame-ancestors 'none';");
+    await next();
+});</pre>
+    </div>
+
+    <h3>Certificate Pinning</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C# — HttpClient with Pinning</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre>var handler = new HttpClientHandler();
+handler.ServerCertificateCustomValidationCallback = (request, cert, chain, errors) =&gt;
+{
+    if (errors != SslPolicyErrors.None) return false;
+    var expectedThumbprint = "A1B2C3D4...";
+    return cert?.GetCertHashString() == expectedThumbprint;
+};</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 5: OWASP -->
+  <!-- ============================================================ -->
+  <div class="section" id="s5">
+    <h2>5. OWASP Top 10 (.NET Specifics)</h2>
+
+    <!-- A01 -->
+    <div class="owasp-item" id="s5a01">
+      <div class="owasp-header">
+        <span class="owasp-id">A01:2021</span>
+        <span class="owasp-name">Broken Access Control</span>
+        <span class="severity-badge sev-critical">Critical</span>
+      </div>
+      <div class="owasp-body">
+        <p>Most common OWASP vulnerability. Missing authorization checks let authenticated users access data they don't own.</p>
+        <div class="compare-grid">
+          <div class="code-block vulnerable">
+            <div class="code-header">
+              <span class="code-label-vulnerable">Vulnerable — IDOR</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>[Authorize]
+[HttpGet("documents/{id}")]
+public async Task&lt;IActionResult&gt; Get(int id)
+{
+    var doc = await _db.Documents.FindAsync(id);
+    return Ok(doc); // Any user sees any doc!</pre>
+          </div>
+          <div class="code-block safe">
+            <div class="code-header">
+              <span class="code-label-safe">Safe — Resource-Based Auth</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>[Authorize]
+[HttpGet("documents/{id}")]
+public async Task&lt;IActionResult&gt; Get(int id)
+{
+    var doc = await _db.Documents.FindAsync(id);
+    if (doc == null) return NotFound();
+
+    var auth = await _authService.AuthorizeAsync(
+        User, doc, DocumentOperations.Read);
+
+    if (!auth.Succeeded) return Forbid(); // 403
+
+    return Ok(doc);
+}</pre>
+          </div>
+        </div>
+        <div class="card card-tip">
+          <div class="card-label">Fix</div>
+          <ul>
+            <li>Deny by default — no access unless explicitly granted</li>
+            <li>Authorize at every layer: controller, service, repository</li>
+            <li>Log all access denials with user ID and resource</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- A02 -->
+    <div class="owasp-item" id="s5a02">
+      <div class="owasp-header">
+        <span class="owasp-id">A02:2021</span>
+        <span class="owasp-name">Cryptographic Failures</span>
+        <span class="severity-badge sev-critical">Critical</span>
+      </div>
+      <div class="owasp-body">
+        <p>Storing passwords in plaintext or using weak algorithms (MD5, SHA1 without salt) makes password databases trivially crackable.</p>
+        <div class="compare-grid">
+          <div class="code-block vulnerable">
+            <div class="code-header">
+              <span class="code-label-vulnerable">Vulnerable — MD5 Password</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>// NEVER — MD5 is trivially crackable
+var hash = MD5.HashData(
+    Encoding.UTF8.GetBytes(password)
+).ToHexString();</pre>
+          </div>
+          <div class="code-block safe">
+            <div class="code-header">
+              <span class="code-label-safe">Safe — BCrypt</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre">// NuGet: BCrypt.Net-Next
+string hash = BCrypt.Net.BCrypt.HashPassword(
+    password, workFactor: 12); // ~300ms
+
+bool ok = BCrypt.Net.BCrypt.Verify(password, hash);</pre>
+          </div>
+        </div>
+        <p><strong>Why BCrypt/Argon2 and not SHA-256 for passwords?</strong> SHA-256 is designed to be <em>fast</em> — GPUs compute billions/second enabling brute force. BCrypt/Argon2 are intentionally slow with configurable work factors. They also include automatic salting.</p>
+      </div>
+    </div>
+
+    <!-- A03 -->
+    <div class="owasp-item" id="s5a03">
+      <div class="owasp-header">
+        <span class="owasp-id">A03:2021</span>
+        <span class="owasp-name">SQL Injection</span>
+        <span class="severity-badge sev-critical">Critical</span>
+      </div>
+      <div class="owasp-body">
+        <div class="compare-grid">
+          <div class="code-block vulnerable">
+            <div class="code-header">
+              <span class="code-label-vulnerable">Vulnerable — String Concat</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre">// username = "' OR '1'='1" → all users
+// username = "'; DROP TABLE Users;--"
+var sql = $"SELECT * FROM Users " +
+          $"WHERE Username = '{username}'";
+await _db.Database.ExecuteSqlRaw(sql);</pre>
+          </div>
+          <div class="code-block safe">
+            <div class="code-header">
+              <span class="code-label-safe">Safe — EF Core LINQ</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre">// EF Core LINQ — always parameterized
+var user = await _db.Users
+    .Where(u => u.Username == username)
+    .FirstOrDefaultAsync();
+
+// Raw SQL with interpolation (safe)
+await _db.Database.ExecuteSqlInterpolated(
+    $"UPDATE Users SET Login={now} WHERE Id={id}");</pre>
+          </div>
+        </div>
+        <div class="card card-pitfall">
+          <div class="card-label">EF Core Pitfall</div>
+          <p><code>ExecuteSqlRaw($"...{variable}")</code> is VULNERABLE. Use <code>ExecuteSqlInterpolated</code> instead — it treats the interpolated values as SQL parameters, not string concatenation.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- A05 -->
+    <div class="owasp-item" id="s5a05">
+      <div class="owasp-header">
+        <span class="owasp-id">A05:2021</span>
+        <span class="owasp-name">Security Misconfiguration</span>
+        <span class="severity-badge sev-high">High</span>
+      </div>
+      <div class="owasp-body">
+        <div class="compare-grid">
+          <div class="code-block vulnerable">
+            <div class="code-header">
+              <span class="code-label-vulnerable">Vulnerable — Dev Page in Prod</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre">// Shows full stack trace to users!
+app.UseDeveloperExceptionPage();</pre>
+          </div>
+          <div class="code-block safe">
+            <div class="code-header">
+              <span class="code-label-safe">Safe — Env-Specific Config</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre">if (app.Environment.IsDevelopment())
+    app.UseDeveloperExceptionPage();
+else
+{
+    app.UseExceptionHandler("/error"); // Generic
+    app.UseHsts();
+}
+// /error returns generic 500 — no stack trace</pre>
+          </div>
+        </div>
+        <p>Other misconfigurations: default credentials not changed, Swagger in production without auth, CORS set to <code>AllowAnyOrigin</code>.</p>
+      </div>
+    </div>
+
+    <!-- A06 -->
+    <div class="owasp-item" id="s5a06">
+      <div class="owasp-header">
+        <span class="owasp-id">A06:2021</span>
+        <span class="owasp-name">Vulnerable and Outdated Components</span>
+        <span class="severity-badge sev-high">High</span>
+      </div>
+      <div class="owasp-body">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Shell — NuGet Audit</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre"># Check for known vulnerabilities
+dotnet list package --vulnerable
+
+# Check for outdated packages
+dotnet list package --outdated
+
+# .NET 8 SDK — NuGet Audit runs automatically on dotnet restore
+# Add to CI pipeline — fail build on high severity findings</pre>
+        </div>
+        <ul>
+          <li>Enable <strong>Dependabot</strong> in GitHub for automated security PRs</li>
+          <li>Use <strong>internal NuGet proxy</strong> (Artifactory, Azure Artifacts) — vet packages</li>
+          <li>Maintain a Software Bill of Materials (SBOM)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- A07 -->
+    <div class="owasp-item" id="s5a07">
+      <div class="owasp-header">
+        <span class="owasp-id">A07:2021</span>
+        <span class="owasp-name">Identification and Authentication Failures</span>
+        <span class="severity-badge sev-high">High</span>
+      </div>
+      <div class="owasp-body">
+        <div class="compare-grid">
+          <div class="code-block vulnerable">
+            <div class="code-header">
+              <span class="code-label-vulnerable">Vulnerable — No Rate Limiting</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre">[HttpPost("login")]
+public async Task&lt;IActionResult&gt; Login(LoginRequest r)
+{
+    var user = await _userManager
+        .FindByEmailAsync(r.Email);
+    if (user != null &&
+        await _userManager.CheckPasswordAsync(user, r.Password))
+        return Ok(GenerateToken(user));
+    return Unauthorized();
+    // Allows unlimited brute-force attempts!
+}</pre>
+          </div>
+          <div class="code-block safe">
+            <div class="code-header">
+              <span class="code-label-safe">Safe — Lockout + Rate Limit</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre">[HttpPost("login")]
+public async Task&lt;IActionResult&gt; Login(LoginRequest r)
+{
+    var result = await _signInManager.PasswordSignInAsync(
+        r.Email, r.Password,
+        isPersistent: false,
+        lockoutOnFailure: true); // 5 tries → 15 min lock
+
+    if (result.IsLockedOut)
+        return StatusCode(429, "Account locked.");
+
+    if (!result.Succeeded)
+        return Unauthorized("Invalid credentials.");
+
+    return Ok(GenerateToken(r.Email));
+}</pre>
+          </div>
+        </div>
+        <div class="code-block safe">
+          <div class="code-header"><span class="code-label-safe">Safe — Configure Identity Lockout</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre">builder.Services.AddIdentity&lt;ApplicationUser, IdentityRole&gt;(options =&gt;
+{
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Password.RequiredLength = 12;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+});</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- A09 -->
+    <div class="owasp-item" id="s5a09">
+      <div class="owasp-header">
+        <span class="owasp-id">A09:2021</span>
+        <span class="owasp-name">Security Logging and Monitoring Failures</span>
+        <span class="severity-badge sev-medium">Medium</span>
+      </div>
+      <div class="owasp-body">
+        <div class="compare-grid">
+          <div class="code-block vulnerable">
+            <div class="code-header"><span class="code-label-vulnerable">Never Log These</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre">_logger.LogDebug("Password: {Password}", password);
+_logger.LogDebug("Token: {Token}", accessToken);
+_logger.LogDebug("Card: {CC}", creditCardNumber);</pre>
+          </div>
+          <div class="code-block safe">
+            <div class="code-header"><span class="code-label-safe">Always Log These</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre">_logger.LogWarning(
+    "Failed login. Email={Email} IP={IP} Time={Time}",
+    email, ipAddress, DateTimeOffset.UtcNow);
+
+_logger.LogInformation(
+    "Privilege escalation. UserId={UserId} Role={Role}",
+    userId, newRole);</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A10 -->
+    <div class="owasp-item" id="s5a10">
+      <div class="owasp-header">
+        <span class="owasp-id">A10:2021</span>
+        <span class="owasp-name">Server-Side Request Forgery (SSRF)</span>
+        <span class="severity-badge sev-high">High</span>
+      </div>
+      <div class="owasp-body">
+        <p>Server makes HTTP requests to URLs controlled by the attacker, potentially hitting internal services or cloud metadata endpoints (e.g., AWS <code>169.254.169.254</code> for IAM credentials).</p>
+        <div class="compare-grid">
+          <div class="code-block vulnerable">
+            <div class="code-header"><span class="code-label-vulnerable">Vulnerable</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre">[HttpGet("fetch")]
+public async Task&lt;IActionResult&gt; Fetch(
+    [FromQuery] string url)
+{
+    // Attacker: url=http://169.254.169.254/
+    //           /latest/meta-data/ → AWS IAM creds!
+    var content = await _client.GetStringAsync(url);
+    return Ok(content);
+}</pre>
+          </div>
+          <div class="code-block safe">
+            <div class="code-header"><span class="code-label-safe">Safe — Allowlist + IP Block</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre">private static readonly HashSet&lt;string&gt; _allowed =
+    new(StringComparer.OrdinalIgnoreCase)
+    { "api.trusted.com", "data.public.com" };
+
+public async Task&lt;IActionResult&gt; Fetch(string url)
+{
+    if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)
+        || uri.Scheme != "https"
+        || !_allowed.Contains(uri.Host))
+        return BadRequest("Not allowed");
+
+    var ips = await Dns.GetHostAddressesAsync(uri.Host);
+    if (ips.Any(IsPrivateIp))
+        return BadRequest("Internal addresses blocked");
+
+    return Ok(await _client.GetStringAsync(uri));
+}
+
+private static bool IsPrivateIp(IPAddress ip)
+{
+    var b = ip.GetAddressBytes();
+    return b[0] == 10
+        || (b[0] == 172 && b[1] >= 16 && b[1] <= 31)
+        || (b[0] == 192 && b[1] == 168)
+        || (b[0] == 169 && b[1] == 254); // Metadata
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 6: XSS -->
+  <!-- ============================================================ -->
+  <div class="section" id="s6">
+    <h2>6. XSS — Cross-Site Scripting</h2>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Type</th><th>How</th><th>Example</th></tr>
+        <tr><td>Reflected</td><td>Payload in URL echoed in response</td><td><code>?q=&lt;script&gt;steal()&lt;/script&gt;</code></td></tr>
+        <tr><td>Stored</td><td>Payload saved in DB, shown to others</td><td>Comment: <code>&lt;script&gt;document.cookie&lt;/script&gt;</code></td></tr>
+        <tr><td>DOM-based</td><td>Client-side JS writes user input to DOM</td><td><code>document.write(location.hash)</code></td></tr>
+      </table>
+    </div>
+
+    <h3>Razor — Auto-Encodes by Default</h3>
+    <div class="compare-grid">
+      <div class="code-block safe">
+        <div class="code-header"><span class="code-label-safe">Safe — Razor Default</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">&lt;!-- Razor HTML-encodes automatically --&gt;
+&lt;p&gt;Welcome, @Model.Username&lt;/p&gt;
+&lt;!-- Output: Welcome, &amp;lt;script&amp;gt;... --&gt;</pre>
+      </div>
+      <div class="code-block vulnerable">
+        <div class="code-header"><span class="code-label-vulnerable">Vulnerable — @Html.Raw</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">&lt;!-- NEVER use Html.Raw on user input --&gt;
+&lt;p&gt;@Html.Raw(Model.UserBio)&lt;/p&gt;
+&lt;!-- &lt;script&gt; in bio EXECUTES! --&gt;</pre>
+      </div>
+    </div>
+
+    <div class="code-block safe">
+      <div class="code-header"><span class="code-label-safe">Safe — HTML Sanitizer When Rich Text Needed</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre">// NuGet: Ganss.Xss — HtmlSanitizer
+var sanitizer = new HtmlSanitizer();
+sanitizer.AllowedTags.Add("b");
+sanitizer.AllowedTags.Add("i");
+// Only then is Html.Raw safe:
+var safeHtml = sanitizer.Sanitize(userInput);</pre>
+    </div>
+
+    <h3>Content Security Policy (CSP)</h3>
+    <div class="code-block safe">
+      <div class="code-header"><span class="code-label-safe">Safe — CSP Header</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre">app.Use(async (ctx, next) =&gt;
+{
+    ctx.Response.Headers.Append("Content-Security-Policy",
+        "default-src 'self'; " +
+        "script-src 'self' https://cdn.trusted.com; " +
+        "style-src 'self'; " +
+        "frame-ancestors 'none';"); // Prevents clickjacking too
+    await next();
+});</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 7: CSRF -->
+  <!-- ============================================================ -->
+  <div class="section" id="s7">
+    <h2>7. CSRF — Cross-Site Request Forgery</h2>
+
+    <p>The attacker's site submits a form to your site using the victim's session cookie — the browser sends cookies automatically on any request.</p>
+
+    <h3>ASP.NET Core Antiforgery</h3>
+    <div class="compare-grid">
+      <div class="code-block vulnerable">
+        <div class="code-header"><span class="code-label-vulnerable">Vulnerable — No CSRF Protection</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">[HttpPost]
+public async Task&lt;IActionResult&gt; Transfer(
+    TransferRequest request)
+{
+    // Any site can POST here with victim's cookie!
+    await _bankService.TransferAsync(request);
+    return Ok();
+}</pre>
+      </div>
+      <div class="code-block safe">
+        <div class="code-header"><span class="code-label-safe">Safe — Antiforgery Token</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">[AutoValidateAntiforgeryToken] // On controller
+[HttpPost]
+public async Task&lt;IActionResult&gt; Transfer(
+    TransferRequest request)
+{
+    // Token from hidden form field validated
+    await _bankService.TransferAsync(request);
+    return Ok();
+}
+
+// Razor Form
+@Html.AntiForgeryToken() // Hidden input added</pre>
+      </div>
+    </div>
+
+    <h3>SameSite Cookie Attribute</h3>
+    <div class="code-block safe">
+      <div class="code-header"><span class="code-label-safe">Safe — Cookie Config</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre">builder.Services.ConfigureApplicationCookie(options =&gt;
+{
+    // Strict: cookie never sent cross-site (best CSRF prevention)
+    // Lax: sent on top-level navigation only (links, not forms)
+    // None: sent cross-site (requires Secure=true, use for OAuth)
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.HttpOnly = true;
+});</pre>
+    </div>
+
+    <div class="card card-tip">
+      <div class="card-label">Tip — JWT APIs</div>
+      <p>For JWT-based APIs where tokens are in the <code>Authorization</code> header: CSRF is not a concern — browsers do not automatically send custom headers. CSRF only applies to cookie-authenticated requests.</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 8: SQL INJECTION -->
+  <!-- ============================================================ -->
+  <div class="section" id="s8">
+    <h2>8. SQL Injection Prevention</h2>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Approach</th><th>Safe?</th><th>Notes</th></tr>
+        <tr><td>EF Core LINQ queries</td><td style="color:var(--green)">Safe</td><td>Always parameterized</td></tr>
+        <tr><td><code>ExecuteSqlInterpolated</code></td><td style="color:var(--green)">Safe</td><td>FormattableString → parameters</td></tr>
+        <tr><td><code>ExecuteSqlRaw</code> + SqlParameter</td><td style="color:var(--green)">Safe</td><td>Manual but correct</td></tr>
+        <tr><td><code>ExecuteSqlRaw</code> + string concat/interpolation</td><td style="color:var(--keyword)">UNSAFE</td><td>Never do this</td></tr>
+        <tr><td>Stored procedures</td><td style="color:var(--orange)">Mostly safe</td><td>Vulnerable if SP uses dynamic SQL internally</td></tr>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C# — All Patterns Side-by-Side</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre">// VULNERABLE — DO NOT DO ANY OF THESE
+var sql1 = $"SELECT * FROM Users WHERE Id = {id}";           // Interpolation
+var sql2 = "SELECT * WHERE Name = '" + name + "'";           // Concat
+await _db.Database.ExecuteSqlRaw(sql1);                      // VULNERABLE
+
+// SAFE — 1. EF Core LINQ (preferred)
+var user = await _db.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+
+// SAFE — 2. ExecuteSqlInterpolated (looks like interpolation, IS parameterized)
+await _db.Database.ExecuteSqlInterpolated(
+    $"UPDATE Users SET Login = {DateTime.UtcNow} WHERE Id = {id}");
+
+// SAFE — 3. ExecuteSqlRaw with explicit parameters
+await _db.Database.ExecuteSqlRaw(
+    "UPDATE Users SET Login = @date WHERE Id = @id",
+    new SqlParameter("@date", DateTime.UtcNow),
+    new SqlParameter("@id", id));
+
+// SAFE — 4. ADO.NET SqlCommand
+using var cmd = new SqlCommand("SELECT * FROM Users WHERE Name = @Name", conn);
+cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100).Value = name;</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 9: SECRETS -->
+  <!-- ============================================================ -->
+  <div class="section" id="s9">
+    <h2>9. Secrets Management</h2>
+
+    <div class="compare-grid">
+      <div class="code-block vulnerable">
+        <div class="code-header"><span class="code-label-vulnerable">Never — Hardcoded Secrets</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">// appsettings.json — DO NOT COMMIT
+{
+  "Jwt": { "Secret": "my-super-secret" },
+  "ConnectionStrings": {
+    "DB": "Server=prod;Password=abc123!"
+  }
+}
+
+// Code — NEVER
+const string ApiKey = "sk-live-abc123";</pre>
+      </div>
+      <div class="code-block safe">
+        <div class="code-header"><span class="code-label-safe">Safe — By Environment</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">// Development: user-secrets
+dotnet user-secrets init
+dotnet user-secrets set "Jwt:Secret" "dev-secret"
+
+// Production: AWS Secrets Manager
+builder.Configuration.AddSecretsManager(opts =&gt; {
+    opts.SecretFilter = e =&gt; e.Name.StartsWith("MyApp/");
+});
+
+// Production: Azure Key Vault
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://myvault.vault.azure.net/"),
+    new DefaultAzureCredential());</pre>
+      </div>
+    </div>
+
+    <h3>Scanning for Leaked Secrets</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Shell</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre"># Prevent committing secrets
+git secrets --install && git secrets --register-aws
+
+# Scan git history for leaked secrets
+trufflehog git https://github.com/org/repo.git
+
+# GitHub Advanced Security scans 100+ token types automatically</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 10: ENCRYPTION -->
+  <!-- ============================================================ -->
+  <div class="section" id="s10">
+    <h2>10. Encryption and Hashing</h2>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th></th><th>Hashing</th><th>Encryption</th></tr>
+        <tr><td>Reversible?</td><td>No (one-way)</td><td>Yes (with key)</td></tr>
+        <tr><td>Use for</td><td>Passwords, integrity checks</td><td>Data you need to recover</td></tr>
+        <tr><td>Examples</td><td>BCrypt, SHA-256, Argon2, PBKDF2</td><td>AES-256, RSA</td></tr>
+      </table>
+    </div>
+
+    <h3>AES-256-GCM — Authenticated Symmetric Encryption</h3>
+    <div class="code-block safe">
+      <div class="code-header"><span class="code-label-safe">Safe — AES-256-GCM (Detects Tampering)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre">public class AesEncryption
+{
+    public static (byte[] ciphertext, byte[] nonce, byte[] tag)
+        Encrypt(byte[] plaintext, byte[] key)
+    {
+        var nonce = RandomNumberGenerator.GetBytes(12); // 96-bit for GCM
+        var ciphertext = new byte[plaintext.Length];
+        var tag = new byte[16];
+
+        using var aes = new AesGcm(key, 16);
+        aes.Encrypt(nonce, plaintext, ciphertext, tag);
+        return (ciphertext, nonce, tag);
+    }
+
+    public static byte[] Decrypt(
+        byte[] ciphertext, byte[] key, byte[] nonce, byte[] tag)
+    {
+        var plaintext = new byte[ciphertext.Length];
+        using var aes = new AesGcm(key, 16);
+        aes.Decrypt(nonce, ciphertext, tag, plaintext);
+        // Throws AuthenticationTagMismatchException if tampered
+        return plaintext;
+    }
+}</pre>
+    </div>
+
+    <h3>At-Rest and In-Transit</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Layer</th><th>Mechanism</th></tr>
+        <tr><td>SQL Server at-rest</td><td>Transparent Data Encryption (TDE) — automatic, no code change</td></tr>
+        <tr><td>S3 at-rest</td><td>SSE-S3, SSE-KMS, SSE-C (customer-managed key)</td></tr>
+        <tr><td>Field-level (PII)</td><td>AES-256 encrypt sensitive columns before storing</td></tr>
+        <tr><td>In-transit</td><td>TLS 1.2+ everywhere (API calls, DB connections)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 11: INPUT VALIDATION -->
+  <!-- ============================================================ -->
+  <div class="section" id="s11">
+    <h2>11. Input Validation</h2>
+
+    <div class="compare-grid">
+      <div class="code-block vulnerable">
+        <div class="code-header"><span class="code-label-vulnerable">Blacklist — Always Loses</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">// Attacker will find a bypass
+if (input.Contains("'") || input.Contains("--")
+    || input.Contains("DROP"))
+    return BadRequest();</pre>
+      </div>
+      <div class="code-block safe">
+        <div class="code-header"><span class="code-label-safe">Whitelist — Define Exactly What Is Allowed</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre">if (!Regex.IsMatch(username, @"^[a-zA-Z0-9_]{3,20}$"))
+    return BadRequest("3-20 alphanumeric chars only");</pre>
+      </div>
+    </div>
+
+    <h3>DataAnnotations + FluentValidation</h3>
+    <div class="code-block safe">
+      <div class="code-header"><span class="code-label-safe">Safe — FluentValidation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre">public class CreateUserValidator : AbstractValidator&lt;CreateUserRequest&gt;
+{
+    public CreateUserValidator(AppDbContext db)
+    {
+        RuleFor(x => x.Email)
+            .NotEmpty().EmailAddress().MaximumLength(254)
+            .MustAsync(async (email, ct) =>
+                !await db.Users.AnyAsync(u => u.Email == email, ct))
+            .WithMessage("Email already in use");
+
+        RuleFor(x => x.Password)
+            .NotEmpty().MinimumLength(12)
+            .Must(p => p.Any(char.IsUpper) && p.Any(char.IsDigit)
+                    && p.Any(c => !char.IsLetterOrDigit(c)))
+            .WithMessage("Password too weak");
+    }
+}</pre>
+    </div>
+
+    <h3>File Upload Security</h3>
+    <div class="code-block safe">
+      <div class="code-header"><span class="code-label-safe">Safe — Comprehensive File Validation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre">[HttpPost("upload")]
+public async Task&lt;IActionResult&gt; Upload(IFormFile file)
+{
+    // 1. Size limit
+    if (file.Length > 5 * 1024 * 1024)
+        return BadRequest("Max 5 MB");
+
+    // 2. Extension whitelist (not blacklist)
+    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+    var allowed = new[] { ".jpg", ".png", ".pdf" };
+    if (!allowed.Contains(ext)) return BadRequest("Type not allowed");
+
+    // 3. Magic bytes — extension can be spoofed!
+    var magicBytes = new Dictionary&lt;string, byte[]&gt;
+    {
+        [".jpg"] = new byte[] { 0xFF, 0xD8, 0xFF },
+        [".png"] = new byte[] { 0x89, 0x50, 0x4E, 0x47 },
+        [".pdf"] = new byte[] { 0x25, 0x50, 0x44, 0x46 }
+    };
+    using var stream = file.OpenReadStream();
+    var header = new byte[4];
+    await stream.ReadExactlyAsync(header);
+    if (!header.Take(magicBytes[ext].Length).SequenceEqual(magicBytes[ext]))
+        return BadRequest("Content mismatch");
+
+    // 4. Random filename — never trust client filename
+    var safeName = $"{Guid.NewGuid()}{ext}";
+
+    // 5. Store outside web root
+    var path = Path.Combine("/secure-uploads", safeName);
+    stream.Position = 0;
+    using var fs = File.Create(path);
+    await file.CopyToAsync(fs);
+    return Ok(new { fileName = safeName });
+}</pre>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 12: Q&A -->
+  <!-- ============================================================ -->
+  <div class="section" id="s12">
+    <h2>12. Interview Q&amp;A Rapid Fire</h2>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">What's the difference between authentication and authorization?</div>
+      <div class="card-answer">Authentication = proving who you are (identity). Authorization = determining what you can do (permissions). JWT handles both: the token proves identity; claims/roles govern access. In .NET: <code>[Authorize]</code> enforces both.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">Why is <code>alg: none</code> in JWT dangerous?</div>
+      <div class="card-answer">A library accepting <code>none</code> skips signature validation. An attacker crafts a token with any payload, strips the signature, sets <code>alg: none</code>, and the server accepts it. Fix: always whitelist the expected algorithm explicitly in <code>ValidAlgorithms</code>.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">When would you choose RS256 over HS256?</div>
+      <div class="card-answer">RS256 when multiple services verify tokens — each only needs the public key. HS256 requires sharing the secret with every verifier. RS256 also guarantees only the auth server (holding the private key) can issue tokens.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">What is PKCE and why does it exist?</div>
+      <div class="card-answer">SPAs and mobile apps can't safely store a client secret. PKCE replaces it with a one-time cryptographic challenge: the client generates a random verifier, hashes it into a challenge, sends the challenge in <code>/authorize</code>, then proves ownership by sending the verifier in <code>/token</code>. Even if the auth code is intercepted, it's useless without the verifier.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">What's the difference between XSS and CSRF?</div>
+      <div class="card-answer">XSS = injecting JavaScript into a page to run in the victim's browser (attacks the client). CSRF = tricking the victim's browser into submitting a request using their credentials (attacks the server via the client). XSS can steal tokens; CSRF abuses existing sessions.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">Why not store JWTs in localStorage?</div>
+      <div class="card-answer">Any JavaScript on the page — including injected XSS scripts — can read <code>localStorage</code>. httpOnly cookies cannot be read by JavaScript at all, making them immune to token theft via XSS.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">Why use BCrypt/Argon2 instead of SHA-256 for passwords?</div>
+      <div class="card-answer">SHA-256 is designed to be fast — a GPU computes billions/sec enabling brute force. BCrypt/Argon2 have configurable work factors making each hash take 100-300ms. They also include automatic per-password salting, preventing rainbow table attacks.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">What is SSRF and how do you prevent it?</div>
+      <div class="card-answer">Server-Side Request Forgery — the server makes HTTP requests to URLs the attacker controls, potentially hitting internal services, databases, or cloud metadata APIs (AWS IMDSv1: 169.254.169.254). Prevent with URL allowlists, blocking private IP ranges, and disabling IMDSv1 in favor of IMDSv2.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">What does "defense in depth" mean?</div>
+      <div class="card-answer">Layering multiple independent security controls so that failure of any single layer doesn't compromise the system. Example: input validation + parameterized queries + WAF + least privilege DB user + field encryption + centralized monitoring + rate limiting.</div>
+    </div>
+
+    <div class="card card-q">
+      <div class="card-label">Interview Q</div>
+      <div class="card-question">What's the EF Core SQL injection pitfall most developers miss?</div>
+      <div class="card-answer"><code>ExecuteSqlRaw($"...{variable}")</code> looks like a safe interpolated string but is directly vulnerable. Use <code>ExecuteSqlInterpolated</code> instead — it uses FormattableString which EF Core converts to proper SQL parameters, not string concatenation.</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 13: CHECKLIST -->
+  <!-- ============================================================ -->
+  <div class="section" id="s13">
+    <h2>13. OWASP Security Checklist for .NET APIs</h2>
+
+    <div class="checklist-section">
+      <h4>Authentication &amp; JWT</h4>
+      <ul class="checklist">
+        <li>JWT signature validation enabled (not trusting alg from token)</li>
+        <li>Algorithm explicitly whitelisted — no <code>none</code> or auto-detect</li>
+        <li>Short expiry on access tokens (15–60 min)</li>
+        <li>Refresh token rotation implemented (old token invalidated on use)</li>
+        <li>Tokens stored in <code>httpOnly; Secure; SameSite=Strict</code> cookies</li>
+        <li>Minimal <code>ClockSkew</code> (30 seconds max)</li>
+      </ul>
+
+      <h4>Authorization</h4>
+      <ul class="checklist">
+        <li>Every endpoint has <code>[Authorize]</code> or explicit policy</li>
+        <li>Resource-based authorization checks ownership</li>
+        <li>Deny by default — global fallback policy configured</li>
+        <li>Roles and claims validated server-side only</li>
+        <li>403 returned for authorization failures (not 401)</li>
+      </ul>
+
+      <h4>Transport</h4>
+      <ul class="checklist">
+        <li>HTTPS enforced with <code>UseHttpsRedirection()</code></li>
+        <li>HSTS header configured in production</li>
+        <li>TLS 1.2+ minimum (TLS 1.0/1.1 disabled)</li>
+        <li>Security headers: X-Content-Type-Options, X-Frame-Options, CSP, Referrer-Policy</li>
+      </ul>
+
+      <h4>Input &amp; Output</h4>
+      <ul class="checklist">
+        <li>All input validated with whitelist approach (not blacklist)</li>
+        <li>No string concatenation in SQL queries — parameterized everywhere</li>
+        <li>HTML output encoded (Razor default; no <code>@Html.Raw</code> on user input)</li>
+        <li>File uploads: extension + magic byte validation, size limit, random filenames</li>
+        <li>Validation at system boundaries — never trust client-side validation alone</li>
+      </ul>
+
+      <h4>Secrets &amp; Crypto</h4>
+      <ul class="checklist">
+        <li>No secrets in code, <code>appsettings.json</code>, or git history</li>
+        <li>Secrets in Key Vault / Secrets Manager in production</li>
+        <li>Passwords hashed with BCrypt, Argon2, or PBKDF2 — not MD5/SHA1</li>
+        <li>Sensitive data encrypted at rest (TDE or field-level) and in transit (TLS)</li>
+        <li>Secret scanning configured (git-secrets, GitHub Advanced Security)</li>
+      </ul>
+
+      <h4>CSRF &amp; CORS</h4>
+      <ul class="checklist">
+        <li>Antiforgery tokens on all state-changing forms (<code>[AutoValidateAntiforgeryToken]</code>)</li>
+        <li><code>SameSite=Strict</code> on auth cookies</li>
+        <li>CORS policy is restrictive — no <code>AllowAnyOrigin</code> with <code>AllowCredentials</code></li>
+      </ul>
+
+      <h4>Logging &amp; Monitoring</h4>
+      <ul class="checklist">
+        <li>Security events logged: failed logins, privilege escalation, unusual access patterns</li>
+        <li>No sensitive data in logs: passwords, tokens, PII, credit cards</li>
+        <li>Centralized logging with automated alerts (failed logins spike, privilege escalation)</li>
+        <li>Rate limiting on authentication endpoints (<code>AddRateLimiter</code> in .NET 7+)</li>
+        <li>Account lockout after failed attempts (ASP.NET Core Identity)</li>
+      </ul>
+
+      <h4>Dependencies &amp; Configuration</h4>
+      <ul class="checklist">
+        <li><code>dotnet list package --vulnerable</code> runs in CI — build fails on high severity</li>
+        <li>Dependabot / NuGet Audit configured for automatic alerts</li>
+        <li>No debug endpoints (Swagger, health details) in production without authentication</li>
+        <li>Stack traces not exposed to users (<code>UseExceptionHandler</code> in prod)</li>
+        <li>Developer exception page disabled in production</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>

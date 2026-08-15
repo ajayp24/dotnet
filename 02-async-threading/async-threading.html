@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>async/await &amp; Threading — Lead .NET Interview Prep</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --h1: #58a6ff;
+    --h2: #58a6ff;
+    --h3: #79c0ff;
+    --keyword: #ff7b72;
+    --string: #a5d6ff;
+    --comment: #8b949e;
+    --number: #f2cc60;
+    --type: #ffa657;
+    --method: #d2a8ff;
+    --link: #58a6ff;
+    --interview-border: #58a6ff;
+    --interview-bg: #1a2332;
+    --pitfall-border: #ff7b72;
+    --pitfall-bg: #2d1a1a;
+    --tip-border: #3fb950;
+    --tip-bg: #1a2d1a;
+    --tag-bg: #21262d;
+    --sidebar-w: 270px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+  }
+
+  /* ===== SIDEBAR ===== */
+  #sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    padding: 20px 0;
+    flex-shrink: 0;
+  }
+
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-title {
+    color: var(--h1);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: 0 20px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  #toc { list-style: none; }
+
+  #toc li a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 5px 20px;
+    border-left: 2px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+    line-height: 1.4;
+  }
+
+  #toc li a:hover,
+  #toc li a.active {
+    color: var(--h1);
+    border-left-color: var(--h1);
+    background: rgba(88,166,255,.06);
+  }
+
+  #toc li a .num {
+    color: var(--muted);
+    margin-right: 6px;
+    font-size: 11px;
+    opacity: .7;
+  }
+
+  /* ===== MAIN ===== */
+  #main {
+    flex: 1;
+    min-width: 0;
+    padding: 48px 64px 96px;
+    max-width: 900px;
+  }
+
+  /* ===== HEADER ===== */
+  .page-header {
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+    color: var(--h1);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .page-header .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--tag-bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .badge.blue { color: var(--h1); border-color: rgba(88,166,255,.4); background: rgba(88,166,255,.08); }
+  .badge.red  { color: var(--keyword); border-color: rgba(255,123,114,.4); background: rgba(255,123,114,.08); }
+  .badge.green { color: #3fb950; border-color: rgba(63,185,80,.4); background: rgba(63,185,80,.08); }
+
+  /* ===== SECTIONS ===== */
+  .section { margin-bottom: 72px; }
+
+  h2 {
+    font-size: 22px;
+    color: var(--h2);
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    scroll-margin-top: 24px;
+  }
+
+  h3 {
+    font-size: 17px;
+    color: var(--h3);
+    margin: 28px 0 12px;
+    font-weight: 600;
+    scroll-margin-top: 24px;
+  }
+
+  p { margin: 10px 0; color: var(--text); }
+
+  ul, ol { padding-left: 24px; margin: 10px 0; }
+  li { margin: 4px 0; }
+
+  strong { color: var(--text); font-weight: 600; }
+  em { color: var(--type); font-style: italic; }
+
+  code {
+    background: var(--surface2);
+    color: var(--keyword);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    font-size: 13px;
+  }
+
+  /* ===== CODE BLOCKS ===== */
+  .code-block {
+    position: relative;
+    margin: 16px 0;
+  }
+
+  .code-block .lang-tag {
+    position: absolute;
+    top: 0; right: 40px;
+    background: var(--tag-bg);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 0 0 4px 4px;
+    font-family: monospace;
+    border: 1px solid var(--border);
+    border-top: none;
+    z-index: 1;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: monospace;
+    transition: color .15s, border-color .15s;
+    z-index: 2;
+  }
+
+  .copy-btn:hover { color: var(--text); border-color: var(--h1); }
+  .copy-btn.copied { color: #3fb950; border-color: #3fb950; }
+
+  pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 20px 20px 20px;
+    overflow-x: auto;
+    tab-size: 4;
+  }
+
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Syntax highlight classes */
+  .kw  { color: var(--keyword); }
+  .str { color: var(--string); }
+  .cm  { color: var(--comment); font-style: italic; }
+  .num { color: var(--number); }
+  .tp  { color: var(--type); }
+  .fn  { color: var(--method); }
+  .op  { color: #c9d1d9; }
+
+  /* ===== CARDS ===== */
+  .interview-q {
+    background: var(--interview-bg);
+    border-left: 4px solid var(--interview-border);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+
+  .interview-q .card-label {
+    color: var(--h1);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 6px;
+  }
+
+  .interview-q p { color: var(--text); margin: 6px 0; }
+  .interview-q strong { color: var(--h3); }
+
+  .pitfall {
+    background: var(--pitfall-bg);
+    border-left: 4px solid var(--pitfall-border);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+
+  .pitfall .card-label { color: var(--keyword); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .pitfall p { color: var(--text); margin: 4px 0; }
+
+  .tip {
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+
+  .tip .card-label { color: #3fb950; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .tip p { color: var(--text); margin: 4px 0; }
+
+  /* ===== TABLES ===== */
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 8px; border: 1px solid var(--border); }
+
+  table { border-collapse: collapse; width: 100%; min-width: 500px; }
+
+  th {
+    background: var(--surface);
+    color: var(--h3);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(48,54,61,.5);
+    color: var(--text);
+    font-size: 13.5px;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+  td code { font-size: 12px; }
+
+  .yes { color: #3fb950; font-weight: 600; }
+  .no  { color: var(--keyword); font-weight: 600; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    #sidebar { display: none; }
+    #main { padding: 24px 20px 64px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar">
+  <div class="sidebar-title">async/await &amp; Threading</div>
+  <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+  <ul id="toc">
+    <li><a href="#s1"><span class="num">01</span>Task vs Thread</a></li>
+    <li><a href="#s2"><span class="num">02</span>async/await Internals</a></li>
+    <li><a href="#s3"><span class="num">03</span>SynchronizationContext</a></li>
+    <li><a href="#s4"><span class="num">04</span>ConfigureAwait(false)</a></li>
+    <li><a href="#s5"><span class="num">05</span>Deadlock in async/await</a></li>
+    <li><a href="#s6"><span class="num">06</span>CancellationToken</a></li>
+    <li><a href="#s7"><span class="num">07</span>Task Parallel Library</a></li>
+    <li><a href="#s8"><span class="num">08</span>Thread Synchronization</a></li>
+    <li><a href="#s9"><span class="num">09</span>Span&lt;T&gt; &amp; Memory&lt;T&gt;</a></li>
+    <li><a href="#s10"><span class="num">10</span>IDisposable &amp; IAsyncDisposable</a></li>
+  </ul>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main id="main">
+
+  <div class="page-header">
+    <h1>async/await &amp; Threading</h1>
+    <div class="subtitle">Lead .NET Software Engineer — Interview Preparation</div>
+    <div class="badges">
+      <span class="badge blue">C# 10+</span>
+      <span class="badge blue">.NET 6/7/8</span>
+      <span class="badge red">Senior Level</span>
+      <span class="badge green">10 Topics</span>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 1 ===== -->
+  <section class="section" id="s1">
+    <h2>1. Task vs Thread</h2>
+
+    <h3>Thread — OS-Level Primitive</h3>
+    <p>A <code>Thread</code> is an OS-level construct. Each thread gets its own stack (default <strong>1 MB on Windows</strong>), is scheduled by the OS kernel, and is expensive to create and destroy. Creating thousands of threads is not feasible.</p>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Creating a Thread explicitly</span>
+<span class="kw">var</span> thread = <span class="kw">new</span> <span class="tp">Thread</span>(() =>
+{
+    <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Running on Thread ID: {Thread.CurrentThread.ManagedThreadId}"</span>);
+    <span class="tp">Thread</span>.<span class="fn">Sleep</span>(<span class="num">1000</span>); <span class="cm">// Blocks the entire OS thread</span>
+});
+thread.IsBackground = <span class="kw">true</span>;
+thread.<span class="fn">Start</span>();
+thread.<span class="fn">Join</span>(); <span class="cm">// Caller blocks until thread completes</span></code></pre>
+    </div>
+
+    <h3>Task — Logical Unit of Work on ThreadPool</h3>
+    <p>A <code>Task</code> is a higher-level abstraction representing work that <em>may</em> run asynchronously. <code>Task.Run</code> schedules work on the <strong>ThreadPool</strong>, which reuses threads instead of creating new ones.</p>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Task.Run — uses ThreadPool (reuses existing threads)</span>
+<span class="kw">var</span> task = <span class="tp">Task</span>.<span class="fn">Run</span>(() =>
+{
+    <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Thread ID: {Thread.CurrentThread.ManagedThreadId}"</span>);
+    <span class="kw">return</span> <span class="fn">ComputePrimes</span>(<span class="num">1_000_000</span>);
+});
+<span class="kw">int</span> result = <span class="kw">await</span> task; <span class="cm">// Awaiting does NOT block the calling thread</span>
+
+<span class="cm">// I/O: Don't use Thread or Task.Run — just async/await directly</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">FetchDataAsync</span>(<span class="kw">string</span> url)
+{
+    <span class="cm">// During await, NO thread is consumed — OS handles I/O completion</span>
+    <span class="kw">return await</span> <span class="kw">new</span> <span class="tp">HttpClient</span>().<span class="fn">GetStringAsync</span>(url);
+}
+
+<span class="cm">// CPU work: offload to ThreadPool, freeing ASP.NET request thread</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">int</span>&gt; <span class="fn">ComputeOnThreadPool</span>()
+{
+    <span class="kw">return await</span> <span class="tp">Task</span>.<span class="fn">Run</span>(() => <span class="fn">ComputePrimes</span>(<span class="num">10_000_000</span>));
+}</code></pre>
+    </div>
+
+    <h3>Decision Matrix</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Criterion</th><th>Task.Run</th><th>new Thread()</th></tr></thead>
+        <tbody>
+          <tr><td>Overhead</td><td>Low — ThreadPool reuse</td><td>High — OS thread creation (1MB stack)</td></tr>
+          <tr><td>Awaitable</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td>Return value</td><td class="yes">Yes (Task&lt;T&gt;)</td><td class="no">No (needs shared state)</td></tr>
+          <tr><td>Best for I/O</td><td>Use async/await instead</td><td class="no">No</td></tr>
+          <tr><td>Best for CPU</td><td class="yes">Yes (short-medium)</td><td>Yes (long-running, dedicated)</td></tr>
+          <tr><td>Set thread priority</td><td class="no">No</td><td class="yes">Yes</td></tr>
+          <tr><td>STA thread (COM)</td><td class="no">No</td><td class="yes">Yes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="interview-q">
+      <div class="card-label">Interview Q</div>
+      <p><strong>Q: "Why does async/await not create a new thread?"</strong></p>
+      <p>async/await is a <strong>compiler transformation</strong>, not a threading construct. When you await an I/O operation, the .NET runtime registers a callback with the OS I/O completion port. The thread is released back to the ThreadPool immediately. When I/O completes, the OS signals completion and the continuation is posted back to the ThreadPool (or SynchronizationContext). No thread sits blocked waiting. For CPU work, a thread is still needed (Task.Run), but await ensures the <em>calling</em> thread is not blocked while waiting for the result.</p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2 ===== -->
+  <section class="section" id="s2">
+    <h2>2. async/await Internals</h2>
+
+    <h3>The Compiler-Generated State Machine</h3>
+    <p>When you write an <code>async</code> method, the C# compiler generates a <strong>state machine struct</strong> that implements <code>IAsyncStateMachine</code>. Each <code>await</code> point becomes a state. The <code>MoveNext()</code> method is called to resume execution after each await.</p>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// What you write:</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">FetchDataAsync</span>(<span class="kw">string</span> url)
+{
+    <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Before await"</span>);
+    <span class="kw">var</span> result = <span class="kw">await new</span> <span class="tp">HttpClient</span>().<span class="fn">GetStringAsync</span>(url);
+    <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"After await"</span>);
+    <span class="kw">return</span> result.<span class="fn">ToUpper</span>();
+}
+
+<span class="cm">// Simplified compiler output (conceptually):</span>
+[<span class="tp">CompilerGenerated</span>]
+<span class="kw">private struct</span> <span class="tp">FetchDataAsyncStateMachine</span> : <span class="tp">IAsyncStateMachine</span>
+{
+    <span class="kw">public int</span> _state;   <span class="cm">// -1 = not started, 0 = initial, 1 = after first await</span>
+    <span class="kw">public</span> <span class="tp">AsyncTaskMethodBuilder</span>&lt;<span class="kw">string</span>&gt; _builder;
+    <span class="kw">public string</span> url;
+    <span class="kw">private</span> <span class="tp">TaskAwaiter</span>&lt;<span class="kw">string</span>&gt; _awaiter;
+
+    <span class="kw">public void</span> <span class="fn">MoveNext</span>()
+    {
+        <span class="kw">string</span> result;
+        <span class="kw">try</span>
+        {
+            <span class="kw">if</span> (_state == <span class="num">0</span>)
+            {
+                <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Before await"</span>);
+                <span class="kw">var</span> task = <span class="kw">new</span> <span class="tp">HttpClient</span>().<span class="fn">GetStringAsync</span>(url);
+                _awaiter = task.<span class="fn">GetAwaiter</span>();
+
+                <span class="kw">if</span> (!_awaiter.IsCompleted)  <span class="cm">// Not done yet — suspend</span>
+                {
+                    _state = <span class="num">1</span>;
+                    _builder.<span class="fn">AwaitUnsafeOnCompleted</span>(<span class="kw">ref</span> _awaiter, <span class="kw">ref this</span>);
+                    <span class="kw">return</span>;  <span class="cm">// Control returns to caller — NO THREAD BLOCKED</span>
+                }
+            }
+            <span class="cm">// State 1: resumes here after I/O completes</span>
+            result = _awaiter.<span class="fn">GetResult</span>();
+            <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"After await"</span>);
+            _builder.<span class="fn">SetResult</span>(result.<span class="fn">ToUpper</span>());
+        }
+        <span class="kw">catch</span> (<span class="tp">Exception</span> ex) { _builder.<span class="fn">SetException</span>(ex); }
+    }
+
+    <span class="kw">public void</span> <span class="fn">SetStateMachine</span>(<span class="tp">IAsyncStateMachine</span> sm) { }
+}</code></pre>
+    </div>
+
+    <h3>Task&lt;T&gt; vs ValueTask&lt;T&gt;</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Task&lt;T&gt; always allocates a heap object</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">int</span>&gt; <span class="fn">GetValueWithTask</span>()
+{
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>);
+    <span class="kw">return</span> <span class="num">42</span>;
+}
+
+<span class="cm">// ValueTask&lt;T&gt; — avoids allocation when result is available synchronously</span>
+<span class="cm">// Use when the method FREQUENTLY completes without actually awaiting</span>
+<span class="kw">public</span> <span class="tp">ValueTask</span>&lt;<span class="kw">int</span>&gt; <span class="fn">GetCachedValue</span>(<span class="kw">int</span> key)
+{
+    <span class="kw">if</span> (_cache.<span class="fn">TryGetValue</span>(key, <span class="kw">out int</span> cached))
+        <span class="kw">return new</span> <span class="tp">ValueTask</span>&lt;<span class="kw">int</span>&gt;(cached); <span class="cm">// Synchronous path — ZERO allocation</span>
+
+    <span class="kw">return new</span> <span class="tp">ValueTask</span>&lt;<span class="kw">int</span>&gt;(<span class="fn">FetchFromDatabaseAsync</span>(key)); <span class="cm">// Async path</span>
+}</code></pre>
+    </div>
+
+    <div class="tip">
+      <div class="card-label">ValueTask Rules</div>
+      <p>Can only be awaited <strong>once</strong>. Cannot be stored and awaited later. Do NOT call <code>.Result</code> on it. Best for: cache layers, synchronous fast paths in async interfaces, hot paths where allocations matter.</p>
+    </div>
+
+    <h3>async void — The Danger Zone</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// DANGEROUS: async void — exceptions are unhandled, fire-and-forget</span>
+<span class="kw">public async void</span> <span class="fn">DangerousFireAndForget</span>()
+{
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>);
+    <span class="kw">throw new</span> <span class="tp">InvalidOperationException</span>(<span class="str">"This exception is LOST!"</span>);
+    <span class="cm">// Exception crashes the process or is silently swallowed</span>
+}
+
+<span class="cm">// ONLY legitimate use of async void: event handlers (must return void)</span>
+<span class="kw">private async void</span> <span class="fn">Button_Click</span>(<span class="kw">object</span> sender, <span class="tp">EventArgs</span> e)
+{
+    <span class="kw">await</span> <span class="fn">LoadDataAsync</span>(); <span class="cm">// Event handlers MUST return void — acceptable</span>
+}
+
+<span class="cm">// Correct fire-and-forget with error handling:</span>
+<span class="kw">public static async</span> <span class="tp">Task</span> <span class="fn">SafeFireAndForget</span>(
+    <span class="tp">Task</span> task,
+    <span class="tp">Action</span>&lt;<span class="tp">Exception</span>&gt;? onException = <span class="kw">null</span>)
+{
+    <span class="kw">try</span> { <span class="kw">await</span> task; }
+    <span class="kw">catch</span> (<span class="tp">Exception</span> ex) { onException?.Invoke(ex); }
+}
+
+<span class="cm">// Usage:</span>
+_ = <span class="fn">SafeFireAndForget</span>(
+    <span class="fn">SomeBackgroundWorkAsync</span>(),
+    ex => logger.<span class="fn">LogError</span>(ex, <span class="str">"Background task failed"</span>)
+);</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Return Type</th><th>Allocates</th><th>Multi-await</th><th>Exception propagates</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><code>void</code></td><td>—</td><td>—</td><td class="no">No (lost/crash)</td><td>Event handlers ONLY</td></tr>
+          <tr><td><code>Task</code></td><td class="no">Always</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Standard async void-like</td></tr>
+          <tr><td><code>Task&lt;T&gt;</code></td><td class="no">Always</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Standard async with result</td></tr>
+          <tr><td><code>ValueTask&lt;T&gt;</code></td><td>Only when async</td><td class="no">Once only</td><td class="yes">Yes</td><td>Hot path, sync fast path</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3 ===== -->
+  <section class="section" id="s3">
+    <h2>3. SynchronizationContext</h2>
+
+    <h3>What It Is</h3>
+    <p><code>SynchronizationContext</code> is an abstraction that captures "where" code should run when it returns after an <code>await</code>. It provides a <code>Post()</code> method to schedule work on a specific context — e.g., the UI thread or an ASP.NET request thread.</p>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public async</span> <span class="tp">Task</span> <span class="fn">ExplainContextCapture</span>()
+{
+    <span class="cm">// await captures SynchronizationContext.Current HERE</span>
+    <span class="kw">var</span> capturedContext = <span class="tp">SynchronizationContext</span>.Current;
+
+    <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Before await: Thread {Thread.CurrentThread.ManagedThreadId}, "</span> +
+                      <span class="str">$"Context: {capturedContext?.GetType().Name ?? "null"}"</span>);
+
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>);
+    <span class="cm">// After delay, runtime posts continuation back to capturedContext</span>
+    <span class="cm">// WinForms: resumes on UI thread (WindowsFormsSynchronizationContext)</span>
+    <span class="cm">// ASP.NET Core: resumes on any ThreadPool thread (context is null)</span>
+
+    <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"After await: Thread {Thread.CurrentThread.ManagedThreadId}"</span>);
+}</code></pre>
+    </div>
+
+    <h3>ASP.NET Core Has NO SynchronizationContext</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code>[<span class="tp">ApiController</span>]
+[<span class="tp">Route</span>(<span class="str">"api/[controller]"</span>)]
+<span class="kw">public class</span> <span class="tp">DemoController</span> : <span class="tp">ControllerBase</span>
+{
+    [<span class="tp">HttpGet</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="fn">Get</span>()
+    {
+        <span class="cm">// SynchronizationContext.Current is always null in ASP.NET Core</span>
+        <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="tp">SynchronizationContext</span>.Current); <span class="cm">// null</span>
+
+        <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>);
+
+        <span class="cm">// May run on a DIFFERENT ThreadPool thread — that's fine and by design</span>
+        <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="tp">SynchronizationContext</span>.Current); <span class="cm">// still null</span>
+
+        <span class="kw">return</span> <span class="fn">Ok</span>(<span class="str">"Done"</span>);
+    }
+}</code></pre>
+    </div>
+
+    <h3>WinForms / WPF — UI Thread Context</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// WinForms: WindowsFormsSynchronizationContext is set automatically</span>
+<span class="kw">private async void</span> <span class="fn">LoadButton_Click</span>(<span class="kw">object</span> sender, <span class="tp">EventArgs</span> e)
+{
+    loadButton.Enabled = <span class="kw">false</span>;  <span class="cm">// UI thread — safe</span>
+
+    <span class="cm">// SynchronizationContext.Current = WindowsFormsSynchronizationContext</span>
+    <span class="kw">var</span> data = <span class="kw">await</span> <span class="fn">FetchDataAsync</span>(); <span class="cm">// Suspends, releases UI thread</span>
+
+    <span class="cm">// AUTOMATICALLY resumes on UI thread because of captured context</span>
+    resultLabel.Text = data;       <span class="cm">// Safe: back on UI thread</span>
+    loadButton.Enabled = <span class="kw">true</span>;     <span class="cm">// Safe: back on UI thread</span>
+}</code></pre>
+    </div>
+
+    <div class="interview-q">
+      <div class="card-label">Interview Q</div>
+      <p><strong>Q: "What is SynchronizationContext and why does ASP.NET Core not have one?"</strong></p>
+      <p><code>SynchronizationContext</code> is a mechanism allowing continuations after <code>await</code> to be posted back to a specific execution context — most importantly, a specific thread. In WinForms/WPF, the UI framework provides a context that posts work back to the UI thread, necessary because only the UI thread can update controls.</p>
+      <p>ASP.NET Core deliberately has <strong>no SynchronizationContext</strong>. The team removed it because: (1) it was a source of deadlocks when mixing sync and async, (2) it imposed thread affinity that hurt scalability, and (3) HttpContext objects are safe to access from any thread under proper async patterns. Continuations run on any available ThreadPool thread, maximizing throughput.</p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 4 ===== -->
+  <section class="section" id="s4">
+    <h2>4. ConfigureAwait(false)</h2>
+
+    <h3>What It Does</h3>
+    <p><code>ConfigureAwait(false)</code> tells the awaiter: <em>"Do NOT capture the current SynchronizationContext. When the continuation runs, use any available ThreadPool thread."</em></p>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Without ConfigureAwait(false) — captures current SynchronizationContext</span>
+<span class="kw">await</span> <span class="fn">SomeOperationAsync</span>();
+<span class="cm">// Continuation tries to post back to UI thread / request context</span>
+
+<span class="cm">// With ConfigureAwait(false) — ignores SynchronizationContext</span>
+<span class="kw">await</span> <span class="fn">SomeOperationAsync</span>().<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>);
+<span class="cm">// Continuation runs on any ThreadPool thread — more efficient, avoids deadlock</span>
+
+<span class="cm">// ===== LIBRARY CODE: always use ConfigureAwait(false) =====</span>
+<span class="kw">public static async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">FetchAsync</span>(<span class="kw">string</span> url)
+{
+    <span class="kw">using var</span> client = <span class="kw">new</span> <span class="tp">HttpClient</span>();
+    <span class="kw">var</span> response = <span class="kw">await</span> client.<span class="fn">GetAsync</span>(url).<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>);
+    <span class="kw">var</span> content = <span class="kw">await</span> response.Content.<span class="fn">ReadAsStringAsync</span>().<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>);
+    <span class="kw">return</span> content.<span class="fn">ToUpper</span>();
+}
+
+<span class="cm">// ===== WinForms APPLICATION: do NOT use ConfigureAwait(false) =====</span>
+<span class="cm">// if you need to update UI after the await</span>
+<span class="kw">private async void</span> <span class="fn">LoadButton_Click</span>(<span class="kw">object</span> sender, <span class="tp">EventArgs</span> e)
+{
+    <span class="kw">var</span> data = <span class="kw">await</span> <span class="fn">FetchDataAsync</span>();  <span class="cm">// NO ConfigureAwait(false) — need UI thread</span>
+    label.Text = data;  <span class="cm">// Must run on UI thread</span>
+}</code></pre>
+    </div>
+
+    <h3>The Deadlock ConfigureAwait(false) Prevents</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// DEADLOCK SCENARIO (ASP.NET 4.x / WinForms):</span>
+
+<span class="kw">private async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">GetDataAsync</span>()
+{
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>); <span class="cm">// Captures: "post continuation to UI thread"</span>
+    <span class="kw">return</span> <span class="str">"data"</span>;
+}
+
+<span class="cm">// 1. UI thread calls GetDataDeadlock()</span>
+<span class="cm">// 2. GetDataDeadlock() calls GetDataAsync() and BLOCKS with .Result</span>
+<span class="cm">// 3. GetDataAsync awaits Task.Delay — captured context = UI thread</span>
+<span class="cm">// 4. .Result BLOCKS the UI thread</span>
+<span class="cm">// 5. Continuation scheduled to post back to UI thread (which is blocked)</span>
+<span class="cm">// 6. DEADLOCK — thread waits for task, task waits for thread</span>
+<span class="kw">public string</span> <span class="fn">GetDataDeadlock</span>() => <span class="fn">GetDataAsync</span>().Result;  <span class="cm">// NEVER DO THIS</span>
+
+<span class="cm">// FIX: ConfigureAwait(false) in the async method</span>
+<span class="kw">private async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">GetDataAsyncSafe</span>()
+{
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>).<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>); <span class="cm">// Don't capture context</span>
+    <span class="kw">return</span> <span class="str">"data"</span>; <span class="cm">// Runs on ThreadPool — no deadlock</span>
+}
+<span class="kw">public string</span> <span class="fn">SafeSyncCall</span>() => <span class="fn">GetDataAsyncSafe</span>().<span class="fn">GetAwaiter</span>().<span class="fn">GetResult</span>(); <span class="cm">// OK</span>
+
+<span class="cm">// BEST FIX: Async all the way</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">GetDataCorrectly</span>() => <span class="kw">await</span> <span class="fn">GetDataAsync</span>(); <span class="cm">// No issue</span></code></pre>
+    </div>
+
+    <div class="interview-q">
+      <div class="card-label">Interview Q</div>
+      <p><strong>Q: "What does ConfigureAwait(false) do?"</strong></p>
+      <p>It configures the awaiter to NOT capture the current <code>SynchronizationContext</code>. Without it, when an awaited task completes, the continuation is scheduled back on the original context (e.g., UI thread). With <code>ConfigureAwait(false)</code>, the continuation runs on any available ThreadPool thread. Benefits: (1) better performance — no context marshaling overhead, and (2) prevention of deadlocks when callers block synchronously with <code>.Result</code> or <code>.Wait()</code>. Library authors should always use it. In ASP.NET Core, it's effectively a no-op since there's no SynchronizationContext.</p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 5 ===== -->
+  <section class="section" id="s5">
+    <h2>5. Deadlock in async/await</h2>
+
+    <h3>The Classic Deadlock — Step by Step</h3>
+
+    <div class="pitfall">
+      <div class="card-label">Deadlock Mechanism</div>
+      <p>1. Async method starts and hits an <code>await</code>. It captures the current SynchronizationContext and suspends.</p>
+      <p>2. The calling code blocks the thread with <code>.Result</code>, waiting for the Task to complete.</p>
+      <p>3. When the awaited operation finishes, the continuation is scheduled to run on the captured context — which requires the blocked thread.</p>
+      <p>4. Thread can't resume (blocked), Task can't complete (can't get thread) — DEADLOCK.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// ===== WRONG PATTERNS — deadlock in sync context =====</span>
+
+<span class="kw">public string</span> <span class="fn">WrongPattern1</span>() => <span class="fn">GetDataAsync</span>().Result;  <span class="cm">// .Result — DEADLOCK</span>
+
+<span class="kw">public void</span> <span class="fn">WrongPattern2</span>()
+{
+    <span class="fn">GetDataAsync</span>().<span class="fn">Wait</span>();  <span class="cm">// .Wait() — DEADLOCK</span>
+}
+
+<span class="cm">// GetAwaiter().GetResult() is slightly better (no AggregateException wrapping)</span>
+<span class="cm">// but STILL DEADLOCKS if SynchronizationContext is present</span>
+<span class="kw">public string</span> <span class="fn">WrongPattern3</span>() => <span class="fn">GetDataAsync</span>().<span class="fn">GetAwaiter</span>().<span class="fn">GetResult</span>();
+
+<span class="cm">// ===== CORRECT PATTERNS =====</span>
+
+<span class="cm">// Best: async all the way</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">CorrectPattern1</span>() => <span class="kw">await</span> <span class="fn">GetDataAsync</span>();
+
+<span class="cm">// Last resort for legacy code: Task.Run escapes the SynchronizationContext</span>
+<span class="kw">public string</span> <span class="fn">LegacyFix</span>()
+{
+    <span class="cm">// Task.Run starts WITHOUT the current SynchronizationContext</span>
+    <span class="kw">return</span> <span class="tp">Task</span>.<span class="fn">Run</span>(() => <span class="fn">GetDataAsync</span>()).<span class="fn">GetAwaiter</span>().<span class="fn">GetResult</span>();
+}
+
+<span class="kw">private async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">GetDataAsync</span>()
+{
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>);
+    <span class="kw">return</span> <span class="str">"result"</span>;
+}</code></pre>
+    </div>
+
+    <div class="interview-q">
+      <div class="card-label">Interview Q</div>
+      <p><strong>Q: "How can async/await cause a deadlock? Show me an example."</strong></p>
+      <p>In WinForms or ASP.NET classic (not Core), if you call <code>asyncMethod().Result</code>: (1) the async method hits <code>await</code> and captures the SynchronizationContext, (2) <code>.Result</code> blocks the current thread, (3) when the awaited operation completes, the continuation tries to post back to the captured context, which requires the thread that is currently blocked by <code>.Result</code>, (4) deadlock. The fix is to make calling code <code>async</code> all the way up, or use <code>ConfigureAwait(false)</code> inside the async library method so it doesn't capture the context in the first place.</p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 6 ===== -->
+  <section class="section" id="s6">
+    <h2>6. CancellationToken</h2>
+
+    <h3>CancellationTokenSource and CancellationToken</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public async</span> <span class="tp">Task</span> <span class="fn">BasicCancellationExample</span>()
+{
+    <span class="kw">using var</span> cts = <span class="kw">new</span> <span class="tp">CancellationTokenSource</span>();
+    cts.<span class="fn">CancelAfter</span>(<span class="tp">TimeSpan</span>.<span class="fn">FromSeconds</span>(<span class="num">5</span>)); <span class="cm">// Auto-cancel after 5 seconds</span>
+
+    <span class="kw">try</span>
+    {
+        <span class="kw">await</span> <span class="fn">DoLongWorkAsync</span>(cts.Token);
+    }
+    <span class="kw">catch</span> (<span class="tp">OperationCanceledException</span>)
+    {
+        <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Work was cancelled!"</span>);
+    }
+}
+
+<span class="kw">private async</span> <span class="tp">Task</span> <span class="fn">DoLongWorkAsync</span>(<span class="tp">CancellationToken</span> ct)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">100</span>; i++)
+    {
+        ct.<span class="fn">ThrowIfCancellationRequested</span>(); <span class="cm">// Throws OperationCanceledException</span>
+
+        <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">100</span>, ct); <span class="cm">// Task.Delay respects cancellation too</span>
+
+        <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Step {i} complete"</span>);
+    }
+}</code></pre>
+    </div>
+
+    <h3>Real Example: Cancel HTTP Request (ASP.NET Core)</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// ASP.NET Core passes HttpContext.RequestAborted automatically</span>
+<span class="cm">// when the client disconnects, the CancellationToken is cancelled</span>
+[<span class="tp">ApiController</span>]
+[<span class="tp">Route</span>(<span class="str">"api/[controller]"</span>)]
+<span class="kw">public class</span> <span class="tp">SearchController</span> : <span class="tp">ControllerBase</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">HttpClient</span> _httpClient;
+
+    [<span class="tp">HttpGet</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="fn">Search</span>(
+        [<span class="tp">FromQuery</span>] <span class="kw">string</span> q,
+        <span class="tp">CancellationToken</span> ct) <span class="cm">// Bound to HttpContext.RequestAborted</span>
+    {
+        <span class="kw">var</span> response = <span class="kw">await</span> _httpClient
+            .<span class="fn">GetAsync</span>(<span class="str">$"/api/search?q={Uri.EscapeDataString(q)}"</span>, ct)
+            .<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>);
+
+        response.<span class="fn">EnsureSuccessStatusCode</span>();
+
+        <span class="kw">var</span> results = <span class="kw">await</span> response.Content
+            .<span class="fn">ReadFromJsonAsync</span>&lt;<span class="kw">string</span>[]&gt;(cancellationToken: ct)
+            .<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>);
+
+        <span class="kw">return</span> <span class="fn">Ok</span>(results);
+        <span class="cm">// If client disconnects mid-request, OperationCanceledException is thrown</span>
+        <span class="cm">// and the HTTP request is actually cancelled (not just the await)</span>
+    }
+}</code></pre>
+    </div>
+
+    <h3>Linked Cancellation Tokens</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Cancel if EITHER user cancels OR timeout occurs</span>
+<span class="kw">using var</span> userCts = <span class="kw">new</span> <span class="tp">CancellationTokenSource</span>();
+<span class="kw">using var</span> timeoutCts = <span class="kw">new</span> <span class="tp">CancellationTokenSource</span>(<span class="tp">TimeSpan</span>.<span class="fn">FromSeconds</span>(<span class="num">30</span>));
+
+<span class="cm">// Cancels if ANY of the linked tokens is cancelled</span>
+<span class="kw">using var</span> linkedCts = <span class="tp">CancellationTokenSource</span>.<span class="fn">CreateLinkedTokenSource</span>(
+    userCts.Token,
+    timeoutCts.Token);
+
+<span class="kw">try</span>
+{
+    <span class="kw">await</span> <span class="fn">DoWorkAsync</span>(linkedCts.Token);
+}
+<span class="kw">catch</span> (<span class="tp">OperationCanceledException</span>)
+{
+    <span class="kw">if</span> (timeoutCts.IsCancellationRequested)
+        <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Cancelled: timeout"</span>);
+    <span class="kw">else if</span> (userCts.IsCancellationRequested)
+        <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Cancelled: user action"</span>);
+}</code></pre>
+    </div>
+
+    <h3>Real Example: Background Service with Graceful Shutdown</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public class</span> <span class="tp">BackgroundProcessor</span> : <span class="tp">BackgroundService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ILogger</span>&lt;<span class="tp">BackgroundProcessor</span>&gt; _logger;
+    <span class="kw">private readonly</span> <span class="tp">IMessageQueue</span> _queue;
+
+    <span class="kw">protected override async</span> <span class="tp">Task</span> <span class="fn">ExecuteAsync</span>(<span class="tp">CancellationToken</span> stoppingToken)
+    {
+        <span class="cm">// stoppingToken is cancelled when app shuts down (Ctrl+C, SIGTERM, etc.)</span>
+        <span class="kw">while</span> (!stoppingToken.IsCancellationRequested)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">var</span> message = <span class="kw">await</span> _queue.<span class="fn">DequeueAsync</span>(stoppingToken);
+                <span class="kw">if</span> (message != <span class="kw">null</span>)
+                    <span class="kw">await</span> <span class="fn">ProcessMessageAsync</span>(message, stoppingToken);
+            }
+            <span class="kw">catch</span> (<span class="tp">OperationCanceledException</span>)
+            {
+                <span class="kw">break</span>; <span class="cm">// Normal shutdown — don't log as error</span>
+            }
+            <span class="kw">catch</span> (<span class="tp">Exception</span> ex)
+            {
+                _logger.<span class="fn">LogError</span>(ex, <span class="str">"Error processing message"</span>);
+                <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">1000</span>, stoppingToken); <span class="cm">// Wait before retry</span>
+            }
+        }
+    }
+
+    <span class="kw">private async</span> <span class="tp">Task</span> <span class="fn">ProcessMessageAsync</span>(<span class="tp">Message</span> message, <span class="tp">CancellationToken</span> ct)
+    {
+        ct.<span class="fn">ThrowIfCancellationRequested</span>(); <span class="cm">// Check at logical boundaries</span>
+        <span class="kw">await</span> <span class="fn">StepOneAsync</span>(message, ct);
+        ct.<span class="fn">ThrowIfCancellationRequested</span>();
+        <span class="kw">await</span> <span class="fn">StepTwoAsync</span>(message, ct);
+    }
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 7 ===== -->
+  <section class="section" id="s7">
+    <h2>7. Task Parallel Library (TPL)</h2>
+
+    <h3>Task.WhenAll — Fan-Out Parallel Calls</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// BAD: Sequential — total time = sum of all calls (~650ms)</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">DashboardData</span>&gt; <span class="fn">GetDashboardSequential</span>()
+{
+    <span class="kw">var</span> users   = <span class="kw">await</span> <span class="fn">GetUsersAsync</span>();   <span class="cm">// 200ms</span>
+    <span class="kw">var</span> orders  = <span class="kw">await</span> <span class="fn">GetOrdersAsync</span>();  <span class="cm">// 300ms</span>
+    <span class="kw">var</span> metrics = <span class="kw">await</span> <span class="fn">GetMetricsAsync</span>(); <span class="cm">// 150ms</span>
+    <span class="kw">return new</span> <span class="tp">DashboardData</span>(users, orders, metrics);
+}
+
+<span class="cm">// GOOD: Parallel — total time = slowest call (~300ms)</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">DashboardData</span>&gt; <span class="fn">GetDashboardParallel</span>(<span class="tp">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    <span class="cm">// Fire all three requests simultaneously</span>
+    <span class="kw">var</span> usersTask   = <span class="fn">GetUsersAsync</span>(ct);
+    <span class="kw">var</span> ordersTask  = <span class="fn">GetOrdersAsync</span>(ct);
+    <span class="kw">var</span> metricsTask = <span class="fn">GetMetricsAsync</span>(ct);
+
+    <span class="cm">// Wait for ALL — throws first exception if any fails</span>
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">WhenAll</span>(usersTask, ordersTask, metricsTask);
+
+    <span class="kw">return new</span> <span class="tp">DashboardData</span>(
+        <span class="kw">await</span> usersTask,   <span class="cm">// Already complete — just get result</span>
+        <span class="kw">await</span> ordersTask,
+        <span class="kw">await</span> metricsTask);
+}
+
+<span class="cm">// Collecting ALL exceptions (not just first):</span>
+<span class="kw">try</span> { <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">WhenAll</span>(usersTask, ordersTask, metricsTask); }
+<span class="kw">catch</span>
+{
+    <span class="kw">var</span> errors = <span class="kw">new</span> <span class="tp">List</span>&lt;<span class="tp">Exception</span>&gt;();
+    <span class="kw">if</span> (usersTask.IsFaulted)   errors.<span class="fn">Add</span>(usersTask.Exception!.InnerException!);
+    <span class="kw">if</span> (ordersTask.IsFaulted)  errors.<span class="fn">Add</span>(ordersTask.Exception!.InnerException!);
+    <span class="kw">if</span> (metricsTask.IsFaulted) errors.<span class="fn">Add</span>(metricsTask.Exception!.InnerException!);
+    <span class="kw">throw new</span> <span class="tp">AggregateException</span>(<span class="str">"One or more API calls failed"</span>, errors);
+}</code></pre>
+    </div>
+
+    <h3>Task.WhenAny — Timeout and Racing</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Pattern: Timeout using Task.WhenAny</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>?&gt; <span class="fn">FetchWithTimeoutAsync</span>(
+    <span class="kw">string</span> url,
+    <span class="tp">TimeSpan</span> timeout,
+    <span class="tp">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    <span class="kw">var</span> fetchTask   = _client.<span class="fn">GetStringAsync</span>(url, ct);
+    <span class="kw">var</span> timeoutTask = <span class="tp">Task</span>.<span class="fn">Delay</span>(timeout, ct);
+
+    <span class="kw">var</span> completedTask = <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">WhenAny</span>(fetchTask, timeoutTask);
+
+    <span class="kw">if</span> (completedTask == timeoutTask)
+    {
+        <span class="tp">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Request timed out!"</span>);
+        <span class="kw">return null</span>; <span class="cm">// Or: throw new TimeoutException()</span>
+    }
+
+    <span class="kw">return await</span> fetchTask; <span class="cm">// Re-await to propagate any exceptions</span>
+}
+
+<span class="cm">// Pattern: First successful result from multiple sources</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">GetFromFastestSource</span>(<span class="kw">string</span>[] urls, <span class="tp">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> tasks = urls.<span class="fn">Select</span>(url => _client.<span class="fn">GetStringAsync</span>(url, ct)).<span class="fn">ToList</span>();
+
+    <span class="kw">while</span> (tasks.Count > <span class="num">0</span>)
+    {
+        <span class="kw">var</span> first = <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">WhenAny</span>(tasks);
+        tasks.<span class="fn">Remove</span>(first);
+        <span class="kw">try</span> { <span class="kw">return await</span> first; } <span class="cm">// Success</span>
+        <span class="kw">catch</span> { <span class="kw">if</span> (tasks.Count == <span class="num">0</span>) <span class="kw">throw</span>; } <span class="cm">// Try remaining</span>
+    }
+    <span class="kw">throw new</span> <span class="tp">InvalidOperationException</span>(<span class="str">"All sources failed"</span>);
+}</code></pre>
+    </div>
+
+    <h3>Throttled I/O with SemaphoreSlim</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// WRONG: Parallel.ForEach with async lambda — async is "lost"</span>
+<span class="cm">// Parallel.ForEach cannot await async lambdas — creates async void effectively</span>
+<span class="tp">Parallel</span>.<span class="fn">ForEach</span>(ids, <span class="kw">async</span> id =>  <span class="cm">// async void lambda!</span>
+{
+    <span class="kw">await</span> <span class="fn">FetchItemAsync</span>(id);  <span class="cm">// Parallel.ForEach can't await this</span>
+});
+
+<span class="cm">// CORRECT: WhenAll + SemaphoreSlim for throttled I/O (max 10 concurrent)</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="fn">ThrottledParallelIO</span>(<span class="tp">IEnumerable</span>&lt;<span class="kw">int</span>&gt; ids, <span class="tp">CancellationToken</span> ct)
+{
+    <span class="kw">using var</span> semaphore = <span class="kw">new</span> <span class="tp">SemaphoreSlim</span>(<span class="num">10</span>);
+
+    <span class="kw">var</span> tasks = ids.<span class="fn">Select</span>(<span class="kw">async</span> id =>
+    {
+        <span class="kw">await</span> semaphore.<span class="fn">WaitAsync</span>(ct);
+        <span class="kw">try</span>
+        {
+            <span class="kw">return await</span> <span class="fn">FetchItemAsync</span>(id, ct);
+        }
+        <span class="kw">finally</span>
+        {
+            semaphore.<span class="fn">Release</span>(); <span class="cm">// Always release</span>
+        }
+    });
+
+    <span class="kw">var</span> results = <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">WhenAll</span>(tasks);
+}</code></pre>
+    </div>
+
+    <div class="pitfall">
+      <div class="card-label">Pitfall: Over-Parallelizing I/O</div>
+      <p>Using <code>Parallel.ForEach</code> for I/O blocks ThreadPool threads waiting for async I/O completion. Under load, this causes ThreadPool starvation. Use <code>Task.WhenAll</code> with a <code>SemaphoreSlim</code> to limit concurrency while keeping threads free.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>CPU-bound parallel work</td><td><code>Parallel.For</code> / <code>Parallel.ForEach</code></td></tr>
+          <tr><td>I/O-bound parallel work</td><td><code>Task.WhenAll</code> + <code>SemaphoreSlim</code> throttle</td></tr>
+          <tr><td>Fire multiple async ops together</td><td><code>Task.WhenAll</code></td></tr>
+          <tr><td>First result wins</td><td><code>Task.WhenAny</code></td></tr>
+          <tr><td>Timeout pattern</td><td><code>Task.WhenAny(mainTask, Task.Delay(timeout))</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 8 ===== -->
+  <section class="section" id="s8">
+    <h2>8. Thread Synchronization Primitives</h2>
+
+    <h3>lock Keyword (Monitor)</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public class</span> <span class="tp">ThreadSafeCounter</span>
+{
+    <span class="kw">private int</span> _count = <span class="num">0</span>;
+    <span class="kw">private readonly object</span> _lock = <span class="kw">new object</span>();
+
+    <span class="cm">// lock compiles to Monitor.Enter / Monitor.Exit (in a try/finally)</span>
+    <span class="kw">public void</span> <span class="fn">Increment</span>()
+    {
+        <span class="kw">lock</span> (_lock) { _count++; }
+    }
+
+    <span class="kw">public int</span> Value
+    {
+        <span class="kw">get</span> { <span class="kw">lock</span> (_lock) { <span class="kw">return</span> _count; } }
+    }
+
+    <span class="cm">// TryEnter — non-blocking attempt with timeout</span>
+    <span class="kw">public bool</span> <span class="fn">TryIncrement</span>()
+    {
+        <span class="kw">if</span> (<span class="tp">Monitor</span>.<span class="fn">TryEnter</span>(_lock, <span class="tp">TimeSpan</span>.<span class="fn">FromMilliseconds</span>(<span class="num">100</span>)))
+        {
+            <span class="kw">try</span> { _count++; <span class="kw">return true</span>; }
+            <span class="kw">finally</span> { <span class="tp">Monitor</span>.<span class="fn">Exit</span>(_lock); }
+        }
+        <span class="kw">return false</span>;
+    }
+}</code></pre>
+    </div>
+
+    <h3>SemaphoreSlim — Async Rate Limiter</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public class</span> <span class="tp">RateLimitedApiClient</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">SemaphoreSlim</span> _semaphore;  <span class="cm">// Max 5 concurrent calls</span>
+    <span class="kw">private readonly</span> <span class="tp">HttpClient</span> _httpClient;
+
+    <span class="kw">public</span> <span class="fn">RateLimitedApiClient</span>(<span class="tp">HttpClient</span> httpClient)
+    {
+        _httpClient = httpClient;
+        _semaphore = <span class="kw">new</span> <span class="tp">SemaphoreSlim</span>(initialCount: <span class="num">5</span>, maxCount: <span class="num">5</span>);
+    }
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">CallApiAsync</span>(<span class="kw">string</span> endpoint, <span class="tp">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">await</span> _semaphore.<span class="fn">WaitAsync</span>(ct);  <span class="cm">// Async wait — doesn't block a thread</span>
+        <span class="kw">try</span>
+        {
+            <span class="kw">return await</span> _httpClient.<span class="fn">GetStringAsync</span>(endpoint, ct).<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>);
+        }
+        <span class="kw">finally</span>
+        {
+            _semaphore.<span class="fn">Release</span>(); <span class="cm">// Always release in finally</span>
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h3>ReaderWriterLockSlim — Read-Heavy Scenarios</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public class</span> <span class="tp">ThreadSafeCache</span>&lt;<span class="tp">TKey</span>, <span class="tp">TValue</span>&gt; <span class="kw">where</span> <span class="tp">TKey</span> : <span class="kw">notnull</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">Dictionary</span>&lt;<span class="tp">TKey</span>, <span class="tp">TValue</span>&gt; _cache = <span class="kw">new</span>();
+    <span class="kw">private readonly</span> <span class="tp">ReaderWriterLockSlim</span> _rwLock = <span class="kw">new</span>();
+
+    <span class="cm">// Multiple readers can hold read lock simultaneously</span>
+    <span class="kw">public bool</span> <span class="fn">TryGet</span>(<span class="tp">TKey</span> key, <span class="kw">out</span> <span class="tp">TValue</span>? value)
+    {
+        _rwLock.<span class="fn">EnterReadLock</span>();
+        <span class="kw">try</span> { <span class="kw">return</span> _cache.<span class="fn">TryGetValue</span>(key, <span class="kw">out</span> value); }
+        <span class="kw">finally</span> { _rwLock.<span class="fn">ExitReadLock</span>(); }
+    }
+
+    <span class="cm">// Exclusive write lock — all readers must finish first</span>
+    <span class="kw">public void</span> <span class="fn">Set</span>(<span class="tp">TKey</span> key, <span class="tp">TValue</span> value)
+    {
+        _rwLock.<span class="fn">EnterWriteLock</span>();
+        <span class="kw">try</span> { _cache[key] = value; }
+        <span class="kw">finally</span> { _rwLock.<span class="fn">ExitWriteLock</span>(); }
+    }
+
+    <span class="cm">// GetOrAdd with double-check locking via upgradeable read lock</span>
+    <span class="kw">public</span> <span class="tp">TValue</span> <span class="fn">GetOrAdd</span>(<span class="tp">TKey</span> key, <span class="tp">Func</span>&lt;<span class="tp">TKey</span>, <span class="tp">TValue</span>&gt; factory)
+    {
+        _rwLock.<span class="fn">EnterUpgradeableReadLock</span>();
+        <span class="kw">try</span>
+        {
+            <span class="kw">if</span> (_cache.<span class="fn">TryGetValue</span>(key, <span class="kw">out var</span> existing)) <span class="kw">return</span> existing;
+
+            _rwLock.<span class="fn">EnterWriteLock</span>();
+            <span class="kw">try</span>
+            {
+                <span class="kw">if</span> (!_cache.<span class="fn">TryGetValue</span>(key, <span class="kw">out</span> existing)) <span class="cm">// Double-check</span>
+                    _cache[key] = existing = factory(key);
+                <span class="kw">return</span> existing;
+            }
+            <span class="kw">finally</span> { _rwLock.<span class="fn">ExitWriteLock</span>(); }
+        }
+        <span class="kw">finally</span> { _rwLock.<span class="fn">ExitUpgradeableReadLock</span>(); }
+    }
+}</code></pre>
+    </div>
+
+    <h3>Interlocked — Lock-Free Atomic Operations</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public class</span> <span class="tp">AtomicMetrics</span>
+{
+    <span class="kw">private long</span> _requestCount = <span class="num">0</span>;
+
+    <span class="cm">// Atomic operations — no lock needed</span>
+    <span class="kw">public long</span> <span class="fn">IncrementRequests</span>() => <span class="tp">Interlocked</span>.<span class="fn">Increment</span>(<span class="kw">ref</span> _requestCount);
+    <span class="kw">public long</span> <span class="fn">DecrementRequests</span>() => <span class="tp">Interlocked</span>.<span class="fn">Decrement</span>(<span class="kw">ref</span> _requestCount);
+    <span class="kw">public long</span> <span class="fn">GetCount</span>()          => <span class="tp">Interlocked</span>.<span class="fn">Read</span>(<span class="kw">ref</span> _requestCount);
+    <span class="kw">public long</span> <span class="fn">Reset</span>()             => <span class="tp">Interlocked</span>.<span class="fn">Exchange</span>(<span class="kw">ref</span> _requestCount, <span class="num">0</span>);
+
+    <span class="cm">// Compare-and-Swap — foundation of lock-free algorithms</span>
+    <span class="kw">private int</span> _activeConnections = <span class="num">0</span>;
+    <span class="kw">public bool</span> <span class="fn">TryAcquireConnection</span>()
+    {
+        <span class="kw">int</span> current = _activeConnections;
+        <span class="cm">// If _activeConnections == current, set to current+1 and return current</span>
+        <span class="kw">return</span> <span class="tp">Interlocked</span>.<span class="fn">CompareExchange</span>(
+            <span class="kw">ref</span> _activeConnections, current + <span class="num">1</span>, current) == current;
+    }
+}
+
+<span class="cm">// volatile: visibility guarantee only — no atomicity for compound ops!</span>
+<span class="kw">private volatile bool</span> _isRunning = <span class="kw">true</span>;
+<span class="kw">public void</span> <span class="fn">Stop</span>() => _isRunning = <span class="kw">false</span>;  <span class="cm">// Write visible immediately</span>
+<span class="kw">public void</span> <span class="fn">WorkLoop</span>() { <span class="kw">while</span> (_isRunning) <span class="fn">DoWork</span>(); } <span class="cm">// Fresh read</span></code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Primitive</th><th>Async-friendly</th><th>Cross-process</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><code>lock</code> / <code>Monitor</code></td><td class="no">No</td><td class="no">No</td><td>General purpose, fast</td></tr>
+          <tr><td><code>SemaphoreSlim</code></td><td class="yes">Yes (WaitAsync)</td><td class="no">No</td><td>Throttling, rate limiting</td></tr>
+          <tr><td><code>Semaphore</code></td><td class="no">No</td><td class="yes">Yes</td><td>Cross-process semaphore</td></tr>
+          <tr><td><code>Mutex</code></td><td class="no">No</td><td class="yes">Yes</td><td>Single-instance guard</td></tr>
+          <tr><td><code>ReaderWriterLockSlim</code></td><td class="no">No</td><td class="no">No</td><td>Read-heavy, write-rare</td></tr>
+          <tr><td><code>Interlocked</code></td><td>N/A (lock-free)</td><td class="no">No</td><td>Counters, flags, CAS</td></tr>
+          <tr><td><code>volatile</code></td><td>N/A</td><td class="no">No</td><td>Visibility only — no atomicity</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 9 ===== -->
+  <section class="section" id="s9">
+    <h2>9. Span&lt;T&gt;, Memory&lt;T&gt;, ReadOnlySpan&lt;T&gt;</h2>
+
+    <h3>What Is Span&lt;T&gt;?</h3>
+    <p><code>Span&lt;T&gt;</code> is a <strong>stack-allocated ref struct</strong> that provides a zero-overhead, type-safe view over contiguous memory — a managed array, a stack buffer, or unmanaged native memory. Slicing it causes <strong>zero allocation</strong>.</p>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Without Span: each Substring allocates a new string on the heap</span>
+<span class="kw">string</span> line = <span class="str">"2024-01-15,Alice,100.50"</span>;
+<span class="kw">string</span> datePart = line.<span class="fn">Substring</span>(<span class="num">0</span>, <span class="num">10</span>);  <span class="cm">// Allocation!</span>
+<span class="kw">string</span> namePart = line.<span class="fn">Substring</span>(<span class="num">11</span>, <span class="num">5</span>); <span class="cm">// Allocation!</span>
+
+<span class="cm">// With ReadOnlySpan: ZERO allocation — slices the original string in-place</span>
+<span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; span = line.<span class="fn">AsSpan</span>();
+<span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; dateSpan = span[..<span class="num">10</span>];  <span class="cm">// No allocation</span>
+<span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; nameSpan = span[<span class="num">11</span>..<span class="num">16</span>]; <span class="cm">// No allocation</span>
+
+<span class="tp">Console</span>.<span class="fn">WriteLine</span>(dateSpan.ToString()); <span class="cm">// "2024-01-15"</span>
+<span class="tp">Console</span>.<span class="fn">WriteLine</span>(nameSpan.ToString()); <span class="cm">// "Alice"</span></code></pre>
+    </div>
+
+    <h3>Parsing CSV Without Allocations</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public static class</span> <span class="tp">CsvParser</span>
+{
+    <span class="cm">// Parses CSV line with zero intermediate allocations</span>
+    <span class="kw">public static</span> <span class="tp">CsvRecord</span> <span class="fn">ParseLine</span>(<span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; line)
+    {
+        <span class="kw">int</span> comma1 = line.<span class="fn">IndexOf</span>(<span class="str">','</span>);
+        <span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; dateSpan = line[..comma1];
+
+        <span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; remaining = line[(comma1 + <span class="num">1</span>)..];
+        <span class="kw">int</span> comma2 = remaining.<span class="fn">IndexOf</span>(<span class="str">','</span>);
+        <span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; nameSpan   = remaining[..comma2];
+        <span class="tp">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; amountSpan = remaining[(comma2 + <span class="num">1</span>)..];
+
+        <span class="cm">// Parse directly from span — no intermediate string allocation</span>
+        <span class="kw">if</span> (!<span class="tp">DateOnly</span>.<span class="fn">TryParse</span>(dateSpan, <span class="kw">out var</span> date))
+            <span class="kw">throw new</span> <span class="tp">FormatException</span>(<span class="str">$"Invalid date: {dateSpan.ToString()}"</span>);
+
+        <span class="kw">if</span> (!<span class="kw">decimal</span>.<span class="fn">TryParse</span>(amountSpan, <span class="kw">out var</span> amount))
+            <span class="kw">throw new</span> <span class="tp">FormatException</span>(<span class="str">$"Invalid amount: {amountSpan.ToString()}"</span>);
+
+        <span class="kw">return new</span> <span class="tp">CsvRecord</span>(date, nameSpan.<span class="fn">ToString</span>(), amount);
+        <span class="cm">// Only one allocation: the name string (unavoidable if storing it)</span>
+    }
+}
+
+record CsvRecord(<span class="tp">DateOnly</span> Date, <span class="kw">string</span> Name, <span class="kw">decimal</span> Amount);</code></pre>
+    </div>
+
+    <h3>stackalloc and Smart Buffer Selection</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// stackalloc: allocate on stack, wrapped in Span for safety</span>
+<span class="kw">public static void</span> <span class="fn">ProcessWithStackBuffer</span>(<span class="tp">ReadOnlySpan</span>&lt;<span class="kw">byte</span>&gt; data)
+{
+    <span class="tp">Span</span>&lt;<span class="kw">byte</span>&gt; buffer = <span class="kw">stackalloc byte</span>[<span class="num">256</span>]; <span class="cm">// Stack memory — zero heap allocation</span>
+    data[..<span class="tp">Math</span>.<span class="fn">Min</span>(data.Length, buffer.Length)].<span class="fn">CopyTo</span>(buffer);
+    <span class="cm">// Buffer freed automatically when method returns</span>
+}
+
+<span class="cm">// Smart pattern: stack for small, ArrayPool for large</span>
+<span class="kw">public static void</span> <span class="fn">SmartBuffer</span>(<span class="tp">ReadOnlySpan</span>&lt;<span class="kw">byte</span>&gt; data)
+{
+    <span class="kw">const int</span> StackThreshold = <span class="num">512</span>;
+    <span class="kw">byte</span>[]? rentedArray = <span class="kw">null</span>;
+
+    <span class="tp">Span</span>&lt;<span class="kw">byte</span>&gt; buffer = data.Length &lt;= StackThreshold
+        ? <span class="kw">stackalloc byte</span>[<span class="num">512</span>]
+        : (rentedArray = <span class="tp">ArrayPool</span>&lt;<span class="kw">byte</span>&gt;.Shared.<span class="fn">Rent</span>(data.Length));
+
+    <span class="kw">try</span>
+    {
+        data.<span class="fn">CopyTo</span>(buffer);
+        <span class="cm">// Process...</span>
+    }
+    <span class="kw">finally</span>
+    {
+        <span class="kw">if</span> (rentedArray != <span class="kw">null</span>)
+            <span class="tp">ArrayPool</span>&lt;<span class="kw">byte</span>&gt;.Shared.<span class="fn">Return</span>(rentedArray); <span class="cm">// Return to pool</span>
+    }
+}</code></pre>
+    </div>
+
+    <h3>Memory&lt;T&gt; — Span&lt;T&gt; for Async Code</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Span&lt;T&gt; is a ref struct — CANNOT be stored on heap or in async methods</span>
+<span class="cm">// public async Task WontCompile()</span>
+<span class="cm">// {</span>
+<span class="cm">//     Span&lt;byte&gt; span = new byte[100]; // COMPILE ERROR in async method</span>
+<span class="cm">//     await Task.Delay(100);</span>
+<span class="cm">// }</span>
+
+<span class="cm">// Memory&lt;T&gt; CAN cross async boundaries</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">int</span>&gt; <span class="fn">ProcessDataAsync</span>(<span class="tp">Memory</span>&lt;<span class="kw">byte</span>&gt; data, <span class="tp">CancellationToken</span> ct)
+{
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">Delay</span>(<span class="num">10</span>, ct);  <span class="cm">// Memory&lt;T&gt; survives the await</span>
+    <span class="kw">return</span> <span class="fn">ProcessSpan</span>(data.Span);  <span class="cm">// Convert to Span when needed</span>
+}
+
+<span class="cm">// MemoryPool: reusable memory, no allocation</span>
+<span class="kw">public static async</span> <span class="tp">Task</span> <span class="fn">ProcessStreamAsync</span>(<span class="tp">Stream</span> stream, <span class="tp">CancellationToken</span> ct)
+{
+    <span class="kw">using</span> <span class="tp">IMemoryOwner</span>&lt;<span class="kw">byte</span>&gt; owner = <span class="tp">MemoryPool</span>&lt;<span class="kw">byte</span>&gt;.Shared.<span class="fn">Rent</span>(<span class="num">4096</span>);
+    <span class="tp">Memory</span>&lt;<span class="kw">byte</span>&gt; buffer = owner.Memory;
+    <span class="kw">int</span> bytesRead;
+
+    <span class="kw">while</span> ((bytesRead = <span class="kw">await</span> stream.<span class="fn">ReadAsync</span>(buffer, ct)) > <span class="num">0</span>)
+    {
+        <span class="kw">await</span> <span class="fn">ProcessChunkAsync</span>(buffer[..bytesRead], ct);
+    }
+    <span class="cm">// Memory returns to pool on Dispose (end of using block)</span>
+}</code></pre>
+    </div>
+
+    <div class="interview-q">
+      <div class="card-label">Interview Q</div>
+      <p><strong>Q: "What is Span&lt;T&gt; and why use it?"</strong></p>
+      <p><code>Span&lt;T&gt;</code> is a stack-allocated <code>ref struct</code> that provides a zero-overhead, type-safe view over contiguous memory. It eliminates allocations in hot paths. Instead of <code>string.Substring()</code> (heap allocation), use <code>AsSpan()</code> for zero-copy slicing. Its <code>ref struct</code> restriction means it cannot be stored on the heap, in class fields, or across <code>await</code> points — use <code>Memory&lt;T&gt;</code> for those cases. Common uses: binary/text protocol parsing, buffer processing, avoiding <code>new byte[]</code> in I/O paths.</p>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 10 ===== -->
+  <section class="section" id="s10">
+    <h2>10. IDisposable and IAsyncDisposable</h2>
+
+    <h3>The Full Dispose Pattern</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public class</span> <span class="tp">ResourceManager</span> : <span class="tp">IDisposable</span>
+{
+    <span class="kw">private</span> <span class="tp">FileStream</span>? _fileStream;    <span class="cm">// Managed resource</span>
+    <span class="kw">private</span> <span class="tp">IntPtr</span> _nativeHandle;       <span class="cm">// Unmanaged resource</span>
+    <span class="kw">private bool</span> _disposed = <span class="kw">false</span>;
+
+    <span class="cm">// Called by user code: using statement or explicit Dispose()</span>
+    <span class="kw">public void</span> <span class="fn">Dispose</span>()
+    {
+        <span class="fn">Dispose</span>(disposing: <span class="kw">true</span>);
+        <span class="tp">GC</span>.<span class="fn">SuppressFinalize</span>(<span class="kw">this</span>); <span class="cm">// Tell GC not to call finalizer</span>
+    }
+
+    <span class="cm">// disposing = true: called by user (can access managed objects)</span>
+    <span class="cm">// disposing = false: called by GC finalizer (managed objects may be collected)</span>
+    <span class="kw">protected virtual void</span> <span class="fn">Dispose</span>(<span class="kw">bool</span> disposing)
+    {
+        <span class="kw">if</span> (_disposed) <span class="kw">return</span>;
+
+        <span class="kw">if</span> (disposing)
+        {
+            <span class="cm">// Free managed resources</span>
+            _fileStream?.<span class="fn">Dispose</span>();
+            _fileStream = <span class="kw">null</span>;
+        }
+
+        <span class="cm">// Free unmanaged resources (always, regardless of disposing flag)</span>
+        <span class="kw">if</span> (_nativeHandle != <span class="tp">IntPtr</span>.Zero)
+        {
+            <span class="fn">FreeNativeResource</span>(_nativeHandle);
+            _nativeHandle = <span class="tp">IntPtr</span>.Zero;
+        }
+
+        _disposed = <span class="kw">true</span>;
+    }
+
+    <span class="cm">// Safety net: called by GC if user forgot to call Dispose()</span>
+    ~<span class="fn">ResourceManager</span>() => <span class="fn">Dispose</span>(disposing: <span class="kw">false</span>);
+}</code></pre>
+    </div>
+
+    <h3>using Statement vs using Declaration (C# 8+)</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// Traditional using — Dispose at end of block</span>
+<span class="kw">public void</span> <span class="fn">TraditionalUsing</span>()
+{
+    <span class="kw">using</span> (<span class="kw">var</span> reader = <span class="kw">new</span> <span class="tp">StreamReader</span>(<span class="str">"file.txt"</span>))
+    {
+        <span class="kw">var</span> content = reader.<span class="fn">ReadToEnd</span>();
+    } <span class="cm">// reader.Dispose() called here</span>
+}
+
+<span class="cm">// C# 8+: using declaration — Dispose at end of enclosing method scope</span>
+<span class="kw">public void</span> <span class="fn">ModernUsing</span>()
+{
+    <span class="kw">using var</span> reader = <span class="kw">new</span> <span class="tp">StreamReader</span>(<span class="str">"file.txt"</span>); <span class="cm">// No braces</span>
+    <span class="kw">var</span> content = reader.<span class="fn">ReadToEnd</span>();
+} <span class="cm">// reader.Dispose() called here (end of method)</span>
+
+<span class="cm">// Multiple resources disposed in REVERSE order</span>
+<span class="kw">public void</span> <span class="fn">MultipleResources</span>()
+{
+    <span class="kw">using var</span> connection = <span class="kw">new</span> <span class="tp">SqlConnection</span>(<span class="str">"..."</span>);
+    <span class="kw">using var</span> command    = connection.<span class="fn">CreateCommand</span>();
+    <span class="kw">using var</span> reader     = command.<span class="fn">ExecuteReader</span>();
+    <span class="cm">// Disposed: reader -> command -> connection (reverse order)</span>
+}</code></pre>
+    </div>
+
+    <h3>IAsyncDisposable — Async Cleanup</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="kw">public class</span> <span class="tp">AsyncDatabase</span> : <span class="tp">IAsyncDisposable</span>
+{
+    <span class="kw">private</span> <span class="tp">DbConnection</span>? _connection;
+    <span class="kw">private bool</span> _disposed = <span class="kw">false</span>;
+
+    <span class="kw">public async</span> <span class="tp">ValueTask</span> <span class="fn">DisposeAsync</span>()
+    {
+        <span class="kw">if</span> (_disposed) <span class="kw">return</span>;
+        _disposed = <span class="kw">true</span>;
+
+        <span class="kw">if</span> (_connection != <span class="kw">null</span>)
+        {
+            <span class="kw">await</span> _connection.<span class="fn">CloseAsync</span>();     <span class="cm">// Async: flushes pending ops</span>
+            <span class="kw">await</span> _connection.<span class="fn">DisposeAsync</span>();  <span class="cm">// Async dispose</span>
+            _connection = <span class="kw">null</span>;
+        }
+
+        <span class="tp">GC</span>.<span class="fn">SuppressFinalize</span>(<span class="kw">this</span>);
+    }
+}
+
+<span class="cm">// Usage: await using (C# 8+)</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="fn">UseDatabase</span>()
+{
+    <span class="kw">await using var</span> db = <span class="kw">new</span> <span class="tp">AsyncDatabase</span>();
+    <span class="cm">// ... use db ...</span>
+} <span class="cm">// DisposeAsync() called automatically</span></code></pre>
+    </div>
+
+    <h3>HttpClient — Why NOT to Dispose Per Request</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// WRONG: Disposing HttpClient per request causes socket exhaustion</span>
+<span class="cm">// Connections stay in TIME_WAIT for ~4 minutes, exhausting ports</span>
+<span class="cm">// Also: DNS changes ignored, connection pool recreated on every request</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">GetDataWrong</span>(<span class="kw">string</span> url)
+{
+    <span class="kw">using var</span> client = <span class="kw">new</span> <span class="tp">HttpClient</span>(); <span class="cm">// NEW instance per call — WRONG</span>
+    <span class="kw">return await</span> client.<span class="fn">GetStringAsync</span>(url);
+}
+
+<span class="cm">// Option 1: Static singleton HttpClient (simple apps)</span>
+<span class="kw">private static readonly</span> <span class="tp">HttpClient</span> _client = <span class="kw">new</span> <span class="tp">HttpClient</span>();
+
+<span class="cm">// BEST: IHttpClientFactory (ASP.NET Core)</span>
+<span class="cm">// Manages HttpMessageHandler lifecycle: rotates handlers every 2 minutes</span>
+<span class="cm">// for DNS refresh, while reusing connections within that window</span>
+<span class="kw">public class</span> <span class="tp">MyService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">HttpClient</span> _client;
+
+    <span class="kw">public</span> <span class="fn">MyService</span>(<span class="tp">IHttpClientFactory</span> factory)
+    {
+        _client = factory.<span class="fn">CreateClient</span>(<span class="str">"MyApi"</span>);
+        <span class="cm">// Do NOT dispose _client — factory manages lifetime</span>
+    }
+}
+
+<span class="cm">// Registration:</span>
+<span class="cm">// builder.Services.AddHttpClient("MyApi", client =&gt;</span>
+<span class="cm">// {</span>
+<span class="cm">//     client.BaseAddress = new Uri("https://api.example.com");</span>
+<span class="cm">//     client.Timeout = TimeSpan.FromSeconds(30);</span>
+<span class="cm">// });</span></code></pre>
+    </div>
+
+    <h3>DbConnection — Correct Lifecycle</h3>
+
+    <div class="code-block">
+      <div class="lang-tag">csharp</div>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><code><span class="cm">// DbConnection SHOULD be disposed per operation</span>
+<span class="cm">// Dispose() returns connection to ADO.NET pool — near-instantaneous</span>
+<span class="cm">// Physical connection is NOT destroyed (unless pool is full)</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">List</span>&lt;<span class="tp">User</span>&gt;&gt; <span class="fn">GetUsersAsync</span>(<span class="tp">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    <span class="kw">await using var</span> connection = <span class="kw">new</span> <span class="tp">SqlConnection</span>(_connectionString);
+    <span class="kw">await</span> connection.<span class="fn">OpenAsync</span>(ct);
+
+    <span class="kw">await using var</span> command = connection.<span class="fn">CreateCommand</span>();
+    command.CommandText = <span class="str">"SELECT Id, Name, Email FROM Users"</span>;
+
+    <span class="kw">await using var</span> reader = <span class="kw">await</span> command.<span class="fn">ExecuteReaderAsync</span>(ct);
+    <span class="kw">var</span> users = <span class="kw">new</span> <span class="tp">List</span>&lt;<span class="tp">User</span>&gt;();
+
+    <span class="kw">while</span> (<span class="kw">await</span> reader.<span class="fn">ReadAsync</span>(ct))
+        users.<span class="fn">Add</span>(<span class="kw">new</span> <span class="tp">User</span>(reader.<span class="fn">GetInt32</span>(<span class="num">0</span>), reader.<span class="fn">GetString</span>(<span class="num">1</span>), reader.<span class="fn">GetString</span>(<span class="num">2</span>)));
+
+    <span class="kw">return</span> users;
+    <span class="cm">// connection.DisposeAsync() — returns to pool, NOT destroyed</span>
+}</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Dispose Pattern</th><th>Correct Usage</th></tr></thead>
+        <tbody>
+          <tr><td><code>StreamReader/Writer</code></td><td>Sync</td><td><code>using</code></td></tr>
+          <tr><td><code>SqlConnection/DbConnection</code></td><td>Both</td><td><code>await using</code> per operation (pool returns it)</td></tr>
+          <tr><td><code>HttpClient</code></td><td>Sync</td><td><strong>Do NOT dispose per-request</strong> — reuse or use factory</td></tr>
+          <tr><td><code>SemaphoreSlim</code></td><td>Sync</td><td><code>using</code></td></tr>
+          <tr><td><code>CancellationTokenSource</code></td><td>Sync</td><td><code>using</code></td></tr>
+          <tr><td><code>IHttpClientFactory</code> clients</td><td>Sync</td><td>Do NOT dispose — factory manages handler lifecycle</td></tr>
+          <tr><td>WebSocket client</td><td>Async</td><td><code>await using</code> for graceful close</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; color: var(--muted); font-size: 13px;">
+    Lead .NET Software Engineer Interview Preparation &mdash; async/await &amp; Threading &mdash; August 2026
+  </div>
+
+</main>
+
+<script>
+  // Copy button
+  function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+    });
+  }
+
+  // Active TOC highlighting on scroll
+  const sections = document.querySelectorAll('section.section');
+  const tocLinks = document.querySelectorAll('#toc a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`#toc a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

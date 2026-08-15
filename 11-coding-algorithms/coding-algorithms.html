@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coding &amp; Algorithms — Lead .NET Interview Prep</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #21262d;
+  --border: #30363d;
+  --heading: #58a6ff;
+  --text: #c9d1d9;
+  --muted: #8b949e;
+  --kw: #ff7b72;
+  --str: #a5d6ff;
+  --cm: #8b949e;
+  --num: #79c0ff;
+  --type: #ffa657;
+  --fn: #d2a8ff;
+  --green: #3fb950;
+  --red: #f85149;
+  --yellow: #e3b341;
+  --accent: #58a6ff;
+  --sidebar-w: 270px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.65;display:flex;min-height:100vh;}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;display:flex;flex-direction:column;}
+.sidebar-header{padding:20px 18px 14px;border-bottom:1px solid var(--border);}
+.sidebar-header h2{font-size:13px;font-weight:700;color:var(--heading);text-transform:uppercase;letter-spacing:.08em;}
+.sidebar-header p{font-size:11px;color:var(--muted);margin-top:3px;}
+.sidebar nav{padding:10px 0;}
+.sidebar nav a{display:block;padding:5px 18px;font-size:12.5px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;transition:all .15s;}
+.sidebar nav a:hover{color:var(--text);background:var(--surface2);border-left-color:var(--accent);}
+.sidebar nav .nav-section{padding:10px 18px 4px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#444c56;margin-top:6px;}
+
+/* ── Main ── */
+main{margin-left:var(--sidebar-w);padding:44px 56px;max-width:calc(var(--sidebar-w) + 900px);width:100%;}
+.page-title{margin-bottom:6px;}
+.page-title h1{font-size:28px;font-weight:700;color:var(--heading);}
+.page-title p{color:var(--muted);font-size:14px;margin-top:4px;}
+
+/* ── Cards ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin:32px 0;overflow:hidden;}
+.card-header{padding:18px 24px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.card-number{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.card-title{font-size:18px;font-weight:700;color:var(--heading);}
+.card-body{padding:20px 24px;}
+.card-body > * + *{margin-top:16px;}
+
+/* ── Sections within card ── */
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);margin-bottom:6px;}
+.approach-box{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:14px 16px;font-size:13.5px;}
+.approach-box p + p{margin-top:8px;}
+.approach-box ul{padding-left:18px;}
+.approach-box li{margin-top:5px;}
+.approach-box code{background:#0d1117;border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12.5px;font-family:'Cascadia Code','Fira Code',Consolas,monospace;}
+
+/* ── Complexity table ── */
+.complexity-table{width:100%;border-collapse:collapse;font-size:13px;}
+.complexity-table th{background:var(--surface2);color:var(--muted);font-weight:600;text-align:left;padding:7px 12px;border:1px solid var(--border);}
+.complexity-table td{padding:7px 12px;border:1px solid var(--border);}
+.complexity-table tr:nth-child(even) td{background:#161b2255;}
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11.5px;font-weight:700;font-family:'Cascadia Code','Fira Code',Consolas,monospace;}
+.badge-green{background:#3fb95022;color:var(--green);border:1px solid #3fb95055;}
+.badge-yellow{background:#e3b34122;color:var(--yellow);border:1px solid #e3b34155;}
+.badge-red{background:#f8514922;color:var(--red);border:1px solid #f8514955;}
+
+/* ── Code blocks ── */
+.code-wrap{position:relative;margin-top:6px;}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;transition:all .15s;z-index:2;}
+.copy-btn:hover{background:var(--border);color:var(--text);}
+.copy-btn.copied{color:var(--green);border-color:var(--green);}
+pre{background:#010409;border:1px solid var(--border);border-radius:8px;padding:18px 20px;overflow-x:auto;font-family:'Cascadia Code','Fira Code',Consolas,'Courier New',monospace;font-size:12.5px;line-height:1.7;tab-size:4;}
+pre code{background:none;border:none;padding:0;font-size:inherit;}
+
+/* ── Syntax highlight spans ── */
+.kw{color:var(--kw);}
+.st{color:var(--str);}
+.cm{color:var(--cm);font-style:italic;}
+.nm{color:var(--num);}
+.tp{color:var(--type);}
+.fn{color:var(--fn);}
+.op{color:#79c0ff;}
+
+/* ── Examples ── */
+.example-block{background:#010409;border:1px solid var(--border);border-radius:7px;padding:12px 16px;font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:12.5px;line-height:1.7;white-space:pre;}
+
+/* ── Follow-ups ── */
+.followup-list{list-style:none;padding:0;}
+.followup-list li{padding:5px 0 5px 0;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--muted);}
+.followup-list li:last-child{border-bottom:none;}
+.followup-list li::before{content:"→ ";color:var(--accent);}
+
+/* ── Bonus tables ── */
+.wide-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;}
+.wide-table th{background:var(--surface2);color:var(--heading);font-weight:600;text-align:left;padding:8px 12px;border:1px solid var(--border);}
+.wide-table td{padding:7px 12px;border:1px solid var(--border);vertical-align:top;}
+.wide-table tr:nth-child(even) td{background:#161b2233;}
+.wide-table td code{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:11.5px;font-family:'Cascadia Code','Fira Code',Consolas,monospace;}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  main{margin-left:0;padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════ SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Algorithms</h2>
+    <p>Lead .NET Interview Prep</p>
+  </div>
+  <nav>
+    <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+    <div class="nav-section">Core Problems</div>
+    <a href="#s1">1. Two Sum</a>
+    <a href="#s2">2. Product Except Self</a>
+    <a href="#s3">3. Merge Intervals</a>
+    <a href="#s4">4. Longest Substring</a>
+    <a href="#s5">5. LRU Cache</a>
+    <a href="#s6">6. Top K Frequent</a>
+    <a href="#s7">7. Binary Search</a>
+    <a href="#s8">8. BFS</a>
+    <a href="#s9">9. DFS</a>
+    <a href="#s10">10. Tree Traversal</a>
+    <a href="#s11">11. Valid Parentheses</a>
+    <a href="#s12">12. Max Subarray</a>
+    <a href="#s13">13. Coin Change</a>
+    <a href="#s14">14. Climbing Stairs</a>
+    <a href="#s15">15. Find Anagrams</a>
+    <div class="nav-section">Reference</div>
+    <a href="#patterns">Patterns Summary</a>
+    <a href="#csharp-tips">C# Tips</a>
+  </nav>
+</aside>
+
+<!-- ══════════════════════════════════════════════════════════════ MAIN -->
+<main>
+
+<div class="page-title">
+  <h1>Coding &amp; Algorithms</h1>
+  <p>Lead .NET Software Engineer — Interview Prep &nbsp;|&nbsp; 15 problems with complete C# solutions</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 1 -->
+<div class="card" id="s1">
+  <div class="card-header">
+    <div class="card-number">1</div>
+    <div class="card-title">Two Sum</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">HashMap</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given an array of integers <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">nums</code> and an integer <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">target</code>, return the <strong style="color:var(--heading)">indices</strong> of the two numbers that add up to target. Exactly one solution exists; you may not use the same index twice.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Input:  nums = [2, 7, 11, 15], target = 9
+Output: [0, 1]   → 2 + 7 = 9
+
+Input:  nums = [3, 2, 4], target = 6
+Output: [1, 2]
+
+Input:  nums = [3, 3], target = 6
+Output: [0, 1]</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong style="color:var(--kw)">Brute Force O(n²):</strong> Check every pair (i, j). Simple but slow — rejected in interviews.</p>
+      <p><strong style="color:var(--green)">HashMap O(n):</strong> Single pass. For each element, compute <code>complement = target - nums[i]</code>. If complement is already in the dictionary, return both indices. Otherwise store current number → index. Because you only look <em>backward</em>, the same index is never used twice.</p>
+      <p>Step trace for [2,7,11,15] target=9:<br>
+        i=0: complement=7 → not in dict → store {2:0}<br>
+        i=1: complement=2 → found at index 0 → return [0,1]</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Brute Force</td><td><span class="badge badge-red">O(n²)</span></td><td><span class="badge badge-green">O(1)</span></td></tr>
+      <tr><td>HashMap (optimal)</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-yellow">O(n)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s1"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>What if there can be zero or multiple solutions? (return <code>List&lt;int[]&gt;</code>)</li>
+      <li>What if the array is sorted? (two-pointer O(n) time, O(1) space)</li>
+      <li>Two Sum IV — input is a BST? (in-order traversal to sorted array, then two-pointer)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 2 -->
+<div class="card" id="s2">
+  <div class="card-header">
+    <div class="card-number">2</div>
+    <div class="card-title">Product of Array Except Self</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">O(1) extra</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">nums</code>, return array where <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">result[i]</code> = product of all elements except <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">nums[i]</code>. O(n) time, <strong style="color:var(--heading)">no division</strong>.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Input:  [1, 2, 3, 4]
+Output: [24, 12, 8, 6]
+
+Input:  [-1, 1, 0, -3, 3]
+Output: [0, 0, 9, 0, 0]</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong style="color:var(--green)">Two-Pass (Left × Right):</strong> For each index i, the answer is (product of all LEFT of i) × (product of all RIGHT of i).</p>
+      <p><strong>Left pass:</strong> Fill result[i] with prefix product. result[0]=1 (nothing to left).</p>
+      <p><strong>Right pass:</strong> Multiply result[i] by a running rightProduct variable, scanning right→left.</p>
+      <p>Example [1,2,3,4] → Left pass: [1,1,2,6] → Right pass × [24,12,4,1] = [24,12,8,6]</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Two-pass</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-green">O(1) extra</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s2"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>If division were allowed — compute total product and divide. Breaks on zeros.</li>
+      <li>Handles zeros automatically — no special casing needed in the two-pass approach.</li>
+      <li>What if the output array also counts as extra space? (no O(1) solution exists — must store answers somewhere)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 3 -->
+<div class="card" id="s3">
+  <div class="card-header">
+    <div class="card-number">3</div>
+    <div class="card-title">Merge Intervals</div>
+    <span class="badge badge-yellow">O(n log n)</span>
+    <span class="badge badge-green">Sort + Sweep</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given an array of intervals <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">[start, end]</code>, merge all overlapping intervals and return the result.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Input:  [[1,3],[2,6],[8,10],[15,18]]
+Output: [[1,6],[8,10],[15,18]]
+
+Input:  [[1,4],[4,5]]
+Output: [[1,5]]   ← touching intervals merge
+
+Input:  [[1,4],[2,3]]
+Output: [[1,4]]   ← nested interval</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p>1. <strong>Sort</strong> by start time — O(n log n).</p>
+      <p>2. Initialize result list with the first interval.</p>
+      <p>3. For each subsequent interval: if <code>start &lt;= last.end</code> → overlapping, extend end. Otherwise append as new interval.</p>
+      <p>Trace: Sorted [1,3],[2,6],[8,10],[15,18] → merge [1,3]+[2,6]=[1,6] → [8,10] no overlap → [15,18] no overlap</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Step</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Sort</td><td><span class="badge badge-yellow">O(n log n)</span></td><td><span class="badge badge-green">O(1)</span></td></tr>
+      <tr><td>Sweep</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-yellow">O(n) output</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s3"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Insert Interval into sorted non-overlapping list — O(n), no sort needed.</li>
+      <li>Meeting Rooms — can one person attend all? Check for any overlap.</li>
+      <li>Meeting Rooms II — minimum rooms needed? Min-heap on end times.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 4 -->
+<div class="card" id="s4">
+  <div class="card-header">
+    <div class="card-number">4</div>
+    <div class="card-title">Longest Substring Without Repeating Characters</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">Sliding Window</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given string <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">s</code>, find the length of the longest substring without repeating characters.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Input:  "abcabcbb"  → 3   ("abc")
+Input:  "bbbbb"     → 1   ("b")
+Input:  "pwwkew"    → 3   ("wke")
+Input:  ""          → 0</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong style="color:var(--green)">Sliding Window + HashSet:</strong> Expand right pointer, adding chars to a set. When a duplicate is found, shrink from the left until the duplicate is gone.</p>
+      <p><strong style="color:var(--green)">Optimized — Dictionary jump:</strong> Store char → last seen index. On duplicate, jump left pointer directly to <code>prevIdx + 1</code>, skipping the inner while loop entirely.</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>HashSet window</td><td><span class="badge badge-green">O(n) amortized</span></td><td><span class="badge badge-green">O(k) charset</span></td></tr>
+      <tr><td>Dictionary jump</td><td><span class="badge badge-green">O(n) strict</span></td><td><span class="badge badge-green">O(k) charset</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s4"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Return the actual substring, not just length? Track start index when maxLen updates.</li>
+      <li>At most K distinct characters? Use Dictionary frequency; shrink when dict.Count &gt; k.</li>
+      <li>Minimum window substring? Classic sliding window — track distinct chars satisfied.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 5 -->
+<div class="card" id="s5">
+  <div class="card-header">
+    <div class="card-number">5</div>
+    <div class="card-title">LRU Cache</div>
+    <span class="badge badge-green">O(1) get &amp; put</span>
+    <span class="badge badge-green">Dict + DLL</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Design a Least Recently Used cache. <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">get(key)</code> returns value or -1; marks as recently used. <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">put(key, value)</code> inserts/updates; evicts LRU on overflow. Both O(1).</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">LRUCache(2)    put(1,1) put(2,2)
+get(1)  → 1   (1 is now MRU; order: 1,2)
+put(3,3)       evict 2 (LRU)
+get(2)  → -1  (evicted)
+get(3)  → 3
+get(1)  → 1</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong>Dictionary</strong> gives O(1) key→node lookup. <strong>Doubly Linked List</strong> gives O(1) insert/remove at any position. Together they deliver O(1) for both operations.</p>
+      <p>Layout: <code>HEAD ↔ [MRU] ↔ ... ↔ [LRU] ↔ TAIL</code></p>
+      <p>Dummy sentinel nodes (head + tail) eliminate null checks at boundaries.</p>
+      <p><strong>get:</strong> look up in dict → move node to front → return value.</p>
+      <p><strong>put:</strong> if key exists, update + move to front. If new + at capacity, remove tail.Prev (LRU) from dict and list, then add new node at front.</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Operation</th><th>Time</th><th>Space</th></tr>
+      <tr><td>get / put</td><td><span class="badge badge-green">O(1)</span></td><td>—</td></tr>
+      <tr><td>Overall</td><td>—</td><td><span class="badge badge-yellow">O(capacity)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s5"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>LFU Cache (Least Frequently Used)? Frequency buckets + DLL per bucket.</li>
+      <li>Thread-safe LRU? Use lock or ReaderWriterLockSlim.</li>
+      <li>Why not use C# LinkedList&lt;T&gt;? Node removal requires the node object — dictionary must store LinkedListNode&lt;T&gt; not T.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 6 -->
+<div class="card" id="s6">
+  <div class="card-header">
+    <div class="card-number">6</div>
+    <div class="card-title">Top K Frequent Elements</div>
+    <span class="badge badge-green">O(n log k)</span>
+    <span class="badge badge-green">Min-Heap</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">nums</code> and integer <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">k</code>, return the k most frequent elements in any order.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Input:  [1,1,1,2,2,3], k=2  → [1, 2]
+Input:  [1], k=1             → [1]</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong style="color:var(--green)">Min-Heap O(n log k):</strong> Count frequencies with Dictionary. Push each unique number onto a min-heap keyed by frequency. When heap exceeds k, pop the minimum (least frequent). Result: heap holds the k most frequent.</p>
+      <p><strong style="color:var(--green)">Bucket Sort O(n):</strong> Create n+1 buckets. bucket[freq] = list of numbers with that frequency. Collect top k from highest frequency down.</p>
+      <p>PriorityQueue&lt;TElement, TPriority&gt; in .NET 6+ is a min-heap — lowest priority dequeues first.</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Sort by frequency</td><td><span class="badge badge-yellow">O(n log n)</span></td><td><span class="badge badge-yellow">O(n)</span></td></tr>
+      <tr><td>Min-Heap</td><td><span class="badge badge-green">O(n log k)</span></td><td><span class="badge badge-yellow">O(n+k)</span></td></tr>
+      <tr><td>Bucket Sort</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-yellow">O(n)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s6"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Top K frequent words? Same pattern; tie-break alphabetically — adjust heap comparator.</li>
+      <li>K Closest Points to Origin? Min-heap on distance² — same O(n log k) pattern.</li>
+      <li>Kth Largest Element in Stream? Maintain min-heap of size k; top = kth largest.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 7 -->
+<div class="card" id="s7">
+  <div class="card-header">
+    <div class="card-number">7</div>
+    <div class="card-title">Binary Search</div>
+    <span class="badge badge-green">O(log n)</span>
+    <span class="badge badge-green">3 Variants</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Implement: (A) standard binary search, (B) find first/last occurrence (array with duplicates), (C) search in rotated sorted array.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Standard:  [1,3,5,7,9,11], target=7   → index 3
+First occ: [1,2,2,2,3],   target=2   → index 1
+Last occ:  [1,2,2,2,3],   target=2   → index 3
+Rotated:   [4,5,6,7,0,1,2], target=0 → index 4</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong>Core:</strong> mid = left + (right - left) / 2 — prevents integer overflow vs (left+right)/2.</p>
+      <p><strong>First occurrence:</strong> On match, record index but continue LEFT (right = mid-1).</p>
+      <p><strong>Last occurrence:</strong> On match, record index but continue RIGHT (left = mid+1).</p>
+      <p><strong>Rotated:</strong> One half is always fully sorted. Check which half is sorted, then determine if target falls in that range.</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Variant</th><th>Time</th><th>Space</th></tr>
+      <tr><td>All variants</td><td><span class="badge badge-green">O(log n)</span></td><td><span class="badge badge-green">O(1)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s7"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Find minimum in rotated sorted array? If nums[mid] &gt; nums[right], min is in right half.</li>
+      <li>Search a 2D matrix? Treat as 1D: row = i/cols, col = i%cols.</li>
+      <li>Find peak element? If nums[mid] &lt; nums[mid+1], peak is to the right.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 8 -->
+<div class="card" id="s8">
+  <div class="card-header">
+    <div class="card-number">8</div>
+    <div class="card-title">BFS — Breadth-First Search</div>
+    <span class="badge badge-green">O(V+E)</span>
+    <span class="badge badge-green">Queue</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Implement BFS for: (A) level-order tree traversal, (B) shortest path in grid (0=open, 1=wall), (C) count connected components in undirected graph.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Level-order tree [3,9,20,null,null,15,7]:
+  → [[3],[9,20],[15,7]]
+
+Grid shortest path [[0,0,0],[0,1,0],[0,0,0]]:
+  → 5 steps
+
+n=5, edges=[[0,1],[1,2],[3,4]]:
+  → 2 components ({0,1,2} and {3,4})</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p>BFS uses a <strong>Queue (FIFO)</strong> to explore level by level. This guarantees the <strong>shortest path</strong> in unweighted graphs — DFS does not.</p>
+      <p>Level-order trick: snapshot queue.Count before the level loop — that's exactly the nodes at the current level.</p>
+      <p>Mark cells/nodes as visited <em>before</em> enqueuing to prevent duplicate processing.</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Problem</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Level-order</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-yellow">O(n)</span></td></tr>
+      <tr><td>Shortest path</td><td><span class="badge badge-green">O(rows × cols)</span></td><td><span class="badge badge-yellow">O(rows × cols)</span></td></tr>
+      <tr><td>Connected components</td><td><span class="badge badge-green">O(V+E)</span></td><td><span class="badge badge-yellow">O(V)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s8"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>BFS vs DFS — when to prefer BFS? Shortest path (unweighted), level-by-level processing.</li>
+      <li>Bidirectional BFS? Search from both source and target — reduces space from O(b^d) to O(b^(d/2)).</li>
+      <li>Word Ladder? BFS where words are nodes; edges connect words differing by one letter.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 9 -->
+<div class="card" id="s9">
+  <div class="card-header">
+    <div class="card-number">9</div>
+    <div class="card-title">DFS — Depth-First Search</div>
+    <span class="badge badge-green">O(V+E)</span>
+    <span class="badge badge-green">Stack / Recursion</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Implement DFS for: (A) tree traversal recursive and iterative, (B) cycle detection in directed graph, (C) Number of Islands.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Number of Islands:
+  [["1","1","0"],["1","0","0"],["0","0","1"]] → 2
+
+Cycle, n=3, edges=[[0,1],[1,2],[2,0]]:
+  → true  (0 → 1 → 2 → 0)</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong>Cycle detection (directed):</strong> 3-color scheme. White(0)=unvisited, Gray(1)=on current path, Black(2)=done. A back edge to a Gray node = cycle.</p>
+      <p><strong>Number of Islands:</strong> For each unvisited '1', increment count and DFS to sink the entire island (mark connected '1's as '0'). Next outer loop iteration skips sunk cells.</p>
+      <p><strong>Iterative DFS:</strong> Push right child before left child so left is processed first (LIFO).</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Problem</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Tree DFS</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-green">O(h) height</span></td></tr>
+      <tr><td>Cycle detection</td><td><span class="badge badge-green">O(V+E)</span></td><td><span class="badge badge-yellow">O(V)</span></td></tr>
+      <tr><td>Number of Islands</td><td><span class="badge badge-green">O(rows×cols)</span></td><td><span class="badge badge-yellow">O(rows×cols)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s9"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>DFS vs BFS for shortest path? DFS does NOT guarantee shortest path — use BFS.</li>
+      <li>Topological sort? DFS post-order collection, or BFS Kahn's algorithm (in-degree).</li>
+      <li>Number of Islands with Union-Find? Union adjacent land cells, count distinct roots.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 10 -->
+<div class="card" id="s10">
+  <div class="card-header">
+    <div class="card-number">10</div>
+    <div class="card-title">Tree Traversal</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">All 4 traversals</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Implement InOrder, PreOrder, PostOrder (recursive + iterative), and Level-Order traversal on a binary tree.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Tree: 1 → left:2(left:4,right:5), right:3
+
+InOrder:    [4, 2, 5, 1, 3]   ← Left→Root→Right
+PreOrder:   [1, 2, 4, 5, 3]   ← Root→Left→Right
+PostOrder:  [4, 5, 2, 3, 1]   ← Left→Right→Root
+LevelOrder: [[1],[2,3],[4,5]]</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong>Recursive:</strong> Change only where you call <code>result.Add(node.Val)</code>: before children = PreOrder, between = InOrder, after = PostOrder.</p>
+      <p><strong>Iterative InOrder:</strong> Drill left pushing onto stack; pop to process; go right. Most commonly asked iterative pattern.</p>
+      <p><strong>Iterative PostOrder trick:</strong> Root→Right→Left (mirror of PreOrder), then reverse the list → Left→Right→Root.</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Traversal</th><th>Time</th><th>Space</th></tr>
+      <tr><td>InOrder / PreOrder / PostOrder</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-green">O(h) height</span></td></tr>
+      <tr><td>Level-Order</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-yellow">O(w) max width</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s10"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Validate BST? InOrder traversal — check values are strictly increasing.</li>
+      <li>Binary Tree Max Path Sum? PostOrder DFS — return max gain from each subtree.</li>
+      <li>Serialize/Deserialize Binary Tree? PreOrder with null markers.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 11 -->
+<div class="card" id="s11">
+  <div class="card-header">
+    <div class="card-number">11</div>
+    <div class="card-title">Valid Parentheses</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">Stack</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given string of brackets <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">()[]{}</code>, determine if it is valid (every opener closed in correct order).</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">"()"      → true
+"()[]{}"  → true
+"(]"      → false
+"([)]"    → false
+"{[]}"    → true</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p>Push opening brackets. On closing bracket: stack must not be empty AND top must match expected opener. Return true only if stack is empty at end.</p>
+      <p>Trace "{[]}": push { → push [ → ']' pops [ ✓ → '}' pops { ✓ → stack empty → true</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Stack</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-yellow">O(n)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s11"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Minimum moves to make valid? Greedy — track unmatched open count.</li>
+      <li>Longest valid parentheses substring? DP or stack with index tracking.</li>
+      <li>Generate all valid parentheses combinations? Backtracking/DFS.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 12 -->
+<div class="card" id="s12">
+  <div class="card-header">
+    <div class="card-number">12</div>
+    <div class="card-title">Maximum Subarray — Kadane's Algorithm</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">O(1) space</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Find the contiguous subarray with the largest sum and return that sum.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">Input:  [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+Output: 6   (subarray [4, -1, 2, 1])
+
+Input:  [5, 4, -1, 7, 8]  → 23 (entire array)</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong>Kadane's:</strong> At each position, the max subarray ending here = max(nums[i], currentSum + nums[i]). If current sum went negative, it's better to start fresh.</p>
+      <p>Trace [-2,1,-3,4,-1,2,1,-5,4]: cur=-2,1,-2,4,3,5,<strong style="color:var(--green)">6</strong>,1,5 → max=6</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Kadane's</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-green">O(1)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s12"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Maximum product subarray? Track both max and min (negatives flip sign on multiply).</li>
+      <li>Circular subarray maximum sum? max(standard Kadane, total - min subarray).</li>
+      <li>Return the actual subarray? Track tempStart; update start/end when maxSum improves.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 13 -->
+<div class="card" id="s13">
+  <div class="card-header">
+    <div class="card-number">13</div>
+    <div class="card-title">Coin Change (Dynamic Programming)</div>
+    <span class="badge badge-yellow">O(n × amount)</span>
+    <span class="badge badge-green">Bottom-up DP</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given coin denominations and an <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">amount</code>, find the minimum number of coins to make that amount. Return -1 if impossible.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">coins=[1,2,5], amount=11  → 3  (5+5+1)
+coins=[2],     amount=3   → -1 (impossible)
+coins=[1],     amount=0   → 0</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p><strong>Bottom-up DP:</strong> dp[i] = minimum coins to make amount i. Fill with sentinel (amount+1). dp[0]=0.</p>
+      <p>For each amount i, try every coin: dp[i] = min(dp[i], dp[i-coin]+1).</p>
+      <p>DP table [1,2,5] → amount 11:</p>
+      <p><code>amt: 0  1  2  3  4  5  6  7  8  9 10 11</code><br>
+         <code>dp:  0  1  1  2  2  1  2  2  3  3  2  3</code></p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Bottom-up DP</td><td><span class="badge badge-yellow">O(n × amount)</span></td><td><span class="badge badge-yellow">O(amount)</span></td></tr>
+      <tr><td>Memoization</td><td><span class="badge badge-yellow">O(n × amount)</span></td><td><span class="badge badge-yellow">O(amount)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s13"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Count combinations (not minimum)? Change recurrence to sum instead of min.</li>
+      <li>Unbounded vs 0/1 Knapsack? Coin change is unbounded (coins reusable) — loop order matters for 0/1.</li>
+      <li>Each coin with quantity limit? Bounded knapsack — add a quantity dimension.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 14 -->
+<div class="card" id="s14">
+  <div class="card-header">
+    <div class="card-number">14</div>
+    <div class="card-title">Climbing Stairs (DP / Fibonacci)</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">O(1) space</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Climb <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">n</code> stairs, 1 or 2 steps at a time. How many distinct ways to reach the top?</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">n=1 → 1    n=2 → 2    n=3 → 3
+n=4 → 5    n=5 → 8   ← Fibonacci!</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p>To reach step n you came from n-1 (1 step) or n-2 (2 steps): <strong>ways(n) = ways(n-1) + ways(n-2)</strong> — exactly Fibonacci.</p>
+      <p>Naive recursion = O(2^n). Memoization/Tabulation = O(n). Space-optimized with two variables = O(1).</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Naive recursion</td><td><span class="badge badge-red">O(2^n)</span></td><td><span class="badge badge-yellow">O(n)</span></td></tr>
+      <tr><td>Memoization / Tabulation</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-yellow">O(n)</span></td></tr>
+      <tr><td>Space-optimized</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-green">O(1)</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s14"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>1, 2, or 3 steps allowed? dp[i] = dp[i-1]+dp[i-2]+dp[i-3], three prev variables.</li>
+      <li>House Robber? Same Fibonacci pattern — dp[i] = max(dp[i-1], dp[i-2] + nums[i]).</li>
+      <li>Min cost climbing stairs? dp[i] = cost[i] + min(dp[i-1], dp[i-2]).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PROBLEM 15 -->
+<div class="card" id="s15">
+  <div class="card-header">
+    <div class="card-number">15</div>
+    <div class="card-title">Find All Anagrams in a String</div>
+    <span class="badge badge-green">O(n)</span>
+    <span class="badge badge-green">Sliding Window</span>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Problem Statement</div>
+    <p>Given strings <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">s</code> and <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">p</code>, return start indices of all anagrams of <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">p</code> in <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px">s</code>.</p>
+
+    <div class="section-label">Examples</div>
+    <div class="example-block">s="cbaebabacd", p="abc"  → [0, 6]
+  "cba"(idx 0) and "bac"(idx 6) are anagrams
+
+s="abab", p="ab"       → [0, 1, 2]</div>
+
+    <div class="section-label">Approach</div>
+    <div class="approach-box">
+      <p>Use two int[26] frequency arrays (pCount for pattern, wCount for window). Track <code>matches</code> — how many of 26 char slots have equal frequency in both arrays.</p>
+      <p>Slide the window: add new right char (update wCount + matches), remove old left char (update wCount + matches). When matches==26, record start index.</p>
+      <p>Updating matches incrementally avoids recomputing the full comparison on every slide — O(1) per slide.</p>
+    </div>
+
+    <div class="section-label">Complexity</div>
+    <table class="complexity-table">
+      <tr><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Sliding window + freq arrays</td><td><span class="badge badge-green">O(n)</span></td><td><span class="badge badge-green">O(1) — fixed 26</span></td></tr>
+    </table>
+
+    <div class="section-label">C# Solution</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-s15"></pre>
+    </div>
+
+    <div class="section-label">Follow-up Questions</div>
+    <ul class="followup-list">
+      <li>Permutation in String? Same algorithm — return true/false instead of collecting indices.</li>
+      <li>Minimum Window Substring? Sliding window tracking how many distinct required chars are satisfied.</li>
+      <li>Group Anagrams? Sort each word as key — O(n × k log k).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PATTERNS -->
+<div class="card" id="patterns">
+  <div class="card-header">
+    <div class="card-number" style="width:auto;padding:0 10px;font-size:11px;">B1</div>
+    <div class="card-title">Algorithm Patterns Summary</div>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Pattern Decision Table</div>
+    <table class="wide-table">
+      <tr><th>Pattern</th><th>Use When</th><th>C# Type</th><th>Examples</th></tr>
+      <tr><td><strong style="color:var(--heading)">HashMap / HashSet</strong></td><td>O(1) lookup, frequency count, duplicates</td><td><code>Dictionary&lt;K,V&gt;</code>, <code>HashSet&lt;T&gt;</code></td><td>Two Sum, Anagram Groups</td></tr>
+      <tr><td><strong style="color:var(--heading)">Two Pointers</strong></td><td>Sorted array, pairs/triplets, palindrome</td><td>Two int indices</td><td>Two Sum Sorted, 3Sum, Container</td></tr>
+      <tr><td><strong style="color:var(--heading)">Sliding Window</strong></td><td>Subarray/substring with constraint</td><td>left/right + window state</td><td>Longest Substr, Anagrams, Min Window</td></tr>
+      <tr><td><strong style="color:var(--heading)">Binary Search</strong></td><td>Sorted collection, find boundary O(log n)</td><td>left/right indices</td><td>Search, Rotated Array, Peak</td></tr>
+      <tr><td><strong style="color:var(--heading)">Stack</strong></td><td>Matching pairs, next greater/smaller, DFS iterative</td><td><code>Stack&lt;T&gt;</code></td><td>Valid Parens, Daily Temps, DFS</td></tr>
+      <tr><td><strong style="color:var(--heading)">Queue / BFS</strong></td><td>Shortest path (unweighted), level processing</td><td><code>Queue&lt;T&gt;</code></td><td>BFS, Shortest Path, Level-Order</td></tr>
+      <tr><td><strong style="color:var(--heading)">Heap / Priority Queue</strong></td><td>K-th largest/smallest, top-K, streaming</td><td><code>PriorityQueue&lt;E,P&gt;</code></td><td>Top K Frequent, K Closest</td></tr>
+      <tr><td><strong style="color:var(--heading)">Dynamic Programming</strong></td><td>Optimal substructure + overlapping subproblems</td><td>int[] or int[,] dp table</td><td>Coin Change, Climbing Stairs</td></tr>
+      <tr><td><strong style="color:var(--heading)">Union-Find</strong></td><td>Connectivity, grouping, cycle (undirected)</td><td>int[] parent, rank</td><td>Number of Islands, Redundant Conn</td></tr>
+      <tr><td><strong style="color:var(--heading)">Monotonic Stack</strong></td><td>Next greater/smaller element, span problems</td><td>Stack&lt;int&gt; (indices)</td><td>Daily Temperatures, Largest Rectangle</td></tr>
+    </table>
+
+    <div class="section-label" style="margin-top:20px;">Decision Framework</div>
+    <div class="code-wrap">
+      <pre style="font-size:12px;">Is input sorted (or can it be)?
+  Yes → Binary Search O(log n) or Two Pointers O(n)
+
+Need O(1) lookup?
+  Yes → Dictionary / HashSet
+
+Problem about a subarray/substring?
+  Fixed size window → Sliding Window
+  Variable size with constraint → Sliding Window + shrink left
+
+Tree or graph problem?
+  Shortest path / level-by-level → BFS (guarantees shortest)
+  Explore all paths / cycle detection → DFS
+
+Choices that build on smaller choices?
+  Overlapping subproblems? → Dynamic Programming
+  Greedy choice property? → Greedy
+
+Need K-th or top-K?
+  → Heap (PriorityQueue&lt;T,P&gt;)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ C# TIPS -->
+<div class="card" id="csharp-tips">
+  <div class="card-header">
+    <div class="card-number" style="width:auto;padding:0 10px;font-size:11px;">B2</div>
+    <div class="card-title">C# Specific Tips</div>
+  </div>
+  <div class="card-body">
+    <div class="section-label">Collections Cheat Sheet</div>
+    <table class="wide-table">
+      <tr><th>Type</th><th>Use When</th><th>Key Performance</th></tr>
+      <tr><td><code>int[]</code></td><td>Fixed size, fastest iteration, DP tables</td><td>Cache-friendly, no overhead</td></tr>
+      <tr><td><code>List&lt;int&gt;</code></td><td>Dynamic size, need Add/Remove</td><td>O(1) amortized add</td></tr>
+      <tr><td><code>Dictionary&lt;K,V&gt;</code></td><td>O(1) lookup by key, frequency counting</td><td>O(1) avg get/set/contains</td></tr>
+      <tr><td><code>HashSet&lt;T&gt;</code></td><td>Membership test, deduplication</td><td>O(1) avg contains/add</td></tr>
+      <tr><td><code>Stack&lt;T&gt;</code></td><td>LIFO — DFS iterative, matching</td><td>O(1) push/pop</td></tr>
+      <tr><td><code>Queue&lt;T&gt;</code></td><td>FIFO — BFS, level processing</td><td>O(1) enqueue/dequeue</td></tr>
+      <tr><td><code>PriorityQueue&lt;E,P&gt;</code></td><td>Min-heap .NET 6+ — top-K, Dijkstra</td><td>O(log n) enqueue/dequeue</td></tr>
+      <tr><td><code>SortedSet&lt;T&gt;</code></td><td>Sorted membership, range queries</td><td>O(log n) all ops</td></tr>
+    </table>
+
+    <div class="section-label" style="margin-top:20px;">Common C# Patterns in Interviews</div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre id="code-tips"></pre>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ════════════════════════════════════════════════ CODE STORAGE
+const codes = {
+
+'s1': `using System;
+using System.Collections.Generic;
+
+/// <summary>Two Sum — find two indices whose values sum to target.</summary>
+public class Solution01_TwoSum
+{
+    // Brute Force: O(n²) time, O(1) space
+    public int[] TwoSumBruteForce(int[] nums, int target)
+    {
+        for (int i = 0; i < nums.Length; i++)
+            for (int j = i + 1; j < nums.Length; j++)
+                if (nums[i] + nums[j] == target)
+                    return new[] { i, j };
+
+        return Array.Empty<int>(); // guaranteed solution exists
+    }
+
+    // HashMap: O(n) time, O(n) space — optimal
+    public int[] TwoSumHashMap(int[] nums, int target)
+    {
+        // key = number value, value = its array index
+        var seen = new Dictionary<int, int>();
+
+        for (int i = 0; i < nums.Length; i++)
+        {
+            int complement = target - nums[i];
+
+            // If complement was stored in a previous iteration, done
+            if (seen.TryGetValue(complement, out int prevIndex))
+                return new[] { prevIndex, i };
+
+            // Store current number so future iterations can find it
+            seen[nums[i]] = i;
+        }
+
+        return Array.Empty<int>();
+    }
+}`,
+
+'s2': `using System;
+
+/// <summary>Product of Array Except Self — O(n) time, O(1) extra space.</summary>
+public class Solution02_ProductExceptSelf
+{
+    public int[] ProductExceptSelf(int[] nums)
+    {
+        int n      = nums.Length;
+        int[] result = new int[n]; // output array (not counted as extra space)
+
+        // ── Left Pass ─────────────────────────────────────────────────────
+        // result[i] = product of all elements to the LEFT of index i
+        result[0] = 1; // nothing to the left of index 0
+        for (int i = 1; i < n; i++)
+            result[i] = result[i - 1] * nums[i - 1];
+
+        // ── Right Pass ────────────────────────────────────────────────────
+        // Multiply result[i] by product of everything to the RIGHT of i
+        int rightProduct = 1; // running product from the right
+        for (int i = n - 1; i >= 0; i--)
+        {
+            result[i]    *= rightProduct; // combine left and right products
+            rightProduct *= nums[i];      // extend running right product
+        }
+
+        return result;
+    }
+}`,
+
+'s3': `using System;
+using System.Collections.Generic;
+
+/// <summary>Merge Intervals — sort by start, greedily merge overlaps.</summary>
+public class Solution03_MergeIntervals
+{
+    public int[][] Merge(int[][] intervals)
+    {
+        if (intervals.Length <= 1) return intervals;
+
+        // Sort by start time using a custom comparison
+        Array.Sort(intervals, (a, b) => a[0].CompareTo(b[0]));
+
+        var merged = new List<int[]>();
+        merged.Add(intervals[0]); // seed with first interval
+
+        for (int i = 1; i < intervals.Length; i++)
+        {
+            int[] current = intervals[i];
+            int[] last    = merged[^1]; // C# 8+ index-from-end operator
+
+            if (current[0] <= last[1])
+            {
+                // Overlapping or touching: extend the end if needed
+                last[1] = Math.Max(last[1], current[1]);
+            }
+            else
+            {
+                // Gap: add as a new separate interval
+                merged.Add(current);
+            }
+        }
+
+        return merged.ToArray();
+    }
+}`,
+
+'s4': `using System;
+using System.Collections.Generic;
+
+/// <summary>Longest Substring Without Repeating Characters — sliding window.</summary>
+public class Solution04_LongestSubstring
+{
+    // Approach 1: HashSet sliding window
+    public int LengthOfLongestSubstring(string s)
+    {
+        var charSet = new HashSet<char>(); // chars in current window
+        int left    = 0;
+        int maxLen  = 0;
+
+        for (int right = 0; right < s.Length; right++)
+        {
+            // Shrink from left until duplicate s[right] is removed
+            while (charSet.Contains(s[right]))
+            {
+                charSet.Remove(s[left]);
+                left++;
+            }
+
+            charSet.Add(s[right]);
+            maxLen = Math.Max(maxLen, right - left + 1);
+        }
+
+        return maxLen;
+    }
+
+    // Approach 2: Dictionary — jump left pointer directly (O(n) strict)
+    public int LengthOptimized(string s)
+    {
+        var lastSeen = new Dictionary<char, int>(); // char -> last index seen
+        int left     = 0;
+        int maxLen   = 0;
+
+        for (int right = 0; right < s.Length; right++)
+        {
+            // If char was seen inside the current window, jump left past it
+            if (lastSeen.TryGetValue(s[right], out int prevIdx) && prevIdx >= left)
+                left = prevIdx + 1;
+
+            lastSeen[s[right]] = right; // update last seen index
+            maxLen = Math.Max(maxLen, right - left + 1);
+        }
+
+        return maxLen;
+    }
+}`,
+
+'s5': `using System.Collections.Generic;
+
+/// <summary>
+/// LRU Cache — O(1) get and put.
+/// Dictionary for O(1) lookup + Doubly Linked List for O(1) order management.
+/// Sentinel head/tail nodes eliminate null-check edge cases.
+/// </summary>
+public class LRUCache
+{
+    // ── Doubly Linked List Node ──────────────────────────────────────────
+    private class DllNode
+    {
+        public int     Key;
+        public int     Value;
+        public DllNode Prev;
+        public DllNode Next;
+        public DllNode(int key = 0, int value = 0) { Key = key; Value = value; }
+    }
+
+    private readonly int                       _capacity;
+    private readonly Dictionary<int, DllNode>  _cache;   // O(1) key → node lookup
+
+    // HEAD.Next = MRU node,  TAIL.Prev = LRU node
+    private readonly DllNode _head; // dummy sentinel (most recently used end)
+    private readonly DllNode _tail; // dummy sentinel (least recently used end)
+
+    public LRUCache(int capacity)
+    {
+        _capacity  = capacity;
+        _cache     = new Dictionary<int, DllNode>(capacity);
+        _head      = new DllNode();
+        _tail      = new DllNode();
+        _head.Next = _tail;
+        _tail.Prev = _head;
+    }
+
+    // O(1) — lookup then move to front
+    public int Get(int key)
+    {
+        if (!_cache.TryGetValue(key, out DllNode node)) return -1;
+        MoveToFront(node); // mark as most recently used
+        return node.Value;
+    }
+
+    // O(1) — update existing or insert new, evict LRU if over capacity
+    public void Put(int key, int value)
+    {
+        if (_cache.TryGetValue(key, out DllNode existing))
+        {
+            existing.Value = value;
+            MoveToFront(existing);
+        }
+        else
+        {
+            if (_cache.Count == _capacity)
+            {
+                DllNode lru = _tail.Prev; // node just before tail = LRU
+                RemoveNode(lru);
+                _cache.Remove(lru.Key);
+            }
+            var newNode = new DllNode(key, value);
+            AddToFront(newNode);
+            _cache[key] = newNode;
+        }
+    }
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+
+    private void RemoveNode(DllNode node)
+    {
+        node.Prev.Next = node.Next; // wire neighbors together
+        node.Next.Prev = node.Prev; // bypassing this node
+    }
+
+    private void AddToFront(DllNode node)
+    {
+        node.Next      = _head.Next; // insert between head and head.Next
+        node.Prev      = _head;
+        _head.Next.Prev = node;
+        _head.Next     = node;
+    }
+
+    private void MoveToFront(DllNode node)
+    {
+        RemoveNode(node); // unlink from current position
+        AddToFront(node); // re-link right after head
+    }
+}`,
+
+'s6': `using System;
+using System.Collections.Generic;
+
+/// <summary>Top K Frequent Elements — two approaches.</summary>
+public class Solution06_TopKFrequent
+{
+    // ── Approach A: Min-Heap — O(n log k) ───────────────────────────────
+    public int[] TopKFrequentHeap(int[] nums, int k)
+    {
+        // Step 1: Count frequencies
+        var freq = new Dictionary<int, int>();
+        foreach (int num in nums)
+            freq[num] = freq.GetValueOrDefault(num, 0) + 1;
+
+        // Step 2: Min-heap of size k keyed by frequency
+        // PriorityQueue<TElement, TPriority> — .NET 6+, dequeues MINIMUM priority first
+        var minHeap = new PriorityQueue<int, int>();
+
+        foreach (var (num, count) in freq)
+        {
+            minHeap.Enqueue(num, count); // priority = frequency
+
+            // Keep heap size at k; pop least-frequent when exceeded
+            if (minHeap.Count > k)
+                minHeap.Dequeue();
+        }
+
+        // Step 3: Extract k elements
+        int[] result = new int[k];
+        for (int i = k - 1; i >= 0; i--)
+            result[i] = minHeap.Dequeue();
+
+        return result;
+    }
+
+    // ── Approach B: Bucket Sort — O(n) ──────────────────────────────────
+    public int[] TopKFrequentBucketSort(int[] nums, int k)
+    {
+        var freq = new Dictionary<int, int>();
+        foreach (int num in nums)
+            freq[num] = freq.GetValueOrDefault(num, 0) + 1;
+
+        // bucket[f] = list of numbers that appear exactly f times
+        var buckets = new List<int>[nums.Length + 1];
+        foreach (var (num, count) in freq)
+        {
+            buckets[count] ??= new List<int>(); // null-coalescing assignment
+            buckets[count].Add(num);
+        }
+
+        // Collect top k from highest frequency downward
+        var result = new List<int>();
+        for (int f = buckets.Length - 1; f >= 0 && result.Count < k; f--)
+            if (buckets[f] != null)
+                result.AddRange(buckets[f]);
+
+        return result.GetRange(0, k).ToArray();
+    }
+}`,
+
+'s7': `using System;
+
+/// <summary>Binary Search — standard, first/last occurrence, rotated array.</summary>
+public class Solution07_BinarySearch
+{
+    // ── Standard Binary Search ───────────────────────────────────────────
+    public int Search(int[] nums, int target)
+    {
+        int left = 0, right = nums.Length - 1;
+
+        while (left <= right)
+        {
+            // left + (right-left)/2 prevents integer overflow vs (left+right)/2
+            int mid = left + (right - left) / 2;
+
+            if      (nums[mid] == target) return mid;
+            else if (nums[mid] <  target) left  = mid + 1; // right half
+            else                          right = mid - 1; // left half
+        }
+
+        return -1;
+    }
+
+    // ── First Occurrence (array with duplicates) ─────────────────────────
+    public int FindFirst(int[] nums, int target)
+    {
+        int left = 0, right = nums.Length - 1, result = -1;
+
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] == target)
+            {
+                result = mid;      // record candidate
+                right  = mid - 1; // keep searching LEFT for earlier occurrence
+            }
+            else if (nums[mid] < target) left  = mid + 1;
+            else                          right = mid - 1;
+        }
+
+        return result;
+    }
+
+    // ── Last Occurrence ──────────────────────────────────────────────────
+    public int FindLast(int[] nums, int target)
+    {
+        int left = 0, right = nums.Length - 1, result = -1;
+
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] == target)
+            {
+                result = mid;    // record candidate
+                left   = mid + 1; // keep searching RIGHT for later occurrence
+            }
+            else if (nums[mid] < target) left  = mid + 1;
+            else                          right = mid - 1;
+        }
+
+        return result;
+    }
+
+    // ── Search in Rotated Sorted Array ───────────────────────────────────
+    // e.g. [4,5,6,7,0,1,2] — one half is always fully sorted
+    public int SearchRotated(int[] nums, int target)
+    {
+        int left = 0, right = nums.Length - 1;
+
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] == target) return mid;
+
+            // Determine which half is sorted
+            if (nums[left] <= nums[mid]) // left half is sorted
+            {
+                if (target >= nums[left] && target < nums[mid])
+                    right = mid - 1; // target in sorted left half
+                else
+                    left = mid + 1;  // target in right half
+            }
+            else // right half is sorted
+            {
+                if (target > nums[mid] && target <= nums[right])
+                    left = mid + 1;  // target in sorted right half
+                else
+                    right = mid - 1; // target in left half
+            }
+        }
+
+        return -1;
+    }
+}`,
+
+'s8': `using System;
+using System.Collections.Generic;
+
+// Shared tree node (also used in Problems 9 and 10)
+public class TreeNode
+{
+    public int      Val;
+    public TreeNode Left;
+    public TreeNode Right;
+    public TreeNode(int val = 0, TreeNode left = null, TreeNode right = null)
+    { Val = val; Left = left; Right = right; }
+}
+
+/// <summary>BFS — level-order, shortest path in grid, connected components.</summary>
+public class Solution08_BFS
+{
+    // ── Level-Order Tree Traversal ────────────────────────────────────────
+    public IList<IList<int>> LevelOrder(TreeNode root)
+    {
+        var result = new List<IList<int>>();
+        if (root == null) return result;
+
+        var queue = new Queue<TreeNode>();
+        queue.Enqueue(root);
+
+        while (queue.Count > 0)
+        {
+            int levelSize = queue.Count; // snapshot: all nodes at this level
+            var levelVals = new List<int>();
+
+            for (int i = 0; i < levelSize; i++)
+            {
+                TreeNode node = queue.Dequeue();
+                levelVals.Add(node.Val);
+
+                if (node.Left  != null) queue.Enqueue(node.Left);
+                if (node.Right != null) queue.Enqueue(node.Right);
+            }
+
+            result.Add(levelVals);
+        }
+
+        return result;
+    }
+
+    // ── Shortest Path in Grid (0=open, 1=wall) ───────────────────────────
+    public int ShortestPath(int[][] grid)
+    {
+        int rows = grid.Length, cols = grid[0].Length;
+
+        if (grid[0][0] == 1 || grid[rows - 1][cols - 1] == 1) return -1;
+
+        int[][] dirs = { new[] { 0, 1 }, new[] { 0, -1 }, new[] { 1, 0 }, new[] { -1, 0 } };
+        var visited  = new bool[rows, cols];
+        visited[0, 0] = true;
+
+        var queue = new Queue<(int r, int c, int dist)>();
+        queue.Enqueue((0, 0, 1));
+
+        while (queue.Count > 0)
+        {
+            var (r, c, dist) = queue.Dequeue();
+
+            if (r == rows - 1 && c == cols - 1) return dist;
+
+            foreach (int[] dir in dirs)
+            {
+                int nr = r + dir[0], nc = c + dir[1];
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols
+                    && !visited[nr, nc] && grid[nr][nc] == 0)
+                {
+                    visited[nr, nc] = true; // mark BEFORE enqueue to avoid duplicates
+                    queue.Enqueue((nr, nc, dist + 1));
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    // ── Count Connected Components ────────────────────────────────────────
+    public int CountComponents(int n, int[][] edges)
+    {
+        var adj = new List<int>[n];
+        for (int i = 0; i < n; i++) adj[i] = new List<int>();
+        foreach (int[] e in edges) { adj[e[0]].Add(e[1]); adj[e[1]].Add(e[0]); }
+
+        var visited    = new bool[n];
+        int components = 0;
+
+        for (int start = 0; start < n; start++)
+        {
+            if (visited[start]) continue;
+
+            components++;
+            var queue = new Queue<int>();
+            queue.Enqueue(start);
+            visited[start] = true;
+
+            while (queue.Count > 0)
+            {
+                int node = queue.Dequeue();
+                foreach (int nb in adj[node])
+                    if (!visited[nb]) { visited[nb] = true; queue.Enqueue(nb); }
+            }
+        }
+
+        return components;
+    }
+}`,
+
+'s9': `using System;
+using System.Collections.Generic;
+
+/// <summary>DFS — recursive/iterative tree, cycle detection, number of islands.</summary>
+public class Solution09_DFS
+{
+    // ── Tree DFS Recursive (pre-order) ───────────────────────────────────
+    public List<int> DfsTreeRecursive(TreeNode root)
+    {
+        var result = new List<int>();
+        Explore(root, result);
+        return result;
+
+        static void Explore(TreeNode node, List<int> acc)
+        {
+            if (node == null) return;
+            acc.Add(node.Val);          // process before children (pre-order)
+            Explore(node.Left,  acc);
+            Explore(node.Right, acc);
+        }
+    }
+
+    // ── Tree DFS Iterative ────────────────────────────────────────────────
+    public List<int> DfsTreeIterative(TreeNode root)
+    {
+        var result = new List<int>();
+        if (root == null) return result;
+
+        var stack = new Stack<TreeNode>();
+        stack.Push(root);
+
+        while (stack.Count > 0)
+        {
+            TreeNode node = stack.Pop();
+            result.Add(node.Val);
+
+            // Push right first so left is processed first (LIFO)
+            if (node.Right != null) stack.Push(node.Right);
+            if (node.Left  != null) stack.Push(node.Left);
+        }
+
+        return result;
+    }
+
+    // ── Cycle Detection in Directed Graph ────────────────────────────────
+    // 3-color: 0=white(unvisited), 1=gray(on path), 2=black(done)
+    public bool HasCycle(int n, int[][] edges)
+    {
+        var adj = new List<int>[n];
+        for (int i = 0; i < n; i++) adj[i] = new List<int>();
+        foreach (int[] e in edges) adj[e[0]].Add(e[1]); // directed
+
+        int[] color = new int[n];
+
+        bool Dfs(int node)
+        {
+            color[node] = 1; // gray: currently visiting
+
+            foreach (int nb in adj[node])
+            {
+                if (color[nb] == 1) return true;          // back edge = cycle!
+                if (color[nb] == 0 && Dfs(nb)) return true; // unvisited: recurse
+            }
+
+            color[node] = 2; // black: fully explored
+            return false;
+        }
+
+        for (int i = 0; i < n; i++)
+            if (color[i] == 0 && Dfs(i)) return true;
+
+        return false;
+    }
+
+    // ── Number of Islands ─────────────────────────────────────────────────
+    // '1'=land, '0'=water. Count connected land regions.
+    public int NumIslands(char[][] grid)
+    {
+        int rows = grid.Length, cols = grid[0].Length, islands = 0;
+
+        void Sink(int r, int c)
+        {
+            if (r < 0 || r >= rows || c < 0 || c >= cols || grid[r][c] != '1')
+                return;
+
+            grid[r][c] = '0'; // mark visited by sinking to water
+
+            Sink(r + 1, c); Sink(r - 1, c);
+            Sink(r, c + 1); Sink(r, c - 1);
+        }
+
+        for (int r = 0; r < rows; r++)
+            for (int c = 0; c < cols; c++)
+                if (grid[r][c] == '1') { islands++; Sink(r, c); }
+
+        return islands;
+    }
+}`,
+
+'s10': `using System;
+using System.Collections.Generic;
+
+/// <summary>
+/// Tree Traversal — all 4 traversals, recursive and iterative.
+/// Uses TreeNode defined in Problem 8.
+/// </summary>
+public class Solution10_TreeTraversal
+{
+    // ── IN-ORDER: Left → Root → Right ────────────────────────────────────
+
+    public List<int> InOrderRecursive(TreeNode root)
+    {
+        var result = new List<int>();
+        void Traverse(TreeNode n)
+        {
+            if (n == null) return;
+            Traverse(n.Left);      // go left
+            result.Add(n.Val);     // process root
+            Traverse(n.Right);     // go right
+        }
+        Traverse(root);
+        return result;
+    }
+
+    public List<int> InOrderIterative(TreeNode root)
+    {
+        var result = new List<int>();
+        var stack  = new Stack<TreeNode>();
+        TreeNode cur = root;
+
+        while (cur != null || stack.Count > 0)
+        {
+            while (cur != null) { stack.Push(cur); cur = cur.Left; } // drill left
+            cur = stack.Pop();
+            result.Add(cur.Val); // process
+            cur = cur.Right;     // go right
+        }
+
+        return result;
+    }
+
+    // ── PRE-ORDER: Root → Left → Right ───────────────────────────────────
+
+    public List<int> PreOrderRecursive(TreeNode root)
+    {
+        var result = new List<int>();
+        void Traverse(TreeNode n)
+        {
+            if (n == null) return;
+            result.Add(n.Val);     // process root FIRST
+            Traverse(n.Left);
+            Traverse(n.Right);
+        }
+        Traverse(root);
+        return result;
+    }
+
+    public List<int> PreOrderIterative(TreeNode root)
+    {
+        var result = new List<int>();
+        if (root == null) return result;
+
+        var stack = new Stack<TreeNode>();
+        stack.Push(root);
+
+        while (stack.Count > 0)
+        {
+            TreeNode n = stack.Pop();
+            result.Add(n.Val);                          // process on pop
+            if (n.Right != null) stack.Push(n.Right);  // right before left (LIFO)
+            if (n.Left  != null) stack.Push(n.Left);
+        }
+
+        return result;
+    }
+
+    // ── POST-ORDER: Left → Right → Root ──────────────────────────────────
+
+    public List<int> PostOrderRecursive(TreeNode root)
+    {
+        var result = new List<int>();
+        void Traverse(TreeNode n)
+        {
+            if (n == null) return;
+            Traverse(n.Left);
+            Traverse(n.Right);
+            result.Add(n.Val);     // process root LAST
+        }
+        Traverse(root);
+        return result;
+    }
+
+    // Trick: reverse of (Root → Right → Left) = (Left → Right → Root)
+    public List<int> PostOrderIterative(TreeNode root)
+    {
+        var result = new List<int>();
+        if (root == null) return result;
+
+        var stack = new Stack<TreeNode>();
+        stack.Push(root);
+
+        while (stack.Count > 0)
+        {
+            TreeNode n = stack.Pop();
+            result.Insert(0, n.Val);                    // prepend (builds in reverse)
+            if (n.Left  != null) stack.Push(n.Left);   // left before right (opposite)
+            if (n.Right != null) stack.Push(n.Right);
+        }
+
+        return result;
+    }
+
+    // ── LEVEL-ORDER (BFS) ─────────────────────────────────────────────────
+
+    public IList<IList<int>> LevelOrder(TreeNode root)
+    {
+        var result = new List<IList<int>>();
+        if (root == null) return result;
+
+        var queue = new Queue<TreeNode>();
+        queue.Enqueue(root);
+
+        while (queue.Count > 0)
+        {
+            int size  = queue.Count;
+            var level = new List<int>();
+
+            for (int i = 0; i < size; i++)
+            {
+                TreeNode n = queue.Dequeue();
+                level.Add(n.Val);
+                if (n.Left  != null) queue.Enqueue(n.Left);
+                if (n.Right != null) queue.Enqueue(n.Right);
+            }
+
+            result.Add(level);
+        }
+
+        return result;
+    }
+}`,
+
+'s11': `using System.Collections.Generic;
+
+/// <summary>Valid Parentheses — stack-based O(n) solution.</summary>
+public class Solution11_ValidParentheses
+{
+    public bool IsValid(string s)
+    {
+        var stack = new Stack<char>();
+
+        foreach (char c in s)
+        {
+            if (c == '(' || c == '[' || c == '{')
+            {
+                stack.Push(c); // always push opening brackets
+            }
+            else
+            {
+                // Stack must not be empty and top must match expected opener
+                if (stack.Count == 0) return false;
+
+                char top = stack.Pop();
+                if (c == ')' && top != '(') return false;
+                if (c == ']' && top != '[') return false;
+                if (c == '}' && top != '{') return false;
+            }
+        }
+
+        return stack.Count == 0; // all openers must have been closed
+    }
+
+    // Cleaner variant: use dictionary for matching pairs
+    public bool IsValidCleaner(string s)
+    {
+        var matching = new Dictionary<char, char>
+        {
+            [')'] = '(',
+            [']'] = '[',
+            ['}'] = '{'
+        };
+
+        var stack = new Stack<char>();
+
+        foreach (char c in s)
+        {
+            if (!matching.ContainsKey(c)) // opening bracket
+            {
+                stack.Push(c);
+            }
+            else // closing bracket
+            {
+                if (stack.Count == 0 || stack.Pop() != matching[c])
+                    return false;
+            }
+        }
+
+        return stack.Count == 0;
+    }
+}`,
+
+'s12': `using System;
+
+/// <summary>Maximum Subarray — Kadane's Algorithm O(n) time, O(1) space.</summary>
+public class Solution12_MaxSubarray
+{
+    public int MaxSubArray(int[] nums)
+    {
+        int currentSum = nums[0]; // max subarray sum ending at current position
+        int maxSum     = nums[0]; // global maximum
+
+        for (int i = 1; i < nums.Length; i++)
+        {
+            // Either extend current subarray or start fresh from nums[i]
+            currentSum = Math.Max(nums[i], currentSum + nums[i]);
+
+            maxSum = Math.Max(maxSum, currentSum);
+        }
+
+        return maxSum;
+    }
+
+    // Extended: also return the subarray's start and end indices
+    public (int MaxSum, int Start, int End) MaxSubArrayWithIndices(int[] nums)
+    {
+        int currentSum = nums[0], maxSum = nums[0];
+        int start = 0, end = 0, tempStart = 0;
+
+        for (int i = 1; i < nums.Length; i++)
+        {
+            if (nums[i] > currentSum + nums[i])
+            {
+                currentSum = nums[i]; // start a new subarray here
+                tempStart  = i;
+            }
+            else
+            {
+                currentSum += nums[i];
+            }
+
+            if (currentSum > maxSum)
+            {
+                maxSum = currentSum;
+                start  = tempStart;
+                end    = i;
+            }
+        }
+
+        return (maxSum, start, end);
+    }
+}`,
+
+'s13': `using System;
+
+/// <summary>Coin Change — bottom-up DP. O(n * amount) time, O(amount) space.</summary>
+public class Solution13_CoinChange
+{
+    public int CoinChange(int[] coins, int amount)
+    {
+        // dp[i] = minimum coins needed to make exactly amount i
+        int[] dp = new int[amount + 1];
+        Array.Fill(dp, amount + 1); // sentinel: larger than any real answer
+        dp[0] = 0;                   // base case: 0 coins for amount 0
+
+        for (int i = 1; i <= amount; i++)
+        {
+            foreach (int coin in coins)
+            {
+                if (coin <= i)
+                {
+                    // Use this coin + optimal solution for remaining amount
+                    dp[i] = Math.Min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+
+        // If sentinel remains, no solution exists
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+
+    // Top-down memoization alternative
+    public int CoinChangeMemo(int[] coins, int amount)
+    {
+        int[] memo = new int[amount + 1];
+        Array.Fill(memo, -2); // -2=not computed, -1=impossible
+
+        int Dp(int rem)
+        {
+            if (rem == 0)  return 0;
+            if (rem < 0)   return -1;
+            if (memo[rem] != -2) return memo[rem];
+
+            int minCoins = int.MaxValue;
+            foreach (int coin in coins)
+            {
+                int sub = Dp(rem - coin);
+                if (sub >= 0 && sub < minCoins)
+                    minCoins = sub + 1;
+            }
+
+            memo[rem] = (minCoins == int.MaxValue) ? -1 : minCoins;
+            return memo[rem];
+        }
+
+        return Dp(amount);
+    }
+}
+// DP table trace: coins=[1,2,5], amount=11
+// amt:  0  1  2  3  4  5  6  7  8  9 10 11
+// dp:   0  1  1  2  2  1  2  2  3  3  2  3  ← answer = 3`,
+
+'s14': `using System;
+using System.Collections.Generic;
+
+/// <summary>
+/// Climbing Stairs — three DP approaches.
+/// Space-optimized O(1) is the preferred interview answer.
+/// </summary>
+public class Solution14_ClimbingStairs
+{
+    // ── Memoization (top-down DP) ─────────────────────────────────────────
+    public int ClimbStairsMemo(int n)
+    {
+        var memo = new Dictionary<int, int>();
+
+        int Dp(int i)
+        {
+            if (i <= 1) return 1;            // base: 1 way for 0 or 1 step
+            if (memo.ContainsKey(i)) return memo[i];
+
+            memo[i] = Dp(i - 1) + Dp(i - 2); // can arrive from i-1 or i-2
+            return memo[i];
+        }
+
+        return Dp(n);
+    }
+
+    // ── Tabulation (bottom-up DP) ─────────────────────────────────────────
+    public int ClimbStairsTabulation(int n)
+    {
+        if (n <= 1) return 1;
+
+        int[] dp = new int[n + 1];
+        dp[0] = 1; // 1 way to be at step 0 (do nothing)
+        dp[1] = 1; // 1 way to reach step 1
+
+        for (int i = 2; i <= n; i++)
+            dp[i] = dp[i - 1] + dp[i - 2]; // Fibonacci recurrence
+
+        return dp[n];
+    }
+
+    // ── Space-Optimized — O(1) space ─────────────────────────────────────
+    public int ClimbStairsOptimal(int n)
+    {
+        if (n <= 1) return 1;
+
+        int prev2 = 1; // dp[i-2]
+        int prev1 = 1; // dp[i-1]
+
+        for (int i = 2; i <= n; i++)
+        {
+            int curr = prev1 + prev2; // dp[i]
+            prev2    = prev1;         // slide the window
+            prev1    = curr;
+        }
+
+        return prev1;
+    }
+}
+// n=5: dp=[1,1,2,3,5,8]  answer=8 (Fibonacci: F(n+1))`,
+
+'s15': `using System;
+using System.Collections.Generic;
+
+/// <summary>Find All Anagrams — sliding window + frequency arrays. O(n), O(1).</summary>
+public class Solution15_FindAnagrams
+{
+    public IList<int> FindAnagrams(string s, string p)
+    {
+        var result = new List<int>();
+        if (s.Length < p.Length) return result;
+
+        int[] pCount = new int[26]; // frequency of each char in p
+        int[] wCount = new int[26]; // frequency of each char in current window
+
+        // Initialize counts for pattern and first window
+        for (int i = 0; i < p.Length; i++)
+        {
+            pCount[p[i] - 'a']++;
+            wCount[s[i] - 'a']++;
+        }
+
+        // Count how many of 26 char slots currently match
+        int matches = 0;
+        for (int i = 0; i < 26; i++)
+            if (pCount[i] == wCount[i]) matches++;
+
+        // Slide the window one character at a time
+        for (int right = p.Length; right < s.Length; right++)
+        {
+            if (matches == 26)
+                result.Add(right - p.Length); // previous window was anagram
+
+            // ── Add new char entering from the right ──────────────────────
+            int charIn = s[right] - 'a';
+            wCount[charIn]++;
+            if      (wCount[charIn] == pCount[charIn])     matches++;
+            else if (wCount[charIn] == pCount[charIn] + 1) matches--;
+
+            // ── Remove char leaving from the left ─────────────────────────
+            int charOut = s[right - p.Length] - 'a';
+            wCount[charOut]--;
+            if      (wCount[charOut] == pCount[charOut])     matches++;
+            else if (wCount[charOut] == pCount[charOut] - 1) matches--;
+        }
+
+        if (matches == 26) result.Add(s.Length - p.Length); // check last window
+
+        return result;
+    }
+}`,
+
+'tips': `// ── Dictionary with default (avoids KeyNotFoundException) ──────────────
+freq[num] = freq.GetValueOrDefault(num, 0) + 1;
+
+// ── TryGetValue — single lookup instead of ContainsKey + indexer ────────
+if (dict.TryGetValue(key, out int val)) { /* use val */ }
+
+// ── Array.Sort with lambda ───────────────────────────────────────────────
+Array.Sort(intervals, (a, b) => a[0].CompareTo(b[0]));
+
+// ── String to char frequency array ──────────────────────────────────────
+int[] count = new int[26];
+foreach (char c in s) count[c - 'a']++;
+
+// ── Index from end and range operators (C# 8+) ──────────────────────────
+int last  = arr[^1];     // same as arr[arr.Length - 1]
+int[] sub = arr[1..4];   // elements at indices 1, 2, 3
+
+// ── Null-coalescing assignment (C# 8+) ──────────────────────────────────
+buckets[freq] ??= new List<int>();
+
+// ── Tuple deconstruction for queue state ────────────────────────────────
+var queue = new Queue<(int row, int col, int dist)>();
+queue.Enqueue((0, 0, 0));
+var (r, c, d) = queue.Dequeue();
+
+// ── PriorityQueue (min-heap) — .NET 6+ ──────────────────────────────────
+var minHeap = new PriorityQueue<int, int>(); // <element, priority>
+minHeap.Enqueue(value, priority);            // O(log n)
+int top = minHeap.Peek();                    // O(1) — view minimum
+int min = minHeap.Dequeue();                 // O(log n) — removes minimum
+
+// ── StringBuilder for O(n) string building ──────────────────────────────
+var sb = new StringBuilder();
+foreach (char c in chars) sb.Append(c);
+string result = sb.ToString(); // BAD: string += c in a loop is O(n²)
+
+// ── Pre-allocate List to avoid resizing ─────────────────────────────────
+var list = new List<int>(n); // capacity hint — avoids array copies
+
+// ── Array.Fill — initialize DP arrays ───────────────────────────────────
+int[] dp = new int[amount + 1];
+Array.Fill(dp, int.MaxValue);
+dp[0] = 0;
+
+// ── Local functions for recursion (C# 7+) ───────────────────────────────
+bool Dfs(int node)
+{
+    // accesses outer variables (closure)
+    color[node] = 1;
+    foreach (int nb in adj[node])
+        if (color[nb] == 1) return true;
+    color[node] = 2;
+    return false;
+}`
+
+};
+
+// ════════════════════════════════════════════════ SYNTAX HIGHLIGHTER
+function highlight(raw) {
+    const keywords = [
+        'using','namespace','public','private','protected','internal','static',
+        'readonly','const','class','interface','struct','enum','abstract','sealed',
+        'override','virtual','new','void','return','if','else','for','foreach',
+        'while','do','switch','case','break','continue','in','out','ref','var',
+        'int','string','bool','char','long','double','float','byte','short',
+        'null','true','false','this','base','throw','try','catch','finally',
+        'is','as','typeof','sizeof','default','where','from','select','let'
+    ];
+
+    // Escape HTML
+    let code = raw
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    // Apply highlighting in correct order (comments and strings first to protect them)
+    const placeholders = [];
+    let ph = 0;
+
+    // 1. Single-line comments
+    code = code.replace(/(\/\/[^\n]*)/g, (m) => {
+        placeholders.push(`<span class="cm">${m}</span>`);
+        return `\x00${ph++}\x00`;
+    });
+
+    // 2. Strings
+    code = code.replace(/("(?:[^"\\]|\\.)*")/g, (m) => {
+        placeholders.push(`<span class="st">${m}</span>`);
+        return `\x00${ph++}\x00`;
+    });
+
+    // 3. Keywords
+    const kwRe = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+    code = code.replace(kwRe, '<span class="kw">$1</span>');
+
+    // 4. Numbers (not inside already-tagged spans)
+    code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="nm">$1</span>');
+
+    // 5. Common .NET types
+    const types = ['Dictionary','List','Queue','Stack','HashSet','PriorityQueue',
+                   'Array','Math','StringBuilder','Console','IList','TreeNode',
+                   'DllNode','Exception','ArgumentException','HashSet','SortedSet',
+                   'LinkedList','LinkedListNode','Func','Action','Tuple'];
+    const tpRe = new RegExp(`\\b(${types.join('|')})\\b`, 'g');
+    code = code.replace(tpRe, '<span class="tp">$1</span>');
+
+    // Restore placeholders
+    code = code.replace(/\x00(\d+)\x00/g, (_, i) => placeholders[parseInt(i)]);
+
+    return code;
+}
+
+// ════════════════════════════════════════════════ INJECT CODE
+document.querySelectorAll('[id^="code-"]').forEach(pre => {
+    const key = pre.id.replace('code-', '');
+    if (codes[key]) {
+        pre.innerHTML = highlight(codes[key]);
+    }
+});
+
+// ════════════════════════════════════════════════ COPY BUTTONS
+function copyCode(btn) {
+    const pre = btn.nextElementSibling;
+    // Extract plain text from highlighted HTML
+    const tmp = document.createElement('div');
+    tmp.innerHTML = pre.innerHTML;
+    const text = tmp.textContent || tmp.innerText || '';
+
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(() => {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+}
+
+// ════════════════════════════════════════════════ ACTIVE NAV HIGHLIGHT
+const navLinks = document.querySelectorAll('.sidebar nav a');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            const id = e.target.id;
+            navLinks.forEach(a => {
+                a.style.color = a.getAttribute('href') === '#' + id
+                    ? 'var(--text)' : '';
+                a.style.borderLeftColor = a.getAttribute('href') === '#' + id
+                    ? 'var(--accent)' : '';
+                a.style.background = a.getAttribute('href') === '#' + id
+                    ? 'var(--surface2)' : '';
+            });
+        }
+    });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.card').forEach(card => observer.observe(card));
+</script>
+</body>
+</html>

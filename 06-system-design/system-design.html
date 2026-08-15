@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design & Architecture — Lead .NET Interview Prep</title>
+<style>
+/* ── Reset & Variables ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #0d1117;
+  --surface:     #161b22;
+  --surface2:    #21262d;
+  --border:      #30363d;
+  --heading:     #58a6ff;
+  --keyword:     #ff7b72;
+  --string:      #a5d6ff;
+  --comment:     #8b949e;
+  --number:      #f2cc60;
+  --text:        #c9d1d9;
+  --text-muted:  #8b949e;
+  --green:       #3fb950;
+  --orange:      #e3b341;
+  --purple:      #d2a8ff;
+  --accent:      #58a6ff;
+  --tip-border:  #3fb950;
+  --warn-border: #e3b341;
+  --q-border:    #58a6ff;
+  --pit-border:  #ff7b72;
+  --sidebar-w:   270px;
+  --content-max: 860px;
+}
+
+body {
+  background: var(--bg);
+  color:      var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size:  15px;
+  line-height: 1.7;
+  display:    flex;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────────────── */
+#sidebar {
+  width:      var(--sidebar-w);
+  min-width:  var(--sidebar-w);
+  height:     100vh;
+  position:   sticky;
+  top:        0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding:    1rem 0;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-title {
+  font-size:   0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color:       var(--text-muted);
+  padding:     0 1rem 0.75rem;
+}
+
+.sidebar-badge {
+  display:    inline-block;
+  background: #1f3a5f;
+  color:      var(--heading);
+  font-size:  0.65rem;
+  padding:    0.1em 0.45em;
+  border-radius: 3px;
+  margin-left: 0.4rem;
+  font-weight: 700;
+}
+
+#sidebar nav { padding: 0; }
+
+#sidebar a {
+  display:      block;
+  padding:      0.3rem 1rem 0.3rem 1.25rem;
+  color:        var(--text-muted);
+  text-decoration: none;
+  font-size:    0.8rem;
+  border-left:  2px solid transparent;
+  transition:   all 0.15s;
+  line-height:  1.4;
+}
+
+#sidebar a:hover,
+#sidebar a.active {
+  color:        var(--heading);
+  border-left-color: var(--heading);
+  background:   rgba(88,166,255,0.07);
+}
+
+#sidebar .nav-section {
+  font-size:   0.72rem;
+  font-weight: 700;
+  color:       var(--text);
+  padding:     0.75rem 1rem 0.2rem;
+  letter-spacing: 0.04em;
+}
+
+#sidebar .nav-sub {
+  padding-left: 1.8rem;
+  font-size:   0.77rem;
+}
+
+/* ── Main Content ─────────────────────────────────────────────────────── */
+#main {
+  flex:       1;
+  padding:    2.5rem 2rem;
+  max-width:  calc(var(--content-max) + 4rem);
+  min-width:  0;
+}
+
+/* ── Typography ───────────────────────────────────────────────────────── */
+h1 {
+  font-size:   2rem;
+  font-weight: 800;
+  color:       var(--heading);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color:      var(--text-muted);
+  font-size:  0.9rem;
+  margin-bottom: 2.5rem;
+}
+
+h2 {
+  font-size:   1.4rem;
+  font-weight: 700;
+  color:       var(--heading);
+  border-bottom: 1px solid var(--border);
+  padding:     2rem 0 0.4rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 1rem;
+}
+
+h3 {
+  font-size:   1.1rem;
+  font-weight: 700;
+  color:       var(--purple);
+  margin:      1.5rem 0 0.6rem;
+  scroll-margin-top: 1rem;
+}
+
+h4 {
+  font-size:   0.95rem;
+  font-weight: 700;
+  color:       var(--orange);
+  margin:      1.2rem 0 0.4rem;
+}
+
+p  { margin: 0.6rem 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+strong { color: var(--text); font-weight: 700; }
+code {
+  background: var(--surface2);
+  color:      var(--string);
+  padding:    0.15em 0.4em;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size:  0.88em;
+}
+
+a { color: var(--heading); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Tables ───────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; margin: 1rem 0; }
+table {
+  width:          100%;
+  border-collapse: collapse;
+  font-size:      0.88rem;
+}
+th {
+  background:     var(--surface2);
+  color:          var(--heading);
+  font-weight:    700;
+  text-align:     left;
+  padding:        0.5rem 0.75rem;
+  border:         1px solid var(--border);
+}
+td {
+  padding:        0.45rem 0.75rem;
+  border:         1px solid var(--border);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* ── Code Blocks ──────────────────────────────────────────────────────── */
+.code-block {
+  position:   relative;
+  margin:     1rem 0;
+  background: var(--surface);
+  border:     1px solid var(--border);
+  border-radius: 8px;
+  overflow:   hidden;
+}
+
+.code-label {
+  background:  var(--surface2);
+  color:       var(--text-muted);
+  font-size:   0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding:     0.35rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  display:     flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.copy-btn {
+  background:  transparent;
+  border:      1px solid var(--border);
+  color:       var(--text-muted);
+  font-size:   0.7rem;
+  padding:     0.2rem 0.5rem;
+  border-radius: 4px;
+  cursor:      pointer;
+  transition:  all 0.15s;
+}
+.copy-btn:hover { background: var(--surface2); color: var(--text); }
+.copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+.code-block pre {
+  margin:      0;
+  padding:     1rem 1.2rem;
+  overflow-x:  auto;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size:   0.82rem;
+  line-height: 1.6;
+  color:       var(--text);
+  white-space: pre;
+}
+
+/* ── Architecture Diagrams ────────────────────────────────────────────── */
+.arch-diagram {
+  background:  var(--surface);
+  border:      1px solid var(--heading);
+  border-left: 4px solid var(--heading);
+  border-radius: 6px;
+  margin:      1rem 0;
+  overflow:    hidden;
+}
+
+.arch-diagram .code-label {
+  background:  #1a2a3a;
+  color:       var(--heading);
+}
+
+.arch-diagram pre {
+  padding:     1rem 1.2rem;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size:   0.8rem;
+  line-height: 1.65;
+  color:       #adbdd4;
+  overflow-x:  auto;
+  margin:      0;
+  white-space: pre;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────── */
+.card {
+  margin:      1rem 0;
+  padding:     0.8rem 1rem;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-size:   0.9rem;
+}
+
+.card-q {
+  background:  rgba(88,166,255,0.07);
+  border-color: var(--q-border);
+}
+
+.card-tip {
+  background:  rgba(63,185,80,0.07);
+  border-color: var(--tip-border);
+}
+
+.card-pitfall {
+  background:  rgba(255,123,114,0.07);
+  border-color: var(--pit-border);
+}
+
+.card-warn {
+  background:  rgba(227,179,65,0.07);
+  border-color: var(--warn-border);
+}
+
+.card-label {
+  font-size:   0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.4rem;
+}
+
+.card-q .card-label    { color: var(--q-border); }
+.card-tip .card-label  { color: var(--tip-border); }
+.card-pitfall .card-label { color: var(--pit-border); }
+.card-warn .card-label { color: var(--warn-border); }
+
+.card-q p { font-weight: 600; margin-bottom: 0.3rem; }
+.card-q .answer { color: var(--text-muted); font-style: italic; }
+
+/* ── Lists ────────────────────────────────────────────────────────────── */
+ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+li     { margin: 0.25rem 0; }
+
+/* ── Violation / Fix labels ───────────────────────────────────────────── */
+.violation {
+  display:     inline-block;
+  background:  rgba(255,123,114,0.15);
+  color:       var(--keyword);
+  font-size:   0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding:     0.15em 0.5em;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-right: 0.4rem;
+}
+
+.fix-label {
+  display:     inline-block;
+  background:  rgba(63,185,80,0.15);
+  color:       var(--green);
+  font-size:   0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding:     0.15em 0.5em;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-right: 0.4rem;
+}
+
+/* ── Checklist ────────────────────────────────────────────────────────── */
+.checklist { list-style: none; padding-left: 0.5rem; }
+.checklist li::before { content: "✓ "; color: var(--green); font-weight: 700; }
+.checklist .x::before { content: "✗ "; color: var(--keyword); }
+
+/* ── Scrollbar ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  #sidebar { display: none; }
+  #main    { padding: 1.5rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ─────────────────────────────────────────────────────────── -->
+<aside id="sidebar">
+  <div class="sidebar-title">System Design <span class="sidebar-badge">Lead .NET</span></div>
+  <nav>
+    <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+    <div class="nav-section">1. SOLID Principles</div>
+    <a href="#solid" class="nav-sub">Overview</a>
+    <a href="#srp" class="nav-sub">S — Single Responsibility</a>
+    <a href="#ocp" class="nav-sub">O — Open/Closed</a>
+    <a href="#lsp" class="nav-sub">L — Liskov Substitution</a>
+    <a href="#isp" class="nav-sub">I — Interface Segregation</a>
+    <a href="#dip" class="nav-sub">D — Dependency Inversion</a>
+
+    <div class="nav-section">2. CQRS Pattern</div>
+    <a href="#cqrs" class="nav-sub">Concept &amp; Why</a>
+    <a href="#cqrs-code" class="nav-sub">MediatR Implementation</a>
+    <a href="#cqrs-qa" class="nav-sub">Interview Q&amp;A</a>
+
+    <div class="nav-section">3. Event Sourcing</div>
+    <a href="#es" class="nav-sub">Core Concept</a>
+    <a href="#es-code" class="nav-sub">C# Implementation</a>
+    <a href="#es-tradeoffs" class="nav-sub">Pros &amp; Cons</a>
+
+    <div class="nav-section">4. Microservices</div>
+    <a href="#api-gw" class="nav-sub">API Gateway</a>
+    <a href="#circuit" class="nav-sub">Circuit Breaker</a>
+    <a href="#saga" class="nav-sub">Saga Pattern</a>
+    <a href="#outbox" class="nav-sub">Outbox Pattern</a>
+
+    <div class="nav-section">5. Order Management</div>
+    <a href="#order-arch" class="nav-sub">Architecture Diagram</a>
+    <a href="#order-flow" class="nav-sub">Order Flow</a>
+    <a href="#order-failures" class="nav-sub">Failure Scenarios</a>
+
+    <div class="nav-section">6. Notification System</div>
+    <a href="#notif-arch" class="nav-sub">Architecture</a>
+    <a href="#notif-worker" class="nav-sub">Worker Code</a>
+    <a href="#notif-scale" class="nav-sub">Scale Math</a>
+
+    <div class="nav-section">7. URL Shortener</div>
+    <a href="#url-capacity" class="nav-sub">Capacity &amp; Encoding</a>
+    <a href="#url-arch" class="nav-sub">Architecture</a>
+
+    <div class="nav-section">8. Chat Application</div>
+    <a href="#chat-arch" class="nav-sub">Architecture</a>
+    <a href="#chat-code" class="nav-sub">SignalR Hub</a>
+    <a href="#chat-cassandra" class="nav-sub">Cassandra Schema</a>
+
+    <div class="nav-section">9. API Design</div>
+    <a href="#rest" class="nav-sub">RESTful Best Practices</a>
+    <a href="#idempotency" class="nav-sub">Idempotency</a>
+    <a href="#versioning" class="nav-sub">Versioning</a>
+    <a href="#pagination" class="nav-sub">Pagination</a>
+
+    <div class="nav-section">Quick Reference</div>
+    <a href="#framework" class="nav-sub">Interview Framework</a>
+    <a href="#tradeoffs" class="nav-sub">Trade-off Table</a>
+  </nav>
+</aside>
+
+<!-- ── MAIN CONTENT ────────────────────────────────────────────────────── -->
+<main id="main">
+
+<h1>System Design &amp; Architecture</h1>
+<div class="subtitle">Lead .NET Software Engineer — Interview Preparation &nbsp;|&nbsp; Most Critical Round</div>
+
+<div class="card card-warn">
+  <div class="card-label">Interview Strategy</div>
+  Think out loud. Ask clarifying questions before designing. Start high-level, then drill into interesting components. Explicitly state trade-offs — interviewers want to see how you reason, not just what you know.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="solid">1. SOLID Principles</h2>
+
+<p>SOLID is five design principles that make software more maintainable, flexible, and scalable. In a Lead interview, expect to explain <em>violations</em> and refactoring paths — not just recite definitions.</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Principle</th><th>One-liner</th><th>Violation Symptom</th></tr></thead>
+<tbody>
+<tr><td><strong>Single Responsibility</strong></td><td>One reason to change</td><td>God class / fat service</td></tr>
+<tr><td><strong>Open/Closed</strong></td><td>Open to extension, closed to modification</td><td>Switch/if-else on type</td></tr>
+<tr><td><strong>Liskov Substitution</strong></td><td>Subtypes must be substitutable</td><td><code>NotImplementedException</code> in derived class</td></tr>
+<tr><td><strong>Interface Segregation</strong></td><td>No forced dependency on unused methods</td><td>Fat interface forcing empty stubs</td></tr>
+<tr><td><strong>Dependency Inversion</strong></td><td>Depend on abstractions, not concretions</td><td><code>new ConcreteService()</code> inside business logic</td></tr>
+</tbody>
+</table></div>
+
+<!-- ─── SRP ─────────────────────────────────────────────────────────── -->
+<h3 id="srp">1.1 S — Single Responsibility Principle</h3>
+<p><em>"A class should have only one reason to change."</em></p>
+
+<h4><span class="violation">Violation</span> The God Class</h4>
+
+<div class="code-block">
+  <div class="code-label">C# — BAD: God class with 5 responsibilities<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// BAD: OrderService does EVERYTHING — one class with five reasons to change
+public class OrderService
+{
+    private readonly SqlConnection _connection;
+    private readonly SmtpClient _smtpClient;
+
+    public OrderService()
+    {
+        _connection = new SqlConnection("Server=prod;Database=Orders;...");
+        _smtpClient = new SmtpClient("smtp.company.com");
+    }
+
+    public void PlaceOrder(Order order)
+    {
+        // Reason 1: Validation logic — changes when business rules change
+        if (order.Items == null || !order.Items.Any())
+            throw new ArgumentException("Order must have items");
+
+        // Reason 2: Tax calculation — changes when tax rates change
+        decimal taxRate = order.ShippingState switch
+        {
+            "CA" => 0.0725m, "NY" => 0.0800m, "TX" => 0.0625m, _ => 0.0500m
+        };
+        order.TaxAmount = order.Subtotal * taxRate;
+        order.Total = order.Subtotal + order.TaxAmount + order.ShippingCost;
+
+        // Reason 3: Database persistence — changes when storage technology changes
+        using var cmd = new SqlCommand("INSERT INTO Orders ...", _connection);
+        cmd.ExecuteNonQuery();
+
+        // Reason 4: Email notification — changes when template/provider changes
+        var mail = new MailMessage("noreply@company.com", order.CustomerEmail)
+        {
+            Subject = "Order Confirmation",
+            Body    = $"Your order #{order.Id} has been placed."
+        };
+        _smtpClient.Send(mail);
+
+        // Reason 5: Inventory update — changes when inventory logic changes
+        foreach (var item in order.Items)
+        {
+            using var invCmd = new SqlCommand(
+                "UPDATE Inventory SET Qty = Qty - @qty WHERE ProductId = @id", _connection);
+            invCmd.ExecuteNonQuery();
+        }
+    }
+    // Problems: untestable (real DB + SMTP needed), no reuse, teams clash
+}</pre>
+</div>
+
+<h4><span class="fix-label">Fix</span> Decompose by Responsibility</h4>
+
+<div class="code-block">
+  <div class="code-label">C# — GOOD: One class, one reason to change<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// 1. Validation — changes when business rules change
+public interface IOrderValidator  { ValidationResult Validate(Order order); }
+
+public class OrderValidator : IOrderValidator
+{
+    public ValidationResult Validate(Order order)
+    {
+        var errors = new List&lt;string&gt;();
+        if (order.Items == null || !order.Items.Any())
+            errors.Add("Order must have at least one item");
+        if (order.CustomerId &lt;= 0)
+            errors.Add("Invalid customer ID");
+        return new ValidationResult(errors);
+    }
+}
+
+// 2. Tax calculation — changes when tax rates change
+public interface ITaxCalculator  { decimal Calculate(Order order); }
+
+public class StateTaxCalculator : ITaxCalculator
+{
+    private static readonly Dictionary&lt;string, decimal&gt; _rates = new()
+    {
+        ["CA"] = 0.0725m, ["NY"] = 0.0800m, ["TX"] = 0.0625m
+    };
+    public decimal Calculate(Order order) =>
+        order.Subtotal * _rates.GetValueOrDefault(order.ShippingState, 0.05m);
+}
+
+// 3. Repository — changes when storage technology changes
+public interface IOrderRepository
+{
+    Task&lt;int&gt;    SaveAsync(Order order, CancellationToken ct = default);
+    Task&lt;Order?&gt; GetByIdAsync(int orderId, CancellationToken ct = default);
+}
+
+// 4. Notification — changes when notification channels change
+public interface IOrderNotifier  { Task NotifyAsync(Order order, CancellationToken ct = default); }
+
+public class EmailOrderNotifier : IOrderNotifier
+{
+    private readonly IEmailService _email;
+    public EmailOrderNotifier(IEmailService email) => _email = email;
+    public async Task NotifyAsync(Order order, CancellationToken ct = default) =>
+        await _email.SendAsync(new EmailMessage
+        {
+            To      = order.CustomerEmail,
+            Subject = $"Order Confirmation #{order.Id}",
+            Body    = $"Your order has been placed. Total: {order.Total:C}"
+        }, ct);
+}
+
+// 5. Orchestrator — changes when workflow changes; delegates everything else
+public class OrderService
+{
+    private readonly IOrderValidator  _validator;
+    private readonly ITaxCalculator   _taxCalculator;
+    private readonly IOrderRepository _repository;
+    private readonly IOrderNotifier   _notifier;
+
+    public OrderService(IOrderValidator v, ITaxCalculator t,
+                        IOrderRepository r, IOrderNotifier n)
+    { _validator = v; _taxCalculator = t; _repository = r; _notifier = n; }
+
+    public async Task&lt;int&gt; PlaceOrderAsync(Order order, CancellationToken ct = default)
+    {
+        var validation = _validator.Validate(order);
+        if (!validation.IsValid) throw new ValidationException(validation.Errors);
+
+        order.TaxAmount = _taxCalculator.Calculate(order);
+        order.Total     = order.Subtotal + order.TaxAmount + order.ShippingCost;
+
+        var orderId = await _repository.SaveAsync(order, ct);
+        await _notifier.NotifyAsync(order, ct);
+        return orderId;
+    }
+}</pre>
+</div>
+
+<div class="card card-tip">
+  <div class="card-label">Interview Tip</div>
+  The "single reason to change" means one <strong>actor</strong> requests changes — tax accountants change <code>TaxCalculator</code>, DBAs change the repository, marketing changes notifications. Teams stop stepping on each other's code.
+</div>
+
+<!-- ─── OCP ─────────────────────────────────────────────────────────── -->
+<h3 id="ocp">1.2 O — Open/Closed Principle</h3>
+<p><em>"Software should be open for extension, closed for modification."</em></p>
+
+<h4><span class="violation">Violation</span> Switch on Type</h4>
+
+<div class="code-block">
+  <div class="code-label">C# — BAD: Adding payment method requires editing working code<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>public class PaymentService
+{
+    public PaymentResult ProcessPayment(string paymentMethod, decimal amount, string token)
+    {
+        if (paymentMethod == "Stripe")
+        {
+            var client = new StripeClient("sk_live_...");
+            var charge = client.Charges.Create(new ChargeCreateOptions
+                { Amount = (long)(amount * 100), Currency = "usd", Source = token });
+            return new PaymentResult { Success = true, TransactionId = charge.Id };
+        }
+        else if (paymentMethod == "PayPal")
+        {
+            // PayPal-specific code...
+            return new PaymentResult { Success = true };
+        }
+        // Adding "Crypto" forces editing this method — touching working code = regression risk
+        throw new NotSupportedException($"{paymentMethod} not supported");
+    }
+}</pre>
+</div>
+
+<h4><span class="fix-label">Fix</span> Abstraction + Polymorphism</h4>
+
+<div class="code-block">
+  <div class="code-label">C# — GOOD: New payment method = new class, zero existing code changed<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// Stable abstraction — never changes
+public interface IPaymentProcessor
+{
+    bool Supports(string paymentMethod);
+    Task&lt;PaymentResult&gt; ProcessAsync(PaymentRequest request, CancellationToken ct = default);
+}
+
+public class StripePaymentProcessor : IPaymentProcessor
+{
+    private readonly StripeClient _client;
+    public StripePaymentProcessor(IOptions&lt;StripeSettings&gt; settings) =>
+        _client = new StripeClient(settings.Value.ApiKey);
+
+    public bool Supports(string method) =>
+        method.Equals("Stripe", StringComparison.OrdinalIgnoreCase);
+
+    public async Task&lt;PaymentResult&gt; ProcessAsync(PaymentRequest request, CancellationToken ct = default)
+    {
+        try
+        {
+            var charge = await new ChargeService(_client).CreateAsync(new ChargeCreateOptions
+            {
+                Amount   = (long)(request.Amount * 100),
+                Currency = request.Currency.ToLower(),
+                Source   = request.Token
+            }, cancellationToken: ct);
+            return new PaymentResult { Success = charge.Status == "succeeded",
+                                       TransactionId = charge.Id, Gateway = "Stripe" };
+        }
+        catch (StripeException ex)
+        {
+            return new PaymentResult { Success = false, ErrorMessage = ex.StripeError.Message };
+        }
+    }
+}
+
+// NEW payment — just add a class, NOTHING in PaymentService changes
+public class CryptoPaymentProcessor : IPaymentProcessor
+{
+    public bool Supports(string method) =>
+        method.Equals("Crypto", StringComparison.OrdinalIgnoreCase);
+    public async Task&lt;PaymentResult&gt; ProcessAsync(PaymentRequest request, CancellationToken ct = default)
+        => new PaymentResult { Success = true, Gateway = "Crypto" };
+}
+
+// Orchestrator — NEVER changes when new processors are added
+public class PaymentService
+{
+    private readonly IEnumerable&lt;IPaymentProcessor&gt; _processors;
+    public PaymentService(IEnumerable&lt;IPaymentProcessor&gt; processors) => _processors = processors;
+
+    public async Task&lt;PaymentResult&gt; ProcessAsync(string method, PaymentRequest req, CancellationToken ct = default)
+    {
+        var processor = _processors.FirstOrDefault(p => p.Supports(method))
+            ?? throw new NotSupportedException($"No processor for {method}");
+        return await processor.ProcessAsync(req, ct);
+    }
+}
+
+// Program.cs — adding new payment = just register it
+builder.Services.AddScoped&lt;IPaymentProcessor, StripePaymentProcessor&gt;();
+builder.Services.AddScoped&lt;IPaymentProcessor, PayPalPaymentProcessor&gt;();
+builder.Services.AddScoped&lt;IPaymentProcessor, CryptoPaymentProcessor&gt;(); // Zero risk
+builder.Services.AddScoped&lt;PaymentService&gt;();</pre>
+</div>
+
+<!-- ─── LSP ─────────────────────────────────────────────────────────── -->
+<h3 id="lsp">1.3 L — Liskov Substitution Principle</h3>
+<p><em>"If S is a subtype of T, objects of T may be replaced by S without altering correctness."</em></p>
+
+<div class="code-block">
+  <div class="code-label">C# — Classic Violation: Rectangle/Square<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// BAD: Square "is-a" Rectangle seems natural in math — breaks LSP in code
+public class Rectangle
+{
+    public virtual int Width  { get; set; }
+    public virtual int Height { get; set; }
+    public int Area() => Width * Height;
+}
+
+public class Square : Rectangle
+{
+    public override int Width  { set { base.Width = base.Height = value; } }
+    public override int Height { set { base.Width = base.Height = value; } }
+}
+
+public static void ResizeAndCheck(Rectangle rect)
+{
+    rect.Width  = 5;
+    rect.Height = 10;
+    // Rectangle: 5×10 = 50 ✓
+    // Square:    sets both to 10, area = 100 ✗ — LSP violated!
+    Debug.Assert(rect.Area() == 50);
+}
+
+ResizeAndCheck(new Rectangle()); // Passes
+ResizeAndCheck(new Square());    // Throws AssertionException</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">C# — Real Violation: NotImplementedException<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// BAD: Derived class cannot fulfill base contract
+public abstract class ReportGenerator
+{
+    public abstract byte[] GeneratePdf();
+    public abstract byte[] GenerateExcel();
+    public abstract void SendByEmail(string recipient);
+    public abstract void SendBySms(string phoneNumber); // &lt;-- problem
+}
+
+public class SalesReportGenerator : ReportGenerator
+{
+    public override byte[] GeneratePdf()   => Array.Empty&lt;byte&gt;();
+    public override byte[] GenerateExcel() => Array.Empty&lt;byte&gt;();
+    public override void SendByEmail(string recipient) { /* implemented */ }
+
+    // VIOLATION: SMS not applicable — throws at runtime
+    public override void SendBySms(string phoneNumber) =>
+        throw new NotImplementedException("SMS not supported for sales reports");
+}
+
+// Caller assumes base contract works — crashes at runtime
+public void Distribute(ReportGenerator generator)
+{
+    generator.SendBySms("+1234567890"); // Crashes for SalesReportGenerator!
+}</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">C# — Fix: Lean base + capability interfaces<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// GOOD: Base class contracts only what ALL subtypes can fulfill
+public abstract class ReportGenerator
+{
+    public abstract byte[] GeneratePdf();
+    public abstract byte[] GenerateExcel();
+}
+
+// Capabilities as separate interfaces — implement only what you can do
+public interface IEmailSendable { void SendByEmail(string recipient); }
+public interface ISmsSendable   { void SendBySms(string phoneNumber); }
+
+public class SalesReportGenerator : ReportGenerator, IEmailSendable
+{
+    public override byte[] GeneratePdf()   => Array.Empty&lt;byte&gt;();
+    public override byte[] GenerateExcel() => Array.Empty&lt;byte&gt;();
+    public void SendByEmail(string recipient) { /* real impl */ }
+    // No SMS — and that is correct. Simply doesn't implement ISmsSendable.
+}
+
+public class InvoiceReportGenerator : ReportGenerator, IEmailSendable, ISmsSendable
+{
+    public override byte[] GeneratePdf()   => Array.Empty&lt;byte&gt;();
+    public override byte[] GenerateExcel() => Array.Empty&lt;byte&gt;();
+    public void SendByEmail(string recipient) { /* impl */ }
+    public void SendBySms(string phoneNumber)  { /* impl */ }
+}</pre>
+</div>
+
+<ul class="checklist">
+  <li>Preconditions in subclass NOT stronger than base</li>
+  <li>Postconditions in subclass NOT weaker than base</li>
+  <li>No exceptions that base class doesn't declare</li>
+  <li>Invariants of base class preserved in subclass</li>
+  <li class="x">Never throw <code>NotImplementedException</code> in a derived class</li>
+</ul>
+
+<!-- ─── ISP ─────────────────────────────────────────────────────────── -->
+<h3 id="isp">1.4 I — Interface Segregation Principle</h3>
+<p><em>"Clients should not be forced to depend on interfaces they do not use."</em></p>
+
+<div class="code-block">
+  <div class="code-label">C# — BAD vs GOOD: Fat interface vs segregated interfaces<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// BAD: One fat interface no single class can fully honor
+public interface IAnimal
+{
+    void Eat(); void Sleep(); void MakeSound();
+    void Fly();       // Penguins can't fly
+    void Swim();      // Eagles can't swim
+    void Run();       // Snakes can't run
+    void Hibernate(); // Most animals don't hibernate
+}
+
+// Penguin forced to stub out Fly and Hibernate — violation
+public class Penguin : IAnimal
+{
+    public void Eat() { } public void Sleep() { } public void MakeSound() { }
+    public void Swim() { Console.WriteLine("Dives to 1,850ft"); }
+    public void Run()  { Console.WriteLine("Waddles"); }
+    public void Fly()       => throw new NotImplementedException("Penguins can't fly");
+    public void Hibernate() => throw new NotImplementedException();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// GOOD: Role-based interfaces
+public interface IAnimal     { void Eat(); void Sleep(); void MakeSound(); }
+public interface IFlyable    { void Fly();  double MaxAltitudeFt { get; } }
+public interface ISwimmable  { void Swim(); double MaxDepthFt    { get; } }
+public interface IRunnable   { void Run();  double MaxSpeedMph   { get; } }
+public interface IHibernating { void Hibernate(); int HibernationMonths { get; } }
+
+// Each class implements only what it actually does
+public class Eagle   : IAnimal, IFlyable, IRunnable   { /* ... */ }
+public class Penguin : IAnimal, ISwimmable             { /* ... */ } // No IFlyable
+public class Bear    : IAnimal, IRunnable, IHibernating { /* ... */ }
+
+// .NET demonstrates ISP in its own BCL:
+// IReadOnlyCollection&lt;T&gt;  — read-only: Count + IEnumerable
+// ICollection&lt;T&gt;          — extends above + Add/Remove/Clear
+// IList&lt;T&gt;               — extends above + indexer access
+
+public class ProductCatalog
+{
+    private readonly List&lt;Product&gt; _products = new();
+    // External: read-only view — callers can't accidentally mutate
+    public IReadOnlyCollection&lt;Product&gt; GetAll() => _products.AsReadOnly();
+    // Internal: mutable for admin ops
+    internal IList&lt;Product&gt; GetMutableList() => _products;
+}</pre>
+</div>
+
+<div class="card card-tip">
+  <div class="card-label">Tip — .NET API Design</div>
+  Prefer <code>IEnumerable&lt;T&gt;</code> for read-only iteration, <code>IReadOnlyList&lt;T&gt;</code> when index access is needed, <code>IList&lt;T&gt;</code> only when callers must mutate. Never expose <code>List&lt;T&gt;</code> directly from public APIs.
+</div>
+
+<!-- ─── DIP ─────────────────────────────────────────────────────────── -->
+<h3 id="dip">1.5 D — Dependency Inversion Principle</h3>
+<p><em>"High-level modules should not depend on low-level modules. Both should depend on abstractions."</em></p>
+
+<div class="code-block">
+  <div class="code-label">C# — Violation then Fix: Constructor injection via DI<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// BAD: High-level OrderService coupled to concrete low-level classes
+public class OrderService
+{
+    private readonly SqlOrderRepository _repo  = new SqlOrderRepository("Server=prod;...");
+    private readonly SmtpEmailService _email   = new SmtpEmailService("smtp.company.com");
+    // Result: can't unit test without real DB and SMTP server
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// GOOD: Abstractions (stable) ← both sides depend on these
+public interface IOrderRepository { Task&lt;int&gt; SaveAsync(Order order, CancellationToken ct = default); }
+public interface IEmailService    { Task SendAsync(EmailMessage msg,  CancellationToken ct = default); }
+
+// High-level module depends ONLY on abstractions
+public class OrderService
+{
+    private readonly IOrderRepository _repository;
+    private readonly IEmailService    _emailService;
+
+    public OrderService(IOrderRepository repository, IEmailService emailService)
+    {
+        _repository   = repository;
+        _emailService = emailService;
+    }
+
+    public async Task&lt;int&gt; PlaceOrderAsync(Order order, CancellationToken ct = default)
+    {
+        var orderId = await _repository.SaveAsync(order, ct);
+        await _emailService.SendAsync(new EmailMessage
+            { To = order.CustomerEmail, Subject = $"Order #{orderId} Confirmed" }, ct);
+        return orderId;
+    }
+}
+
+// DI wiring — production
+builder.Services.AddScoped&lt;IOrderRepository, SqlOrderRepository&gt;();
+builder.Services.AddSingleton&lt;IEmailService, SmtpEmailService&gt;();
+builder.Services.AddScoped&lt;OrderService&gt;();
+
+// Unit test — swap concretions with mocks; OrderService code is IDENTICAL
+[Fact]
+public async Task PlaceOrder_ShouldSaveAndSendEmail()
+{
+    var mockRepo  = new Mock&lt;IOrderRepository&gt;();
+    var mockEmail = new Mock&lt;IEmailService&gt;();
+    mockRepo.Setup(r => r.SaveAsync(It.IsAny&lt;Order&gt;(), default)).ReturnsAsync(42);
+
+    var service = new OrderService(mockRepo.Object, mockEmail.Object);
+    var orderId = await service.PlaceOrderAsync(new Order { CustomerId = 1 });
+
+    Assert.Equal(42, orderId);
+    mockEmail.Verify(e => e.SendAsync(It.IsAny&lt;EmailMessage&gt;(), default), Times.Once);
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="cqrs">2. CQRS Pattern</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">Architecture — Traditional vs CQRS</div>
+  <pre>Traditional (shared model):
+┌──────────────────────────────────────────────┐
+│              OrderService                    │
+│  PlaceOrder()  ─────────────► DB (Read/Write)│
+│  GetOrder()    ─────────────► DB (Read/Write)│
+│  UpdateOrder() ─────────────► DB (Read/Write)│
+└──────────────────────────────────────────────┘
+
+CQRS (separate models, independently scalable):
+┌──────────────────────┐     ┌──────────────────────────┐
+│    Command Side      │     │       Query Side          │
+│  PlaceOrder          │     │  GetOrderDetails          │
+│  UpdateOrderStatus   │     │  GetOrdersByCustomer      │
+│  CancelOrder         │     │  SearchOrders             │
+│         │            │     │         │                 │
+│         ▼            │     │         ▼                 │
+│  Write DB (SQL)      │────►│  Read DB (NoSQL/View)     │
+│  (normalized, ACID)  │event│  (denormalized, fast)     │
+└──────────────────────┘sync └──────────────────────────┘</pre>
+</div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Problem</th><th>How CQRS Helps</th></tr></thead>
+<tbody>
+<tr><td>Reads join many tables (slow)</td><td>Read side has denormalized views — no joins</td></tr>
+<tr><td>Writes have heavy business rules</td><td>Command side handles validation/domain logic only</td></tr>
+<tr><td>Can't scale reads/writes independently</td><td>Deploy more read replicas, fewer write nodes</td></tr>
+<tr><td>No audit trail</td><td>Commands are explicit logged intents</td></tr>
+<tr><td>Query logic pollutes domain model</td><td>Clean separation — query model is just DTO projection</td></tr>
+</tbody>
+</table></div>
+
+<h3 id="cqrs-code">MediatR Implementation</h3>
+
+<div class="code-block">
+  <div class="code-label">C# — Commands, Queries, and Domain Events with MediatR<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// Install: dotnet add package MediatR
+
+// ── COMMANDS (intent to change state) ────────────────────────────────────
+public record CreateOrderCommand(
+    int CustomerId, string ShippingAddress, List&lt;OrderItemDto&gt; Items
+) : IRequest&lt;int&gt;; // Returns new order ID
+
+public class CreateOrderCommandHandler : IRequestHandler&lt;CreateOrderCommand, int&gt;
+{
+    private readonly IOrderRepository _repository;
+    private readonly IOrderValidator  _validator;
+    private readonly ITaxCalculator   _taxCalculator;
+    private readonly IPublisher       _publisher;
+
+    public async Task&lt;int&gt; Handle(CreateOrderCommand cmd, CancellationToken ct)
+    {
+        var order = new Order
+        {
+            CustomerId      = cmd.CustomerId,
+            ShippingAddress = cmd.ShippingAddress,
+            Items           = cmd.Items.Select(i => new OrderItem
+            {
+                ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice
+            }).ToList()
+        };
+        order.Subtotal = order.Items.Sum(i => i.Quantity * i.UnitPrice);
+
+        var validation = _validator.Validate(order);
+        if (!validation.IsValid) throw new ValidationException(validation.Errors);
+
+        order.TaxAmount = _taxCalculator.Calculate(order);
+        order.Total     = order.Subtotal + order.TaxAmount;
+        order.Status    = OrderStatus.Pending;
+
+        var orderId = await _repository.SaveAsync(order, ct);
+        await _publisher.Publish(new OrderCreatedNotification(orderId, cmd.CustomerId), ct);
+        return orderId;
+    }
+}
+
+// ── QUERIES (read-only, no side effects) ─────────────────────────────────
+public record GetOrderQuery(int OrderId) : IRequest&lt;OrderDto?&gt;;
+
+public class GetOrderQueryHandler : IRequestHandler&lt;GetOrderQuery, OrderDto?&gt;
+{
+    private readonly IOrderReadRepository _readRepo;
+    public GetOrderQueryHandler(IOrderReadRepository readRepo) => _readRepo = readRepo;
+    // Hits read-optimized model — denormalized view, or a read replica
+    public async Task&lt;OrderDto?&gt; Handle(GetOrderQuery q, CancellationToken ct) =>
+        await _readRepo.GetOrderDtoAsync(q.OrderId, ct);
+}
+
+// ── DOMAIN EVENT HANDLERS (decoupled side effects) ────────────────────────
+public record OrderCreatedNotification(int OrderId, int CustomerId) : INotification;
+
+public class SendOrderConfirmationEmail : INotificationHandler&lt;OrderCreatedNotification&gt;
+{
+    private readonly IEmailService _email;
+    public async Task Handle(OrderCreatedNotification n, CancellationToken ct) =>
+        await _email.SendAsync(new EmailMessage { Subject = $"Order #{n.OrderId} Confirmed" }, ct);
+}
+
+// ── CONTROLLER ────────────────────────────────────────────────────────────
+[ApiController, Route("api/orders")]
+public class OrdersController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    [HttpPost]
+    public async Task&lt;IActionResult&gt; Create([FromBody] CreateOrderCommand cmd, CancellationToken ct)
+    {
+        var id = await _mediator.Send(cmd, ct);
+        return CreatedAtAction(nameof(GetById), new { id }, new { orderId = id });
+    }
+
+    [HttpGet("{id}")]
+    public async Task&lt;IActionResult&gt; GetById(int id, CancellationToken ct) =>
+        await _mediator.Send(new GetOrderQuery(id), ct) is { } order ? Ok(order) : NotFound();
+}
+
+// DI
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));</pre>
+</div>
+
+<h3 id="cqrs-qa">Interview Q&amp;A</h3>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p>What is CQRS and when would you use it?</p>
+  <div class="answer">"CQRS separates read and write operations into distinct models. I'd use it when reads and writes have significantly different complexity or scaling needs — like an e-commerce system where browsing is 10x more frequent than placing orders. Simple CRUD apps don't benefit. I start with simple CQRS — separate command/query classes in one DB — and only introduce separate read databases when the query side genuinely needs denormalization."</div>
+</div>
+
+<div class="card card-q">
+  <div class="card-label">Interview Question</div>
+  <p>What are the downsides of CQRS?</p>
+  <div class="answer">"Complexity — two models to maintain instead of one. Eventual consistency if using separate databases. More classes and cognitive overhead. It's overkill for simple CRUD. The sweet spot is independent bounded contexts where reads and writes have different scaling profiles."</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="es">3. Event Sourcing</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">Concept — State Storage vs Event Storage</div>
+  <pre>Traditional (State Storage):
+BankAccount table:
+┌────┬────────────────┬──────────┐
+│ id │ account_number │ balance  │
+├────┼────────────────┼──────────┤
+│  1 │ ACC-001        │ $750.00  │  ← Only current state. History: gone forever.
+└────┴────────────────┴──────────┘
+
+Event Sourcing (Event Storage):
+events table:
+┌────┬────────────┬──────────────────┬─────────┬──────────────────────┐
+│ id │ account_id │ event_type       │ amount  │ occurred_at          │
+├────┼────────────┼──────────────────┼─────────┼──────────────────────┤
+│  1 │ 1          │ AccountOpened    │ $1000   │ 2024-01-01 09:00 UTC │
+│  2 │ 1          │ MoneyWithdrawn   │ $200    │ 2024-01-05 14:00 UTC │
+│  3 │ 1          │ MoneyDeposited   │ $100    │ 2024-01-10 10:00 UTC │
+│  4 │ 1          │ MoneyWithdrawn   │ $150    │ 2024-01-15 16:00 UTC │
+└────┴────────────┴──────────────────┴─────────┴──────────────────────┘
+Replay: $0 + $1000 - $200 + $100 - $150 = $750 ✓
+Temporal query: "What was balance on Jan 7?" → replay events 1–2 → $800</pre>
+</div>
+
+<h3 id="es-code">C# Implementation</h3>
+
+<div class="code-block">
+  <div class="code-label">C# — BankAccount aggregate with event sourcing<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// ── EVENTS (immutable facts) ──────────────────────────────────────────────
+public abstract record DomainEvent
+{
+    public Guid           EventId    { get; init; } = Guid.NewGuid();
+    public DateTimeOffset OccurredAt { get; init; } = DateTimeOffset.UtcNow;
+    public int            Version    { get; init; }
+}
+
+public record AccountOpenedEvent(string AccountNumber, decimal InitialDeposit) : DomainEvent;
+public record MoneyDepositedEvent(decimal Amount, string Reference)            : DomainEvent;
+public record MoneyWithdrawnEvent(decimal Amount, string Reference)            : DomainEvent;
+public record AccountFrozenEvent(string Reason)                                : DomainEvent;
+
+// ── AGGREGATE ─────────────────────────────────────────────────────────────
+public class BankAccount
+{
+    public Guid    Id            { get; private set; }
+    public string  AccountNumber { get; private set; } = string.Empty;
+    public decimal Balance       { get; private set; }
+    public bool    IsFrozen      { get; private set; }
+    public int     Version       { get; private set; }
+
+    private readonly List&lt;DomainEvent&gt; _uncommitted = new();
+    public IReadOnlyList&lt;DomainEvent&gt; UncommittedEvents =&gt; _uncommitted;
+
+    private BankAccount(Guid id) =&gt; Id = id;
+
+    // Factory method
+    public static BankAccount Open(string accountNumber, decimal initialDeposit)
+    {
+        if (initialDeposit &lt;= 0) throw new ArgumentException("Initial deposit must be positive");
+        var account = new BankAccount(Guid.NewGuid());
+        account.RaiseEvent(new AccountOpenedEvent(accountNumber, initialDeposit) { Version = 1 });
+        return account;
+    }
+
+    // Commands: validate, then raise event
+    public void Deposit(decimal amount, string reference)
+    {
+        if (IsFrozen) throw new InvalidOperationException("Account is frozen");
+        if (amount &lt;= 0) throw new ArgumentException("Amount must be positive");
+        RaiseEvent(new MoneyDepositedEvent(amount, reference) { Version = Version + 1 });
+    }
+
+    public void Withdraw(decimal amount, string reference)
+    {
+        if (IsFrozen) throw new InvalidOperationException("Account is frozen");
+        if (Balance &lt; amount) throw new InvalidOperationException("Insufficient funds");
+        RaiseEvent(new MoneyWithdrawnEvent(amount, reference) { Version = Version + 1 });
+    }
+
+    public void Freeze(string reason)
+    {
+        if (IsFrozen) return; // Idempotent
+        RaiseEvent(new AccountFrozenEvent(reason) { Version = Version + 1 });
+    }
+
+    // Apply: only mutates state — NO business logic here
+    private void Apply(DomainEvent @event)
+    {
+        switch (@event)
+        {
+            case AccountOpenedEvent e:
+                AccountNumber = e.AccountNumber;
+                Balance       = e.InitialDeposit;
+                break;
+            case MoneyDepositedEvent e: Balance += e.Amount; break;
+            case MoneyWithdrawnEvent e: Balance -= e.Amount; break;
+            case AccountFrozenEvent:    IsFrozen = true;     break;
+        }
+        Version = @event.Version;
+    }
+
+    private void RaiseEvent(DomainEvent @event)
+    {
+        Apply(@event);           // Mutate state immediately
+        _uncommitted.Add(@event); // Queue for persistence
+    }
+
+    // Rehydration: rebuild from stored events (no business logic)
+    public static BankAccount Rehydrate(Guid id, IEnumerable&lt;DomainEvent&gt; events)
+    {
+        var account = new BankAccount(id);
+        foreach (var @event in events.OrderBy(e =&gt; e.Version))
+            account.Apply(@event); // Apply without queuing — already persisted
+        return account;
+    }
+
+    public void ClearUncommittedEvents() =&gt; _uncommitted.Clear();
+}</pre>
+</div>
+
+<h3 id="es-tradeoffs">Pros &amp; Cons</h3>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Pros</th><th>Cons</th></tr></thead>
+<tbody>
+<tr><td>Complete audit trail — every change recorded</td><td>Complexity — far more code than CRUD</td></tr>
+<tr><td>Temporal queries — "what was balance on Jan 5?"</td><td>Eventual consistency when projecting read models</td></tr>
+<tr><td>Replay events to fix bugs retroactively</td><td>Schema evolution — changing old events is hard</td></tr>
+<tr><td>Natural fit for event-driven architectures</td><td>Snapshot management needed for large event streams</td></tr>
+<tr><td>Add new projections without data migration</td><td>Higher storage requirements than state storage</td></tr>
+</tbody>
+</table></div>
+
+<div class="card card-pitfall">
+  <div class="card-label">Common Mistake</div>
+  CQRS and Event Sourcing are <strong>separate patterns</strong>. CQRS = separate read/write models (can use normal state storage). Event Sourcing = store events instead of state. Most production systems use CQRS <em>without</em> Event Sourcing.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="api-gw">4. Microservices Patterns</h2>
+
+<h3>4.1 API Gateway</h3>
+
+<div class="arch-diagram">
+  <div class="code-label">Architecture — API Gateway</div>
+  <pre>Without Gateway — Client knows all internal addresses:
+  Client ──────────────► OrderService:3001
+  Client ──────────────► UserService:3002
+  Client ──────────────► InventoryService:3003
+
+With API Gateway — Single entry point:
+  Client ──► [API Gateway :443]
+                  │
+                  ├── /api/orders   ──► OrderService (internal)
+                  ├── /api/users    ──► UserService  (internal)
+                  └── /api/items    ──► InventoryService (internal)
+
+Responsibilities:
+  Auth (validate JWT once)  ·  Rate Limiting  ·  SSL Termination
+  Routing  ·  Request Transformation  ·  Distributed Tracing</pre>
+</div>
+
+<h3 id="circuit">4.2 Circuit Breaker with Polly</h3>
+
+<div class="arch-diagram">
+  <div class="code-label">Circuit Breaker State Machine</div>
+  <pre>  CLOSED (normal)
+    │ After N failures in window
+    ▼
+  OPEN (fail fast — no calls to downstream)
+    │ After timeout (e.g. 30s)
+    ▼
+  HALF-OPEN (send single test call)
+    ├── Success ──► CLOSED (recovered)
+    └── Failure ──► OPEN  (still broken)</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">C# — Polly circuit breaker + retry + timeout<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// dotnet add package Microsoft.Extensions.Http.Polly
+
+builder.Services.AddHttpClient&lt;IOrderServiceClient, OrderServiceClient&gt;()
+    .AddPolicyHandler(Policy.WrapAsync(
+
+        // 1. Timeout — individual call max
+        Policy.TimeoutAsync&lt;HttpResponseMessage&gt;(TimeSpan.FromSeconds(10)),
+
+        // 2. Circuit Breaker — open after 5 failures, stay open 30s
+        HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .CircuitBreakerAsync(
+                handledEventsAllowedBeforeBreaking: 5,
+                durationOfBreak: TimeSpan.FromSeconds(30),
+                onBreak:    (_, delay) =&gt; Console.WriteLine($"Circuit OPEN for {delay.TotalSeconds}s"),
+                onReset:    ()         =&gt; Console.WriteLine("Circuit CLOSED"),
+                onHalfOpen: ()         =&gt; Console.WriteLine("Circuit HALF-OPEN")),
+
+        // 3. Retry — exponential backoff + jitter
+        HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .WaitAndRetryAsync(
+                retryCount: 3,
+                sleepDurationProvider: attempt =&gt;
+                    TimeSpan.FromSeconds(Math.Pow(2, attempt))        // 2s, 4s, 8s
+                    + TimeSpan.FromMilliseconds(new Random().Next(0, 500)) // jitter
+            )
+    ));
+
+// .NET 8+ — built-in resilience (Polly v8 backed, recommended)
+builder.Services.AddHttpClient&lt;IOrderServiceClient, OrderServiceClient&gt;()
+    .AddStandardResilienceHandler(opt =&gt;
+    {
+        opt.Retry.MaxRetryAttempts          = 3;
+        opt.CircuitBreaker.FailureRatio     = 0.5;
+        opt.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(30);
+        opt.TotalRequestTimeout.Timeout     = TimeSpan.FromSeconds(30);
+    });</pre>
+</div>
+
+<h3 id="saga">4.3 Saga Pattern</h3>
+
+<div class="arch-diagram">
+  <div class="code-label">Choreography vs Orchestration Saga</div>
+  <pre>Choreography (event-driven, no central coordinator):
+  OrderService ──OrderCreated──► InventoryService
+                                      │ InventoryReserved
+                                      ▼
+                               PaymentService
+                                      │ PaymentFailed
+                                      ▼ (compensate)
+                               InventoryService.ReleaseReservation
+
+Orchestration (central coordinator):
+  SagaOrchestrator:
+    Step 1: ReserveInventory()    → SUCCESS
+    Step 2: ChargePayment()       → FAILURE
+    Compensate Step 1: ReleaseInventory()  ← rollback
+    Mark saga as Failed</pre>
+</div>
+
+<h3 id="outbox">4.4 Outbox Pattern</h3>
+
+<div class="arch-diagram">
+  <div class="code-label">Reliable Event Publishing</div>
+  <pre>PROBLEM: Save to DB AND publish event — both must happen or neither
+  Naive: Save order ✓ → Publish event ✗ (crash) → Event lost forever
+
+OUTBOX SOLUTION:
+  ┌──────────────────────────────────────────────────────┐
+  │  Single DB Transaction (atomic)                      │
+  │   1. INSERT INTO Orders    (order data)              │
+  │   2. INSERT INTO Outbox    (event payload)           │
+  └──────────────────────────────────────────────────────┘
+                       │
+  Background Worker polls Outbox every 5s:
+  3. SELECT unpublished outbox messages
+  4. Publish to SQS/SNS
+  5. UPDATE outbox SET published_at = NOW()
+
+  Result: at-least-once delivery guaranteed</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">C# — Outbox pattern implementation<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>public class OrderService
+{
+    private readonly AppDbContext _context;
+
+    public async Task&lt;int&gt; PlaceOrderAsync(Order order, CancellationToken ct = default)
+    {
+        await using var tx = await _context.Database.BeginTransactionAsync(ct);
+        try
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync(ct);
+
+            // Outbox in SAME transaction — atomically consistent
+            _context.OutboxMessages.Add(new OutboxMessage
+            {
+                Id          = Guid.NewGuid(),
+                AggregateId = order.Id.ToString(),
+                EventType   = nameof(OrderCreatedEvent),
+                Payload     = JsonSerializer.Serialize(new OrderCreatedEvent(order.Id, order.CustomerId)),
+                CreatedAt   = DateTimeOffset.UtcNow
+            });
+            await _context.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+            return order.Id;
+        }
+        catch { await tx.RollbackAsync(ct); throw; }
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="order-arch">5. Design: Order Management System</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">Architecture — Order Management System</div>
+  <pre>                 ┌─────────────────────────────────────────────────────┐
+                 │                  API Gateway                        │
+                 │       Auth · Rate Limit · Routing · SSL Term.       │
+                 └──────────────────────┬──────────────────────────────┘
+                                        │
+              ┌─────────────────────────┼──────────────────────┐
+              │                         │                      │
+              ▼                         ▼                      ▼
+   ┌────────────────────┐  ┌─────────────────────┐  ┌────────────────────┐
+   │   OrderService     │  │  InventoryService   │  │   UserService      │
+   │   .NET 8 API       │  │  .NET 8 API         │  │   .NET 8 API       │
+   │  CreateOrder       │  │  CheckStock         │  │  Auth / JWT        │
+   │  GetOrder          │  │  ReserveStock       │  │  Profile           │
+   │  UpdateStatus      │  │  ReleaseReservation │  │  Addresses         │
+   └────────┬───────────┘  └────────┬────────────┘  └────────────────────┘
+            │                       │
+   ┌────────▼────────┐    ┌─────────▼───────────┐
+   │  SQL Server     │    │  SQL Server         │
+   │  (Orders DB)    │    │  (Inventory DB)     │
+   └────────┬────────┘    └─────────────────────┘
+            │  Outbox pattern
+            ▼
+   ┌──────────────────┐
+   │   AWS SQS/SNS    │◄──────────────────────────────────┐
+   │   Event Bus      │                                   │
+   └──────┬───────────┘                                   │
+          │                                               │
+  ┌───────┼──────────────┐                      PaymentSucceeded
+  │       │              │                      event published
+  ▼       ▼              ▼                                │
+┌──────────────┐  ┌─────────────────┐           ┌────────┴──────────┐
+│PaymentService│  │NotificationSvc  │           │  PaymentService   │
+│.NET 8 API    │  │Background Worker│           └───────────────────┘
+│ Stripe/PayPal│  │ Email (SES)     │
+│ Refunds      │  │ SMS (Twilio)    │
+└──────┬───────┘  └─────────────────┘
+       │
+┌──────▼──────────┐
+│  PostgreSQL     │
+│  (Payments DB)  │
+└─────────────────┘</pre>
+</div>
+
+<h3 id="order-flow">Order Flow (Happy Path)</h3>
+<ol>
+  <li>Client → <code>POST /api/orders</code> with JWT token</li>
+  <li>API Gateway: validate JWT, apply rate limit (100 req/min)</li>
+  <li>OrderService: validate items → HTTP call to InventoryService.ReserveStock() [sync] → persist order (Status: PendingPayment) + Outbox event</li>
+  <li>Return <code>202 Accepted { orderId: 42 }</code></li>
+  <li>Client → <code>POST /api/payments</code> with orderId + Stripe token</li>
+  <li>PaymentService: charge Stripe → publish <code>PaymentSucceeded</code> event</li>
+  <li>OrderService consumes event → Status: Confirmed</li>
+  <li>NotificationService consumes event → sends email/SMS confirmation</li>
+</ol>
+
+<h3 id="order-failures">Failure Scenarios</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Failure</th><th>Handling</th></tr></thead>
+<tbody>
+<tr><td>InventoryService down</td><td>Circuit breaker returns 503. Order not placed. Client gets clear error.</td></tr>
+<tr><td>DB transaction fails</td><td>Transaction rolls back. No outbox event. Safe to retry.</td></tr>
+<tr><td>Payment times out</td><td>Order stays PendingPayment. Stripe webhook confirms asynchronously.</td></tr>
+<tr><td>NotificationService down</td><td>SQS retries with backoff. DLQ after 3 failures. Ops alerted.</td></tr>
+<tr><td>Duplicate order submission</td><td>Idempotency-Key header. OrderService deduplicates within 24h.</td></tr>
+</tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="notif-arch">6. Design: Notification System</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">Architecture — Notification System (1M/day)</div>
+  <pre>  POST /notifications
+         │
+         ▼
+┌─────────────────────────────────────────────────────────┐
+│  Notification API — Validate · Enrich · Publish to SQS  │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+               ┌───────────▼───────────────┐
+               │  AWS SQS (Main Queue)      │
+               │  Retention: 14 days        │
+               │  Visibility timeout: 30s   │
+               └───────────┬───────────────┘
+                           │
+         ┌─────────────────┼─────────────────┐
+         │                 │                 │
+         ▼                 ▼                 ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│Email Workers │  │ SMS Workers  │  │Push Workers  │
+│ (3 instances)│  │ (2 instances)│  │(2 instances) │
+│ Rate: 500/s  │  │ Rate: 100/s  │  │Rate: 1000/s  │
+│ Provider:SES │  │ Prov: Twilio │  │ Prov: FCM    │
+└──────┬───────┘  └──────┬───────┘  └──────┬───────┘
+       │ After 3 retries fail ─────────────┘
+       ▼
+┌──────────────────────────────┐
+│  SQS Dead Letter Queue (DLQ) │
+│  Alert ops · Manual review   │
+└──────────────────────────────┘</pre>
+</div>
+
+<h3 id="notif-worker">Worker Implementation</h3>
+
+<div class="code-block">
+  <div class="code-label">C# — Email notification worker with rate limiting and retry<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>public class EmailNotificationWorker : BackgroundService
+{
+    private readonly IAmazonSQS        _sqs;
+    private readonly IEmailProvider    _emailProvider;
+    private readonly ITemplateEngine   _templateEngine;
+    private readonly SemaphoreSlim     _rateLimiter = new(500, 500); // 500/s max
+
+    protected override async Task ExecuteAsync(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            var response = await _sqs.ReceiveMessageAsync(new ReceiveMessageRequest
+            {
+                QueueUrl            = _queueUrl,
+                MaxNumberOfMessages = 10,   // SQS max per call
+                WaitTimeSeconds     = 20    // Long polling — reduces empty receives
+            }, ct);
+
+            await Task.WhenAll(response.Messages.Select(msg => ProcessAsync(msg, ct)));
+        }
+    }
+
+    private async Task ProcessAsync(Message msg, CancellationToken ct)
+    {
+        var notification = JsonSerializer.Deserialize&lt;NotificationRequest&gt;(msg.Body)!;
+
+        await _rateLimiter.WaitAsync(ct); // Respect provider rate limit
+        try
+        {
+            var rendered = await _templateEngine.RenderAsync(
+                notification.TemplateId, notification.Data, ct);
+
+            var result = await SendWithRetryAsync(notification.Recipient, rendered, ct);
+
+            if (result.Success)
+            {
+                await _repository.MarkSentAsync(notification.Id, result.ProviderId, ct);
+                await _sqs.DeleteMessageAsync(_queueUrl, msg.ReceiptHandle, ct); // Ack
+            }
+            // On failure: DON'T delete — SQS redelivers after visibility timeout expires
+        }
+        finally { _rateLimiter.Release(); }
+    }
+
+    private async Task&lt;SendResult&gt; SendWithRetryAsync(
+        string recipient, RenderedTemplate template, CancellationToken ct) =>
+        await Policy&lt;SendResult&gt;
+            .Handle&lt;Exception&gt;()
+            .OrResult(r =&gt; !r.Success)
+            .WaitAndRetryAsync(3, attempt =&gt; TimeSpan.FromSeconds(Math.Pow(2, attempt)))
+            .ExecuteAsync(() =&gt; _emailProvider.SendAsync(recipient, template, ct));
+}</pre>
+</div>
+
+<h3 id="notif-scale">Scale Math: 1M/Day</h3>
+<div class="arch-diagram">
+  <div class="code-label">Capacity Planning</div>
+  <pre>1M/day = 11.6/second average · Peak (10x) = 116/second
+
+Email (70% = 700K/day):
+  SES: up to 1M+/day (request limit increase from AWS)
+  3 worker instances × 40 msg/s = 120/s capacity ✓
+
+SMS (20% = 200K/day):
+  Twilio: configurable per account tier
+  2 worker instances ✓
+
+Push (10% = 100K/day):
+  FCM handles millions/s — no bottleneck
+  2 worker instances ✓
+
+Auto-scaling triggers (CloudWatch → ECS):
+  Scale OUT: queue depth &gt; 1000 messages
+  Scale IN:  queue depth &lt; 100 messages</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="url-capacity">7. Design: URL Shortener</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">Capacity Estimation</div>
+  <pre>Writes:  100M URLs / 5 years = 55K/day = 0.6/second  (very low)
+Reads:   1B redirects/day = 11,574/second avg; peak 3x = 35,000/second
+Read:Write ratio ≈ 20,000:1 → cache aggressively
+
+Short code options:
+  Base62 alphabet: [a-z A-Z 0-9] = 62 characters
+  7-character code: 62^7 = 3.5 trillion combinations — enough for centuries
+
+  1. Sequential counter → Base62  — simple, no collisions, predictable
+  2. Random bytes → Base62        — unpredictable, collision-check needed
+  3. Hash(URL) → first 7 chars   — deterministic dedup, hash collisions possible</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">C# — URL shortener with Redis cache<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>public class UrlShortenerService
+{
+    private readonly IUrlRepository    _repository;
+    private readonly IDistributedCache _cache;
+
+    private static readonly char[] _base62 =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
+
+    public async Task&lt;string&gt; ShortenAsync(string longUrl, CancellationToken ct = default)
+    {
+        if (!Uri.TryCreate(longUrl, UriKind.Absolute, out _))
+            throw new ArgumentException("Invalid URL");
+
+        var existing = await _repository.GetByLongUrlAsync(longUrl, ct);
+        if (existing is not null) return existing.ShortCode; // Dedup
+
+        string shortCode;
+        do { shortCode = GenerateCode(); }
+        while (await _repository.ExistsAsync(shortCode, ct)); // Retry on collision
+
+        await _repository.SaveAsync(new ShortUrl
+        {
+            ShortCode = shortCode, LongUrl = longUrl,
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiresAt = DateTimeOffset.UtcNow.AddYears(2)
+        }, ct);
+
+        return shortCode;
+    }
+
+    public async Task&lt;string?&gt; ResolveAsync(string shortCode, CancellationToken ct = default)
+    {
+        // Redis cache first — expect 90%+ hit rate for popular URLs
+        var cacheKey = $"url:{shortCode}";
+        var cached   = await _cache.GetStringAsync(cacheKey, ct);
+        if (cached is not null) return cached;
+
+        var shortUrl = await _repository.GetByShortCodeAsync(shortCode, ct);
+        if (shortUrl is null || shortUrl.ExpiresAt &lt; DateTimeOffset.UtcNow) return null;
+
+        await _cache.SetStringAsync(cacheKey, shortUrl.LongUrl,
+            new DistributedCacheEntryOptions
+                { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24) }, ct);
+
+        return shortUrl.LongUrl;
+    }
+
+    private string GenerateCode()
+    {
+        var bytes  = RandomNumberGenerator.GetBytes(8);
+        var number = BitConverter.ToUInt64(bytes, 0);
+        var chars  = new char[7];
+        for (int i = 6; i &gt;= 0; i--) { chars[i] = _base62[number % 62]; number /= 62; }
+        return new string(chars);
+    }
+}</pre>
+</div>
+
+<h3 id="url-arch">Architecture</h3>
+
+<div class="arch-diagram">
+  <div class="code-label">Architecture — URL Shortener</div>
+  <pre>                    ┌──────────────────────────┐
+                    │     CloudFront CDN         │
+                    │  Edge-cache redirects for  │
+                    │  most popular short codes  │
+                    └────────────┬───────────────┘
+                                 │
+            ┌────────────────────┼────────────────────┐
+            │                    │                    │
+      POST /shorten        GET /{code}           Analytics
+            │                    │                    │
+            ▼                    ▼                    ▼
+  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+  │  Write Service   │  │  Read Service    │  │  Analytics Svc   │
+  │  (low traffic)   │  │  (high traffic)  │  │  Background      │
+  └────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘
+           │                     │                     │
+  ┌────────▼─────────┐  ┌────────▼──────────┐  ┌───────▼──────────┐
+  │  DynamoDB        │  │  Redis Cluster    │  │  DynamoDB        │
+  │  (source of      │◄─┤  (cache layer)    │  │  (click events)  │
+  │   truth)         │  │  Hit rate: 90%+   │  │  HyperLogLog     │
+  └──────────────────┘  └───────────────────┘  └──────────────────┘
+
+302 vs 301:
+  301 Moved Permanently → browser caches redirect; CDN-friendly; analytics miss repeat visits
+  302 Found (Temporary) → every redirect hits server; every click trackable ✓
+  Decision: 302 for analytics links; 301 for CDN-cached performance links</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="chat-arch">8. Design: Chat Application</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">Architecture — Chat at 10M Concurrent Users</div>
+  <pre>┌─────────────────────────────────────────────────────────────────────┐
+│         Load Balancer — Layer 4 TCP, sticky sessions                │
+│   (Sticky needed: WebSocket connection must stay on same server)    │
+└───────────────────────────┬─────────────────────────────────────────┘
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+   ┌──────▼──────┐  ┌───────▼─────┐  ┌───────▼─────┐
+   │ Chat Server │  │ Chat Server │  │ Chat Server │
+   │ Node #1     │  │ Node #2     │  │ Node #N     │
+   │ SignalR     │  │ SignalR     │  │ SignalR     │
+   │ ~10K conns  │  │ ~10K conns  │  │ ~10K conns  │
+   └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+          │                │                │
+          └────────────────┼────────────────┘
+                           │ All subscribe to Redis pub/sub
+                           ▼
+             ┌─────────────────────────────┐
+             │     Redis Pub/Sub           │
+             │  Fan-out messages to all    │
+             │  servers that have the      │
+             │  relevant connections       │
+             └──────────────┬──────────────┘
+                            │
+    ┌───────────────────────┼──────────────────────┐
+    │                       │                      │
+    ▼                       ▼                      ▼
+┌─────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  Cassandra      │  │ Presence Service │  │Notification Svc  │
+│  (messages)     │  │ (Redis TTL keys) │  │Push for offline  │
+│  Partitioned by │  │ userId → {status,│  │users (APNS/FCM)  │
+│  chat_id + time │  │ serverId, lastAt}│  │                  │
+└─────────────────┘  └──────────────────┘  └──────────────────┘
+
+Scale math:
+  3M concurrent × 20 msg/day = 60M/day = 700/s avg, 7K/s peak
+  300+ SignalR servers at 10K connections each
+  Redis backplane fans out cross-server messages</pre>
+</div>
+
+<h3 id="chat-code">SignalR Hub</h3>
+
+<div class="code-block">
+  <div class="code-label">C# — ChatHub with SignalR and Redis backplane<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>[Authorize]
+public class ChatHub : Hub
+{
+    private readonly IMessageService  _messages;
+    private readonly IPresenceService _presence;
+    private readonly IGroupService    _groups;
+
+    public override async Task OnConnectedAsync()
+    {
+        var userId = GetUserId();
+        await _presence.UserConnectedAsync(userId, Context.ConnectionId);
+
+        // Join all user's chat rooms (works across all servers via Redis backplane)
+        var chatIds = await _groups.GetUserChatIdsAsync(userId);
+        foreach (var chatId in chatIds)
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"chat:{chatId}");
+
+        await NotifyContactsAsync(userId, isOnline: true);
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var userId = GetUserId();
+        await _presence.UserDisconnectedAsync(userId, Context.ConnectionId);
+        await NotifyContactsAsync(userId, isOnline: false);
+        await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task SendMessage(Guid chatId, string content)
+    {
+        var userId  = GetUserId();
+        var message = new ChatMessage
+        {
+            MessageId = Guid.NewGuid(), ChatId = chatId,
+            SenderId  = userId,         Content = content,
+            SentAt    = DateTimeOffset.UtcNow
+        };
+
+        await _messages.SaveAsync(message); // Persist first (at-least-once)
+
+        // Fan-out to all chat members across all servers
+        await Clients.Group($"chat:{chatId}").SendAsync("ReceiveMessage", new
+        {
+            message.MessageId, message.ChatId,
+            message.SenderId,  message.Content, message.SentAt
+        });
+    }
+
+    public async Task TypingIndicator(Guid chatId, bool isTyping) =>
+        await Clients.OthersInGroup($"chat:{chatId}")
+            .SendAsync("UserTyping", new { UserId = GetUserId(), IsTyping = isTyping });
+
+    private string GetUserId() =>
+        Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? throw new UnauthorizedAccessException();
+
+    private async Task NotifyContactsAsync(string userId, bool isOnline)
+    {
+        var contacts = await _groups.GetContactIdsAsync(userId);
+        foreach (var id in contacts)
+            await Clients.User(id).SendAsync("ContactStatusChanged",
+                new { UserId = userId, IsOnline = isOnline });
+    }
+}
+
+// Redis backplane — cross-server message delivery
+builder.Services.AddSignalR()
+    .AddStackExchangeRedis(redisConnStr, opts =>
+        opts.Configuration.ChannelPrefix = RedisChannel.Literal("chat:"));</pre>
+</div>
+
+<h3 id="chat-cassandra">Cassandra Schema</h3>
+
+<div class="code-block">
+  <div class="code-label">CQL — Message table optimized for time-based chat reads</div>
+  <pre>-- Optimized for "get last 50 messages for chat X before timestamp T"
+CREATE TABLE messages (
+    chat_id    UUID,
+    sent_at    TIMESTAMP,
+    message_id UUID,
+    sender_id  TEXT,
+    content    TEXT,
+    type       TEXT,
+    PRIMARY KEY ((chat_id), sent_at, message_id)  -- partition by chat_id
+) WITH CLUSTERING ORDER BY (sent_at DESC);
+
+-- Query: efficient, no full scan, no ORDER BY needed
+SELECT * FROM messages WHERE chat_id = ? AND sent_at &lt; ? LIMIT 50;
+
+-- Why Cassandra?
+-- partition key = chat_id → all messages for one chat on same node
+-- clustering order = sorted reads at storage level
+-- append-only writes = fast (LSM tree structure)
+-- built-in multi-datacenter replication</pre>
+</div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Fan-out Strategy</th><th>Pros</th><th>Cons</th><th>Use When</th></tr></thead>
+<tbody>
+<tr><td>Fan-out on Write (Push)</td><td>Fast reads</td><td>Expensive for large groups (500 members = 500 writes/msg)</td><td>Small groups (&lt;50)</td></tr>
+<tr><td>Fan-out on Read (Pull)</td><td>Cheap writes</td><td>Slower reads, more complex</td><td>Large groups (50+)</td></tr>
+<tr><td>Hybrid</td><td>Best of both</td><td>More complex logic</td><td>WhatsApp, Messenger</td></tr>
+</tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="rest">9. API Design Patterns</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">RESTful Conventions</div>
+  <pre>Resources — nouns, not verbs:
+  ✓ GET    /api/orders              List orders
+  ✓ GET    /api/orders/{id}         Get specific order
+  ✓ POST   /api/orders              Create order
+  ✓ PUT    /api/orders/{id}         Replace order (full update)
+  ✓ PATCH  /api/orders/{id}         Partial update
+  ✓ DELETE /api/orders/{id}         Delete order
+
+  ✗ POST   /api/createOrder         verb in URL
+  ✗ GET    /api/getOrderById?id=5   verb in URL
+
+HTTP Status Codes:
+  200 OK           GET/PUT/PATCH success
+  201 Created      POST success (+ Location header)
+  204 No Content   DELETE or no-body PUT
+  400 Bad Request  Input validation failure
+  401 Unauthorized Missing/invalid token
+  403 Forbidden    Valid token, insufficient permissions
+  404 Not Found    Resource doesn't exist
+  409 Conflict     Optimistic concurrency clash
+  422 Unprocessable Semantic validation failure
+  429 Too Many Req Rate limit exceeded
+  500 Server Error Never expose stack traces</pre>
+</div>
+
+<h3 id="idempotency">Idempotency</h3>
+
+<div class="code-block">
+  <div class="code-label">C# — Idempotency-Key pattern for safe POST retries<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>[HttpPost]
+public async Task&lt;IActionResult&gt; CreateOrder(
+    [FromBody] CreateOrderRequest request,
+    [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
+    CancellationToken ct)
+{
+    if (!string.IsNullOrEmpty(idempotencyKey))
+    {
+        // Check if we've processed this key before
+        var cached = await _idempotencyStore.GetAsync(idempotencyKey, ct);
+        if (cached is not null)
+            return StatusCode(cached.StatusCode, cached.Body); // Replay — no duplicate
+    }
+
+    var orderId  = await _orderService.PlaceOrderAsync(request, ct);
+    var response = new { orderId };
+
+    // Cache response for 24 hours
+    if (!string.IsNullOrEmpty(idempotencyKey))
+        await _idempotencyStore.SetAsync(idempotencyKey,
+            new IdempotencyRecord(201, response), TimeSpan.FromHours(24), ct);
+
+    return CreatedAtAction(nameof(GetOrder), new { id = orderId }, response);
+}
+
+// PUT and DELETE are naturally idempotent:
+//   PUT  /orders/5 { status: "shipped" } — same result called 5 times
+//   DELETE /orders/5 — first: 204 No Content; subsequent: 404 Not Found (both acceptable)</pre>
+</div>
+
+<h3 id="versioning">API Versioning</h3>
+
+<div class="code-block">
+  <div class="code-label">C# — URL segment versioning with Asp.Versioning<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>builder.Services.AddApiVersioning(options =&gt;
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader  = ApiVersionReader.Combine(
+        new UrlSegmentApiVersionReader(),               // /api/v1/orders
+        new HeaderApiVersionReader("X-API-Version"),    // header
+        new QueryStringApiVersionReader("api-version")  // ?api-version=2.0
+    );
+});
+
+[ApiController, Route("api/v{version:apiVersion}/orders")]
+[ApiVersion("1.0"), ApiVersion("2.0")]
+public class OrdersController : ControllerBase
+{
+    [HttpGet, MapToApiVersion("1.0")]
+    public IActionResult GetV1() =&gt; Ok(new { version = 1 });
+
+    [HttpGet, MapToApiVersion("2.0")]
+    public IActionResult GetV2() =&gt; Ok(new { version = 2, newField = "added in v2" });
+}</pre>
+</div>
+
+<h3 id="pagination">Pagination: Offset vs Cursor</h3>
+
+<div class="code-block">
+  <div class="code-label">C# — Cursor pagination (preferred for large/live datasets)<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>// Offset pagination: GET /api/orders?page=5&amp;pageSize=20
+//   Problem 1: slow for large offsets (skip 80 rows)
+//   Problem 2: items shift if new ones inserted mid-pagination
+
+// Cursor pagination: GET /api/orders?limit=20&amp;after=eyJpZCI6MTAwfQ==
+//   Consistent: based on stable sort key (ID or timestamp)
+//   Fast: WHERE id &gt; cursorId  (indexed)
+
+public async Task&lt;CursorPaginatedResult&lt;OrderSummaryDto&gt;&gt; GetOrdersAsync(
+    string? afterCursor, int limit = 20, CancellationToken ct = default)
+{
+    int? afterId = null;
+    if (afterCursor is not null)
+    {
+        var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(afterCursor));
+        afterId     = JsonSerializer.Deserialize&lt;CursorPayload&gt;(decoded)?.Id;
+    }
+
+    var query = _context.Orders.AsQueryable();
+    if (afterId.HasValue) query = query.Where(o =&gt; o.Id &gt; afterId.Value);
+
+    var items = await query
+        .OrderBy(o =&gt; o.Id)
+        .Take(limit + 1) // Fetch one extra to detect hasMore
+        .Select(o =&gt; new OrderSummaryDto { Id = o.Id, Status = o.Status, Total = o.Total })
+        .ToListAsync(ct);
+
+    var hasMore = items.Count &gt; limit;
+    if (hasMore) items.RemoveAt(items.Count - 1);
+
+    string? nextCursor = null;
+    if (hasMore &amp;&amp; items.Any())
+    {
+        var payload = JsonSerializer.Serialize(new CursorPayload { Id = items.Last().Id });
+        nextCursor  = Convert.ToBase64String(Encoding.UTF8.GetBytes(payload));
+    }
+
+    return new CursorPaginatedResult&lt;OrderSummaryDto&gt;
+        { Items = items, NextCursor = nextCursor, HasMore = hasMore };
+}</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2 id="framework">Quick Reference: Interview Framework</h2>
+
+<div class="arch-diagram">
+  <div class="code-label">System Design Interview — 50 Minute Structure</div>
+  <pre>1. CLARIFY (5 min)
+   ├── Functional requirements: what does the system do?
+   ├── Non-functional: scale, latency, consistency, availability?
+   └── Users, geography, traffic patterns (reads vs writes)?
+
+2. HIGH-LEVEL DESIGN (10 min)
+   ├── Draw major components
+   ├── Identify end-to-end data flow
+   └── Name databases, queues, caches, external services
+
+3. DEEP DIVE (20 min)
+   ├── Pick 2-3 most interesting/complex components
+   ├── Discuss trade-offs explicitly
+   └── Handle failure scenarios
+
+4. SCALING (10 min)
+   ├── Identify the bottleneck (usually DB or a hot service)
+   ├── Horizontal scaling, caching strategy
+   └── Sharding or read replicas if needed
+
+5. REVIEW (5 min)
+   ├── Summarize key trade-offs made
+   └── Mention what you'd do differently with more time/budget</pre>
+</div>
+
+<h2 id="tradeoffs">Key Trade-off Table</h2>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Question</th><th>Answer Pattern</th></tr></thead>
+<tbody>
+<tr><td>SQL vs NoSQL?</td><td>SQL for ACID/relations/complex queries; NoSQL for scale/schema flexibility/key-value lookups</td></tr>
+<tr><td>Sync vs Async?</td><td>Sync when caller needs the result immediately; Async when fire-and-forget is acceptable</td></tr>
+<tr><td>Cache vs DB?</td><td>Cache for reads (TTL); always write DB first; cache is eventually consistent</td></tr>
+<tr><td>Microservices vs Monolith?</td><td>Start with monolith; extract services when team/scale demands; not the other way around</td></tr>
+<tr><td>REST vs gRPC?</td><td>REST for public/external APIs; gRPC for internal service-to-service (binary, strongly typed)</td></tr>
+<tr><td>Fan-out write vs read?</td><td>Write for small groups (fast reads); read for large groups (cheap writes)</td></tr>
+<tr><td>301 vs 302 redirect?</td><td>301 for CDN performance (browser caches); 302 when every click must be tracked</td></tr>
+<tr><td>CQRS vs traditional?</td><td>CQRS when reads and writes have different complexity/scale profiles; otherwise overkill</td></tr>
+<tr><td>Event Sourcing?</td><td>Use when audit trail and temporal queries are core requirements; avoid for simple CRUD</td></tr>
+</tbody>
+</table></div>
+
+<div class="card card-tip">
+  <div class="card-label">Final Tip</div>
+  Never design in silence. Narrate trade-offs: "I'm choosing async here because notification delivery latency is acceptable, and it prevents payment from being blocked by an unrelated notification failure." That kind of reasoning is what separates a lead engineer from a senior engineer.
+</div>
+
+<hr>
+<p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem 0;">
+  Lead .NET Software Engineer — System Design &amp; Architecture &nbsp;|&nbsp; August 2026
+</p>
+
+</main>
+
+<script>
+// Copy button functionality
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Active sidebar highlight on scroll
+const headings = document.querySelectorAll('h2[id], h3[id]');
+const navLinks  = document.querySelectorAll('#sidebar a[href^="#"]');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => link.classList.remove('active'));
+      const id   = entry.target.id;
+      const link = document.querySelector(`#sidebar a[href="#${id}"]`);
+      if (link) {
+        link.classList.add('active');
+        link.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+
+headings.forEach(h => observer.observe(h));
+</script>
+</body>
+</html>

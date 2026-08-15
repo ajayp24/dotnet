@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL — Lead .NET Interview Prep</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;
+  --surface:#161b22;
+  --surface2:#21262d;
+  --border:#30363d;
+  --text:#e6edf3;
+  --text-muted:#8b949e;
+  --heading:#58a6ff;
+  --kw:#ff7b72;
+  --str:#a5d6ff;
+  --fn:#d2a8ff;
+  --num:#79c0ff;
+  --comment:#8b949e;
+  --tip-bg:#0d2137;
+  --tip-border:#1f6feb;
+  --warn-bg:#2d1f0e;
+  --warn-border:#bb8009;
+  --good:#3fb950;
+  --bad:#f85149;
+  --accent:#58a6ff;
+  --sidebar-w:270px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.7;
+  display:flex;
+  min-height:100vh;
+}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:var(--sidebar-w);
+  min-width:var(--sidebar-w);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+  padding:24px 0 40px;
+  flex-shrink:0;
+}
+#sidebar h2{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  padding:0 20px 12px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:10px;
+}
+#sidebar nav a{
+  display:block;
+  padding:5px 20px;
+  color:var(--text-muted);
+  text-decoration:none;
+  font-size:13px;
+  border-left:2px solid transparent;
+  transition:color .15s,border-color .15s,background .15s;
+  line-height:1.4;
+}
+#sidebar nav a:hover{color:var(--accent);background:rgba(88,166,255,.06);border-left-color:var(--accent)}
+#sidebar nav a.sub{padding-left:34px;font-size:12px}
+#sidebar nav a.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,.08)}
+
+/* ── MAIN ── */
+#main{
+  flex:1;
+  min-width:0;
+  padding:48px 48px 80px;
+}
+.content{max-width:860px;margin:0 auto}
+
+/* ── TYPOGRAPHY ── */
+h1{font-size:2rem;color:var(--heading);margin-bottom:8px;font-weight:700;letter-spacing:-.02em}
+.subtitle{color:var(--text-muted);font-size:14px;margin-bottom:48px}
+h2{font-size:1.45rem;color:var(--heading);margin:56px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border);font-weight:600}
+h3{font-size:1.1rem;color:#e6edf3;margin:32px 0 12px;font-weight:600}
+h4{font-size:.95rem;color:var(--text-muted);margin:24px 0 8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+p{margin-bottom:14px;color:#cdd9e5}
+strong{color:var(--text);font-weight:600}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+hr{border:none;border-top:1px solid var(--border);margin:48px 0}
+
+/* ── SECTION ANCHORS ── */
+.section-anchor{display:block;height:0;visibility:hidden;margin-top:-80px;padding-top:80px}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;margin:16px 0 24px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{background:var(--surface2);color:var(--heading);font-weight:600;text-align:left;padding:9px 14px;border:1px solid var(--border)}
+td{padding:8px 14px;border:1px solid var(--border);color:#cdd9e5;vertical-align:top}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+td code,th code{font-size:12px}
+.center{text-align:center}
+
+/* ── CODE ── */
+.code-block{position:relative;margin:16px 0 24px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.code-label{
+  background:var(--surface2);
+  color:var(--text-muted);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:7px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.copy-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-muted);
+  font-size:11px;
+  padding:3px 10px;
+  border-radius:5px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.copy-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.copy-btn.copied{background:var(--good);color:#fff;border-color:var(--good)}
+pre{
+  background:var(--surface);
+  padding:18px 20px;
+  overflow-x:auto;
+  font-family:'Cascadia Code','Fira Code','JetBrains Mono',Consolas,monospace;
+  font-size:13px;
+  line-height:1.6;
+  tab-size:4;
+}
+code{
+  font-family:'Cascadia Code','Fira Code','JetBrains Mono',Consolas,monospace;
+  font-size:12.5px;
+  background:var(--surface2);
+  padding:2px 6px;
+  border-radius:4px;
+  color:#e6edf3;
+  border:1px solid var(--border);
+}
+pre code{background:transparent;padding:0;border:none;font-size:13px}
+
+/* ── SQL SYNTAX HIGHLIGHTING ── */
+.kw{color:var(--kw);font-weight:600}
+.fn{color:var(--fn)}
+.str{color:var(--str)}
+.num{color:var(--num)}
+.cmt{color:var(--comment);font-style:italic}
+.op{color:#ff7b72}
+
+/* ── CALLOUTS ── */
+.tip,.warn,.good,.bad,.qa{
+  border-radius:8px;
+  padding:14px 18px;
+  margin:16px 0 24px;
+  font-size:13.5px;
+  border-left:4px solid;
+}
+.tip{background:var(--tip-bg);border-color:var(--tip-border)}
+.tip::before{content:"💡 Tip — ";font-weight:700;color:var(--accent)}
+.warn{background:var(--warn-bg);border-color:var(--warn-border)}
+.warn::before{content:"⚠ Pitfall — ";font-weight:700;color:#d29922}
+.good{background:#0d2117;border-color:var(--good)}
+.good::before{content:"✓ Good — ";font-weight:700;color:var(--good)}
+.bad{background:#2d0e0e;border-color:var(--bad)}
+.bad::before{content:"✗ Bad — ";font-weight:700;color:var(--bad)}
+.qa{background:var(--surface);border-color:var(--fn)}
+.qa::before{content:"Q&A — ";font-weight:700;color:var(--fn)}
+
+/* ── PROBLEM SECTIONS ── */
+.problem{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin:24px 0;overflow:hidden}
+.problem-header{background:var(--surface2);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.problem-num{background:var(--accent);color:#0d1117;font-weight:700;font-size:12px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.problem-header h3{margin:0;font-size:1rem;color:var(--text)}
+.problem-body{padding:20px}
+.io-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.io-box{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+.io-box h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:8px}
+.io-box pre{background:transparent;padding:0;font-size:12px}
+
+/* ── COMPARISON ── */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.compare-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.compare-box h4{margin-bottom:10px;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.compare-box.good-side h4{color:var(--good)}
+.compare-box.bad-side h4{color:var(--bad)}
+.compare-box ul{padding-left:16px;font-size:13px;color:#cdd9e5}
+.compare-box li{margin-bottom:5px}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-left:6px;vertical-align:middle}
+.badge-blue{background:rgba(88,166,255,.15);color:var(--accent);border:1px solid rgba(88,166,255,.3)}
+.badge-green{background:rgba(63,185,80,.15);color:var(--good);border:1px solid rgba(63,185,80,.3)}
+.badge-red{background:rgba(248,81,73,.15);color:var(--bad);border:1px solid rgba(248,81,73,.3)}
+
+@media(max-width:900px){
+  #sidebar{display:none}
+  #main{padding:24px 20px 60px}
+  .io-row,.compare{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <h2>SQL Interview Prep</h2>
+  <nav id="toc">
+    <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+    <a href="#indexes">1. Indexes</a>
+    <a href="#idx-clustered" class="sub">Clustered Index</a>
+    <a href="#idx-nonclustered" class="sub">Non-Clustered Index</a>
+    <a href="#idx-covering" class="sub">Covering Index</a>
+    <a href="#idx-composite" class="sub">Composite Index</a>
+    <a href="#idx-when-not" class="sub">When NOT to Index</a>
+    <a href="#execution-plans">2. Execution Plans</a>
+    <a href="#ep-operators" class="sub">Operators</a>
+    <a href="#ep-keylookup" class="sub">Key Lookup Problem</a>
+    <a href="#ep-stats" class="sub">Statistics</a>
+    <a href="#deadlocks">3. Deadlocks</a>
+    <a href="#isolation">4. Isolation Levels</a>
+    <a href="#cte">5. CTEs</a>
+    <a href="#cte-recursive" class="sub">Recursive CTE</a>
+    <a href="#window-functions">6. Window Functions</a>
+    <a href="#wf-ranking" class="sub">Ranking</a>
+    <a href="#wf-lag-lead" class="sub">LAG / LEAD</a>
+    <a href="#wf-aggregate" class="sub">Aggregate Windows</a>
+    <a href="#partition-by">7. PARTITION BY</a>
+    <a href="#pagination">8. Pagination</a>
+    <a href="#pg-offset" class="sub">OFFSET / FETCH</a>
+    <a href="#pg-keyset" class="sub">Keyset Pagination</a>
+    <a href="#sprocs">9. Stored Procs vs Inline</a>
+    <a href="#perf">10. Performance Tuning</a>
+    <a href="#problems">11. Coding Problems</a>
+    <a href="#p1" class="sub">P1: Delete Duplicates</a>
+    <a href="#p2" class="sub">P2: Nth Highest Salary</a>
+    <a href="#p3" class="sub">P3: Running Total</a>
+    <a href="#p4" class="sub">P4: Employee Hierarchy</a>
+    <a href="#p5" class="sub">P5: Gaps in Sequence</a>
+    <a href="#p6" class="sub">P6: Pivot / Cross-Tab</a>
+  </nav>
+</aside>
+
+<main id="main">
+<div class="content">
+
+<h1>SQL</h1>
+<p class="subtitle">Lead .NET Software Engineer — Interview Preparation</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<span class="section-anchor" id="indexes"></span>
+<h2>1. Indexes</h2>
+
+<span class="section-anchor" id="idx-clustered"></span>
+<h3>Clustered Index</h3>
+<p>A clustered index defines the <strong>physical storage order</strong> of data rows. The leaf level of the B-tree <em>is</em> the actual data — there is no separate row lookup. Only <strong>one per table</strong>. The primary key creates one by default.</p>
+
+<div class="code-block">
+  <div class="code-label">SQL — Clustered index via PRIMARY KEY<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">CREATE TABLE</span> Orders (
+    OrderID    <span class="kw">INT</span>            <span class="kw">NOT NULL PRIMARY KEY</span>,  <span class="cmt">-- Clustered by default</span>
+    CustomerID <span class="kw">INT</span>            <span class="kw">NOT NULL</span>,
+    OrderDate  <span class="kw">DATETIME</span>       <span class="kw">NOT NULL</span>,
+    Total      <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>
+);</code></pre>
+</div>
+
+<span class="section-anchor" id="idx-nonclustered"></span>
+<h3>Non-Clustered Index</h3>
+<p>A separate B-tree structure whose leaf nodes hold the index key plus a <strong>row locator</strong> (the clustered key, or a RID for heaps). SQL Server follows the pointer to fetch the actual row. Up to 999 per table.</p>
+
+<div class="code-block">
+  <div class="code-label">SQL — Non-clustered index<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">CREATE NONCLUSTERED INDEX</span> IX_Orders_CustomerID
+    <span class="kw">ON</span> Orders (CustomerID);</code></pre>
+</div>
+
+<span class="section-anchor" id="idx-covering"></span>
+<h3>Covering Index</h3>
+<p>Includes all columns the query needs so SQL Server <strong>never revisits the base table</strong>. Extra columns are added via <code>INCLUDE</code> (not in the key — only in the leaf level).</p>
+
+<div class="code-block">
+  <div class="code-label">SQL — Covering index eliminates Key Lookup<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Query: SELECT OrderDate, Total FROM Orders WHERE CustomerID = 42
+-- Without cover: Index Seek + Key Lookup per row (slow at scale)
+-- With cover:    Index Seek only — zero extra I/O</span>
+
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_Orders_CustomerID_Cover
+    <span class="kw">ON</span> Orders (CustomerID)
+    <span class="kw">INCLUDE</span> (OrderDate, Total);</code></pre>
+</div>
+
+<div class="qa">Why use <code>INCLUDE</code> instead of adding columns to the key? INCLUDE columns only live in the leaf level, so they don't affect sort order or propagate through upper B-tree levels. The index key stays narrow, reducing its size and maintenance cost.</div>
+
+<span class="section-anchor" id="idx-composite"></span>
+<h3>Composite Index — Leftmost Prefix Rule</h3>
+<p>A composite index is usable only when the query filters on the <strong>leading column(s) in order</strong>.</p>
+
+<div class="code-block">
+  <div class="code-label">SQL — Composite index usage<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">CREATE NONCLUSTERED INDEX</span> IX_Orders_CustomerDate
+    <span class="kw">ON</span> Orders (CustomerID, OrderDate);
+
+<span class="cmt">-- USES the index (leading column present)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Orders <span class="kw">WHERE</span> CustomerID = <span class="num">5</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Orders <span class="kw">WHERE</span> CustomerID = <span class="num">5</span> <span class="kw">AND</span> OrderDate > <span class="str">'2024-01-01'</span>;
+
+<span class="cmt">-- Does NOT use the index efficiently (leading column missing)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Orders <span class="kw">WHERE</span> OrderDate > <span class="str">'2024-01-01'</span>;</code></pre>
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Index Definition</th><th>Query Predicate</th><th>Uses Index?</th></tr>
+  <tr><td><code>(CustomerID, OrderDate)</code></td><td><code>WHERE CustomerID = 5</code></td><td class="center" style="color:var(--good)">Yes</td></tr>
+  <tr><td><code>(CustomerID, OrderDate)</code></td><td><code>WHERE CustomerID = 5 AND OrderDate = '2024-01-01'</code></td><td class="center" style="color:var(--good)">Yes (both)</td></tr>
+  <tr><td><code>(CustomerID, OrderDate)</code></td><td><code>WHERE OrderDate = '2024-01-01'</code></td><td class="center" style="color:var(--bad)">No</td></tr>
+  <tr><td><code>(OrderDate, CustomerID)</code></td><td><code>WHERE OrderDate = '2024-01-01'</code></td><td class="center" style="color:var(--good)">Yes</td></tr>
+</table>
+</div>
+
+<span class="section-anchor" id="idx-when-not"></span>
+<h3>When NOT to Index</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Situation</th><th>Reason</th></tr>
+  <tr><td>Low-cardinality columns (<code>IsActive BIT</code>)</td><td>Too many matching rows — table scan is cheaper than index + key lookup</td></tr>
+  <tr><td>Frequently updated columns</td><td>Every write must maintain the index structure</td></tr>
+  <tr><td>Very small tables (&lt; ~1,000 rows)</td><td>Table scan is trivially fast</td></tr>
+  <tr><td>Columns never in WHERE / JOIN / ORDER BY</td><td>Index is never consulted</td></tr>
+</table>
+</div>
+
+<div class="qa"><strong>Q: What is the difference between a clustered and non-clustered index?</strong><br><br>
+A clustered index defines the physical row order — the leaf level <em>is</em> the data. One per table. A non-clustered index is a separate B-tree whose leaf nodes store the key plus a pointer back to the data row. Multiple non-clustered indexes are allowed. When a non-clustered index does not cover the query, SQL Server performs a Key Lookup to fetch remaining columns — expensive at scale.</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="execution-plans"></span>
+<h2>2. Execution Plans</h2>
+
+<span class="section-anchor" id="ep-operators"></span>
+<h3>Operator Reference</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Operator</th><th>Meaning</th><th>When You See It</th></tr>
+  <tr><td><strong>Table Scan</strong></td><td>Full table read, no index</td><td style="color:var(--bad)">Missing index or very low selectivity</td></tr>
+  <tr><td><strong>Index Scan</strong></td><td>Full index read</td><td>Non-selective predicate on indexed col</td></tr>
+  <tr><td><strong>Index Seek</strong></td><td>Jump directly to matching rows</td><td style="color:var(--good)">Good — selective WHERE clause</td></tr>
+  <tr><td><strong>Key Lookup</strong></td><td>Extra trip to clustered index for missing columns</td><td style="color:var(--bad)">Non-covering index — fix with INCLUDE</td></tr>
+  <tr><td><strong>Nested Loop</strong></td><td>For each outer row, scan inner set</td><td>Good for small outer input</td></tr>
+  <tr><td><strong>Hash Join</strong></td><td>Build hash table on one side, probe with other</td><td>Large unsorted inputs; bad on small tables</td></tr>
+  <tr><td><strong>Merge Join</strong></td><td>Walk two sorted streams simultaneously</td><td>Both inputs already ordered by join key</td></tr>
+</table>
+</div>
+
+<span class="section-anchor" id="ep-keylookup"></span>
+<h3>Key Lookup Problem &amp; Fix</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — Trigger and fix a Key Lookup<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Index exists only on CustomerID</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_Orders_Cust <span class="kw">ON</span> Orders (CustomerID);
+
+<span class="cmt">-- This query triggers a Key Lookup for OrderDate and Total on every row</span>
+<span class="kw">SELECT</span> CustomerID, OrderDate, Total
+<span class="kw">FROM</span>   Orders
+<span class="kw">WHERE</span>  CustomerID = <span class="num">42</span>;
+<span class="cmt">-- Plan: Index Seek → Key Lookup × N rows  (bad at scale)</span>
+
+<span class="cmt">-- Fix: INCLUDE the missing columns</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_Orders_Cust_Cover
+    <span class="kw">ON</span> Orders (CustomerID)
+    <span class="kw">INCLUDE</span> (OrderDate, Total);
+<span class="cmt">-- Plan: Index Seek only — no key lookups</span></code></pre>
+</div>
+
+<span class="section-anchor" id="ep-stats"></span>
+<h3>Statistics — Why They Matter</h3>
+<p>SQL Server's optimizer uses <strong>statistics</strong> (column value histograms) to estimate row counts and choose join strategies. Stale statistics cause bad cardinality estimates, which lead to wrong join types and memory grants.</p>
+
+<div class="code-block">
+  <div class="code-label">SQL — Update statistics<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">UPDATE STATISTICS</span> Orders;          <span class="cmt">-- Single table</span>
+<span class="kw">EXEC</span> sp_updatestats;               <span class="cmt">-- All tables in current DB</span>
+
+<span class="cmt">-- View histogram for an index</span>
+<span class="kw">DBCC</span> <span class="fn">SHOW_STATISTICS</span> (<span class="str">'Orders'</span>, <span class="str">'IX_Orders_CustomerID'</span>);</code></pre>
+</div>
+
+<div class="tip">A Hash Join is not always bad — it is optimal for large unsorted inputs. It is a warning sign only when you see it on small tables, which indicates the optimizer has badly wrong row-count estimates (stale stats).</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="deadlocks"></span>
+<h2>3. Deadlocks</h2>
+
+<p>A deadlock occurs when two transactions each hold a lock the other needs — a <strong>circular lock dependency</strong>. Neither can proceed.</p>
+
+<div class="code-block">
+  <div class="code-label">SQL — Deadlock scenario and fix<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">CREATE TABLE</span> Accounts (
+    AccountID <span class="kw">INT PRIMARY KEY</span>,
+    Balance   <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>)
+);
+<span class="kw">INSERT INTO</span> Accounts <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">1000.00</span>), (<span class="num">2</span>, <span class="num">500.00</span>);
+
+<span class="cmt">-- Session 1 (Transaction A)</span>
+<span class="kw">BEGIN TRAN</span>;
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance -= <span class="num">100</span> <span class="kw">WHERE</span> AccountID = <span class="num">1</span>;  <span class="cmt">-- Locks row 1</span>
+    <span class="kw">WAITFOR DELAY</span> <span class="str">'00:00:05'</span>;
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance += <span class="num">100</span> <span class="kw">WHERE</span> AccountID = <span class="num">2</span>;  <span class="cmt">-- Waits for row 2</span>
+
+<span class="cmt">-- Session 2 (Transaction B) — run concurrently</span>
+<span class="kw">BEGIN TRAN</span>;
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance -= <span class="num">50</span> <span class="kw">WHERE</span> AccountID = <span class="num">2</span>;  <span class="cmt">-- Locks row 2</span>
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance += <span class="num">50</span> <span class="kw">WHERE</span> AccountID = <span class="num">1</span>;  <span class="cmt">-- Waits for row 1 → DEADLOCK</span>
+
+<span class="cmt">-- FIX: always access rows in the same order (ascending AccountID)</span>
+<span class="cmt">-- Both transactions contend on row 1 first — one waits, no cycle</span>
+<span class="kw">BEGIN TRAN</span>;
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance -= <span class="num">100</span> <span class="kw">WHERE</span> AccountID = <span class="num">1</span>;
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance += <span class="num">100</span> <span class="kw">WHERE</span> AccountID = <span class="num">2</span>;
+<span class="kw">COMMIT</span>;</code></pre>
+</div>
+
+<h3>Prevention Strategies</h3>
+<ul style="margin-left:20px;color:#cdd9e5;margin-bottom:16px">
+  <li><strong>Consistent lock order</strong> — always access tables/rows in the same sequence across all transactions</li>
+  <li><strong>Keep transactions short</strong> — minimize time locks are held</li>
+  <li><strong>Add appropriate indexes</strong> — fewer rows touched per operation = fewer conflicts</li>
+  <li><strong>Use SNAPSHOT isolation</strong> — readers never block writers</li>
+  <li><strong>Retry on error 1205</strong> — application-level retry for deadlock victims</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="isolation"></span>
+<h2>4. Isolation Levels</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Level</th><th class="center">Dirty Read</th><th class="center">Non-Repeatable Read</th><th class="center">Phantom Read</th><th>Blocking</th></tr>
+  <tr><td>READ UNCOMMITTED</td><td class="center" style="color:var(--bad)">Yes</td><td class="center" style="color:var(--bad)">Yes</td><td class="center" style="color:var(--bad)">Yes</td><td>None</td></tr>
+  <tr><td>READ COMMITTED <span class="badge badge-blue">Default</span></td><td class="center" style="color:var(--good)">No</td><td class="center" style="color:var(--bad)">Yes</td><td class="center" style="color:var(--bad)">Yes</td><td>Readers release locks immediately</td></tr>
+  <tr><td>REPEATABLE READ</td><td class="center" style="color:var(--good)">No</td><td class="center" style="color:var(--good)">No</td><td class="center" style="color:var(--bad)">Yes</td><td>Holds shared locks to end of txn</td></tr>
+  <tr><td>SERIALIZABLE</td><td class="center" style="color:var(--good)">No</td><td class="center" style="color:var(--good)">No</td><td class="center" style="color:var(--good)">No</td><td>Highest — range locks</td></tr>
+  <tr><td>SNAPSHOT <span class="badge badge-green">MVCC</span></td><td class="center" style="color:var(--good)">No</td><td class="center" style="color:var(--good)">No</td><td class="center" style="color:var(--good)">No</td><td>Readers never block</td></tr>
+</table>
+</div>
+
+<div class="code-block">
+  <div class="code-label">SQL — Banking transfer with SNAPSHOT isolation<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Enable at database level first</span>
+<span class="kw">ALTER DATABASE</span> BankDB <span class="kw">SET</span> ALLOW_SNAPSHOT_ISOLATION <span class="kw">ON</span>;
+
+<span class="kw">SET TRANSACTION ISOLATION LEVEL</span> SNAPSHOT;
+<span class="kw">BEGIN TRAN</span>;
+    <span class="kw">DECLARE</span> @Bal <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>);
+    <span class="kw">SELECT</span> @Bal = Balance <span class="kw">FROM</span> Accounts <span class="kw">WHERE</span> AccountID = <span class="num">1</span>;
+
+    <span class="kw">IF</span> @Bal >= <span class="num">100</span>
+    <span class="kw">BEGIN</span>
+        <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance -= <span class="num">100</span> <span class="kw">WHERE</span> AccountID = <span class="num">1</span>;
+        <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance += <span class="num">100</span> <span class="kw">WHERE</span> AccountID = <span class="num">2</span>;
+        <span class="kw">COMMIT</span>;
+    <span class="kw">END</span>
+    <span class="kw">ELSE</span>
+    <span class="kw">BEGIN</span>
+        <span class="kw">ROLLBACK</span>;
+        <span class="kw">RAISERROR</span>(<span class="str">'Insufficient funds'</span>, <span class="num">16</span>, <span class="num">1</span>);
+    <span class="kw">END</span></code></pre>
+</div>
+
+<div class="qa"><strong>Q: SNAPSHOT vs READ COMMITTED SNAPSHOT (RCSI)?</strong><br><br>
+SNAPSHOT isolation is <em>transaction-scoped</em> — snapshot is fixed at transaction start. RCSI is <em>statement-scoped</em> — each statement sees committed data as of that statement's start. RCSI is enabled with <code>ALTER DATABASE ... SET READ_COMMITTED_SNAPSHOT ON</code> and silently upgrades all READ COMMITTED sessions without code changes. Both use row versioning in TempDB.</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="cte"></span>
+<h2>5. CTEs (Common Table Expressions)</h2>
+
+<h3>Regular CTE</h3>
+<div class="code-block">
+  <div class="code-label">SQL — Latest order per customer using CTE<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">WITH</span> RecentOrders <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> CustomerID, OrderID, OrderDate, Total,
+           <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+               <span class="kw">PARTITION BY</span> CustomerID
+               <span class="kw">ORDER BY</span> OrderDate <span class="kw">DESC</span>
+           ) <span class="kw">AS</span> rn
+    <span class="kw">FROM</span> Orders
+    <span class="kw">WHERE</span> OrderDate >= <span class="fn">DATEADD</span>(<span class="kw">YEAR</span>, -<span class="num">1</span>, <span class="fn">GETDATE</span>())
+)
+<span class="kw">SELECT</span> CustomerID, OrderID, OrderDate, Total
+<span class="kw">FROM</span>   RecentOrders
+<span class="kw">WHERE</span>  rn = <span class="num">1</span>;</code></pre>
+</div>
+
+<span class="section-anchor" id="cte-recursive"></span>
+<h3>Recursive CTE — Employee Hierarchy</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — Recursive CTE: org chart traversal<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">CREATE TABLE</span> Employees (
+    EmployeeID <span class="kw">INT PRIMARY KEY</span>,
+    Name       <span class="kw">NVARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+    ManagerID  <span class="kw">INT NULL REFERENCES</span> Employees(EmployeeID),
+    Title      <span class="kw">NVARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>
+);
+<span class="kw">INSERT INTO</span> Employees <span class="kw">VALUES</span>
+    (<span class="num">1</span>, <span class="str">'Sarah Chen'</span>,  <span class="kw">NULL</span>, <span class="str">'CEO'</span>),
+    (<span class="num">2</span>, <span class="str">'Mark Torres'</span>, <span class="num">1</span>,    <span class="str">'VP Engineering'</span>),
+    (<span class="num">3</span>, <span class="str">'James Liu'</span>,   <span class="num">2</span>,    <span class="str">'Senior Engineer'</span>),
+    (<span class="num">4</span>, <span class="str">'Ryan Kim'</span>,    <span class="num">3</span>,    <span class="str">'Engineer'</span>);
+
+<span class="kw">WITH</span> OrgHierarchy <span class="kw">AS</span> (
+    <span class="cmt">-- Anchor: root (no manager)</span>
+    <span class="kw">SELECT</span> EmployeeID, Name, Title, ManagerID,
+           <span class="num">0</span> <span class="kw">AS</span> Level,
+           <span class="kw">CAST</span>(Name <span class="kw">AS NVARCHAR</span>(<span class="kw">MAX</span>)) <span class="kw">AS</span> OrgPath
+    <span class="kw">FROM</span>   Employees
+    <span class="kw">WHERE</span>  ManagerID <span class="kw">IS NULL</span>
+
+    <span class="kw">UNION ALL</span>
+
+    <span class="cmt">-- Recursive: each direct report</span>
+    <span class="kw">SELECT</span> e.EmployeeID, e.Name, e.Title, e.ManagerID,
+           h.Level + <span class="num">1</span>,
+           h.OrgPath + <span class="str">N' → '</span> + e.Name
+    <span class="kw">FROM</span>   Employees e
+    <span class="kw">INNER JOIN</span> OrgHierarchy h <span class="kw">ON</span> e.ManagerID = h.EmployeeID
+)
+<span class="kw">SELECT</span> Level,
+       <span class="fn">REPLICATE</span>(<span class="str">N'    '</span>, Level) + Name <span class="kw">AS</span> IndentedName,
+       Title, OrgPath
+<span class="kw">FROM</span>   OrgHierarchy
+<span class="kw">ORDER BY</span> OrgPath
+<span class="kw">OPTION</span> (MAXRECURSION <span class="num">50</span>);</code></pre>
+</div>
+
+<div class="warn">A CTE is not materialized by default — SQL Server may evaluate it multiple times if referenced more than once. For expensive CTEs referenced multiple times, use a temp table. Always set <code>OPTION (MAXRECURSION n)</code> for recursive CTEs; default limit is 100.</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="window-functions"></span>
+<h2>6. Window Functions</h2>
+
+<span class="section-anchor" id="wf-ranking"></span>
+<h3>Ranking Functions</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — ROW_NUMBER, RANK, DENSE_RANK, NTILE<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">SELECT</span> EmployeeID, DepartmentID, Salary,
+       <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> DepartmentID <span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> RowNum,
+       <span class="fn">RANK</span>()        <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> DepartmentID <span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> Rnk,
+       <span class="fn">DENSE_RANK</span>()  <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> DepartmentID <span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> DenseRnk,
+       <span class="fn">NTILE</span>(<span class="num">4</span>)      <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> DepartmentID <span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> Quartile
+<span class="kw">FROM</span>   Employees;
+
+<span class="cmt">-- Salaries: 100k, 90k, 90k, 80k
+-- ROW_NUMBER:  1, 2, 3, 4  (always unique — arbitrary tiebreak)
+-- RANK:        1, 2, 2, 4  (gaps after ties)
+-- DENSE_RANK:  1, 2, 2, 3  (no gaps after ties)
+-- NTILE(4):    1, 2, 3, 4  (divides into 4 equal buckets)</span></code></pre>
+</div>
+
+<span class="section-anchor" id="wf-lag-lead"></span>
+<h3>LAG and LEAD</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — LAG / LEAD for period comparisons<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">SELECT</span> OrderDate, Total,
+       <span class="fn">LAG</span>(Total, <span class="num">1</span>, <span class="num">0</span>)  <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> OrderDate) <span class="kw">AS</span> PreviousTotal,
+       <span class="fn">LEAD</span>(Total, <span class="num">1</span>, <span class="num">0</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> OrderDate) <span class="kw">AS</span> NextTotal,
+       Total - <span class="fn">LAG</span>(Total, <span class="num">1</span>, <span class="num">0</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> OrderDate) <span class="kw">AS</span> DeltaFromPrev
+<span class="kw">FROM</span>   Orders
+<span class="kw">WHERE</span>  CustomerID = <span class="num">42</span>;</code></pre>
+</div>
+
+<span class="section-anchor" id="wf-aggregate"></span>
+<h3>Aggregate Window Functions — Month-over-Month Growth</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — Running total + MoM growth<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">WITH</span> MonthlySales <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="fn">YEAR</span>(OrderDate) <span class="kw">AS</span> Yr,
+           <span class="fn">MONTH</span>(OrderDate) <span class="kw">AS</span> Mo,
+           <span class="fn">SUM</span>(Total) <span class="kw">AS</span> Revenue
+    <span class="kw">FROM</span>   Orders
+    <span class="kw">GROUP BY</span> <span class="fn">YEAR</span>(OrderDate), <span class="fn">MONTH</span>(OrderDate)
+)
+<span class="kw">SELECT</span> Yr, Mo, Revenue,
+       <span class="fn">SUM</span>(Revenue) <span class="kw">OVER</span> (
+           <span class="kw">ORDER BY</span> Yr, Mo
+           <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+       ) <span class="kw">AS</span> RunningTotal,
+       <span class="fn">LAG</span>(Revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Yr, Mo) <span class="kw">AS</span> PrevRevenue,
+       <span class="fn">ROUND</span>(
+           (Revenue - <span class="fn">LAG</span>(Revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Yr, Mo))
+           / <span class="fn">NULLIF</span>(<span class="fn">LAG</span>(Revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Yr, Mo), <span class="num">0</span>) * <span class="num">100</span>, <span class="num">2</span>
+       ) <span class="kw">AS</span> MoMGrowthPct
+<span class="kw">FROM</span>   MonthlySales
+<span class="kw">ORDER BY</span> Yr, Mo;</code></pre>
+</div>
+
+<h3>PARTITION BY vs GROUP BY</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Feature</th><th>GROUP BY</th><th>PARTITION BY (window)</th></tr>
+  <tr><td>Collapses rows</td><td style="color:var(--bad)">Yes — one row per group</td><td style="color:var(--good)">No — all rows retained</td></tr>
+  <tr><td>Mix aggregated + non-aggregated</td><td style="color:var(--bad)">No</td><td style="color:var(--good)">Yes</td></tr>
+  <tr><td>Use case</td><td>Summary totals</td><td>Per-row running totals, ranks</td></tr>
+</table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="partition-by"></span>
+<h2>7. PARTITION BY</h2>
+
+<div class="code-block">
+  <div class="code-label">SQL — Latest order per customer (deduplication)<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">WITH</span> RankedOrders <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> CustomerID, OrderID, OrderDate, Total,
+           <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+               <span class="kw">PARTITION BY</span> CustomerID
+               <span class="kw">ORDER BY</span> OrderDate <span class="kw">DESC</span>, OrderID <span class="kw">DESC</span>  <span class="cmt">-- tiebreak</span>
+           ) <span class="kw">AS</span> rn
+    <span class="kw">FROM</span> Orders
+)
+<span class="kw">SELECT</span> CustomerID, OrderID, OrderDate, Total
+<span class="kw">FROM</span>   RankedOrders
+<span class="kw">WHERE</span>  rn = <span class="num">1</span>;</code></pre>
+</div>
+
+<div class="code-block">
+  <div class="code-label">SQL — First purchase date + stats per customer<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">SELECT DISTINCT</span>
+       CustomerID,
+       <span class="fn">MIN</span>(OrderDate) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> CustomerID) <span class="kw">AS</span> FirstPurchase,
+       <span class="fn">MAX</span>(OrderDate) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> CustomerID) <span class="kw">AS</span> LastPurchase,
+       <span class="fn">COUNT</span>(*)       <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> CustomerID) <span class="kw">AS</span> TotalOrders,
+       <span class="fn">SUM</span>(Total)     <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> CustomerID) <span class="kw">AS</span> LifetimeValue
+<span class="kw">FROM</span>   Orders;</code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="pagination"></span>
+<h2>8. Pagination</h2>
+
+<span class="section-anchor" id="pg-offset"></span>
+<h3>OFFSET / FETCH</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — OFFSET/FETCH paging<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">DECLARE</span> @Page     <span class="kw">INT</span> = <span class="num">2</span>;    <span class="cmt">-- 0-based</span>
+<span class="kw">DECLARE</span> @PageSize <span class="kw">INT</span> = <span class="num">10</span>;
+
+<span class="kw">SELECT</span> OrderID, CustomerID, OrderDate, Total
+<span class="kw">FROM</span>   Orders
+<span class="kw">ORDER BY</span> OrderDate <span class="kw">DESC</span>, OrderID <span class="kw">DESC</span>
+<span class="kw">OFFSET</span>  @Page * @PageSize <span class="kw">ROWS</span>
+<span class="kw">FETCH NEXT</span> @PageSize <span class="kw">ROWS ONLY</span>;</code></pre>
+</div>
+
+<div class="warn"><code>OFFSET 1000000 ROWS</code> forces SQL Server to read and discard 1 million rows before returning results. Performance degrades linearly with offset size.</div>
+
+<span class="section-anchor" id="pg-keyset"></span>
+<h3>Keyset Pagination (Cursor-Based)</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — Keyset pagination — constant performance<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">DECLARE</span> @PageSize      <span class="kw">INT</span>      = <span class="num">10</span>;
+<span class="kw">DECLARE</span> @LastOrderDate <span class="kw">DATETIME</span> = <span class="str">'2024-03-15 09:22:11'</span>;
+<span class="kw">DECLARE</span> @LastOrderID   <span class="kw">INT</span>      = <span class="num">50231</span>;
+
+<span class="kw">SELECT TOP</span> (@PageSize)
+       OrderID, OrderDate, Total
+<span class="kw">FROM</span>   Orders
+<span class="kw">WHERE</span>  OrderDate < @LastOrderDate
+   <span class="kw">OR</span> (OrderDate = @LastOrderDate <span class="kw">AND</span> OrderID < @LastOrderID)
+<span class="kw">ORDER BY</span> OrderDate <span class="kw">DESC</span>, OrderID <span class="kw">DESC</span>;</code></pre>
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Aspect</th><th>OFFSET / FETCH</th><th>Keyset Pagination</th></tr>
+  <tr><td>Performance on large offsets</td><td style="color:var(--bad)">Degrades — reads all preceding rows</td><td style="color:var(--good)">Constant — seeks directly</td></tr>
+  <tr><td>Random page access</td><td style="color:var(--good)">Yes (jump to page 50)</td><td style="color:var(--bad)">No (sequential only)</td></tr>
+  <tr><td>Stable results (new rows)</td><td style="color:var(--bad)">No — new rows shift pages</td><td style="color:var(--good)">Yes — anchored to a value</td></tr>
+  <tr><td>Complexity</td><td style="color:var(--good)">Simple</td><td>Requires unique sortable key</td></tr>
+  <tr><td>Best for</td><td>Small/medium datasets, UI paging</td><td>Infinite scroll, datasets 10M+</td></tr>
+</table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="sprocs"></span>
+<h2>9. Stored Procedures vs Inline Queries</h2>
+
+<div class="compare">
+  <div class="compare-box good-side">
+    <h4>Stored Procedures — Pros</h4>
+    <ul>
+      <li>Execution plan cached and reused</li>
+      <li>Reduced network traffic (one call)</li>
+      <li>Grant permissions on proc, not tables</li>
+      <li>Good for multi-step transactional logic</li>
+    </ul>
+  </div>
+  <div class="compare-box bad-side">
+    <h4>Stored Procedures — Cons</h4>
+    <ul>
+      <li>Parameter sniffing can cause bad plans</li>
+      <li>Logic split between DB and application</li>
+      <li>Harder to test and version-control</li>
+      <li>ORM tools work poorly with sprocs</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Parameter Sniffing &amp; Fixes</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — Parameter sniffing problem and three fixes<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Problem: compiled for CustomerID=1 (1 row) — bad plan for CustomerID=100 (10k rows)</span>
+<span class="kw">CREATE PROCEDURE</span> GetOrdersByCustomer @CustomerID <span class="kw">INT</span>
+<span class="kw">AS BEGIN</span>
+    <span class="kw">SELECT</span> OrderID, OrderDate, Total <span class="kw">FROM</span> Orders <span class="kw">WHERE</span> CustomerID = @CustomerID;
+<span class="kw">END</span>
+
+<span class="cmt">-- Fix 1: OPTION(RECOMPILE) — recompile on each call (for infrequent variable queries)</span>
+<span class="kw">SELECT</span> OrderID, OrderDate, Total <span class="kw">FROM</span> Orders
+<span class="kw">WHERE</span>  CustomerID = @CustomerID
+<span class="kw">OPTION</span> (RECOMPILE);
+
+<span class="cmt">-- Fix 2: Local variable — breaks sniffing; optimizer uses average estimate</span>
+<span class="kw">DECLARE</span> @LocalID <span class="kw">INT</span> = @CustomerID;
+<span class="kw">SELECT</span> OrderID, OrderDate, Total <span class="kw">FROM</span> Orders <span class="kw">WHERE</span> CustomerID = @LocalID;
+
+<span class="cmt">-- Fix 3: OPTIMIZE FOR UNKNOWN — uses average statistics, not sniffed value</span>
+<span class="kw">SELECT</span> OrderID, OrderDate, Total <span class="kw">FROM</span> Orders
+<span class="kw">WHERE</span>  CustomerID = @CustomerID
+<span class="kw">OPTION</span> (OPTIMIZE <span class="kw">FOR</span> (@CustomerID UNKNOWN));</code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="perf"></span>
+<h2>10. Performance Tuning</h2>
+
+<h3>SARGable vs Non-SARGable Predicates</h3>
+<p><strong>SARGable</strong> (Search ARGument able) means the predicate lets the optimizer use an index seek.</p>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Non-SARGable (Bad)</th><th>SARGable Fix</th></tr>
+  <tr><td><code>WHERE YEAR(OrderDate) = 2024</code></td><td><code>WHERE OrderDate >= '2024-01-01' AND OrderDate &lt; '2025-01-01'</code></td></tr>
+  <tr><td><code>WHERE UPPER(Name) = 'SMITH'</code></td><td><code>WHERE Name = 'Smith'</code> (case-insensitive collation)</td></tr>
+  <tr><td><code>WHERE CustomerID + 1 = 42</code></td><td><code>WHERE CustomerID = 41</code></td></tr>
+  <tr><td><code>WHERE LEN(Notes) &gt; 100</code></td><td>Computed column + index, or avoid</td></tr>
+</table>
+</div>
+
+<div class="compare">
+  <div class="compare-box bad-side">
+    <h4>Non-SARGable — Table Scan</h4>
+    <pre style="font-size:12px;margin-top:4px"><code><span class="kw">SELECT</span> * <span class="kw">FROM</span> Orders
+<span class="kw">WHERE</span> <span class="fn">YEAR</span>(OrderDate) = <span class="num">2024</span>;</code></pre>
+  </div>
+  <div class="compare-box good-side">
+    <h4>SARGable — Index Seek</h4>
+    <pre style="font-size:12px;margin-top:4px"><code><span class="kw">SELECT</span> * <span class="kw">FROM</span> Orders
+<span class="kw">WHERE</span> OrderDate >= <span class="str">'2024-01-01'</span>
+  <span class="kw">AND</span> OrderDate <  <span class="str">'2025-01-01'</span>;</code></pre>
+  </div>
+</div>
+
+<h3>Avoid Implicit Conversions</h3>
+
+<div class="code-block">
+  <div class="code-label">SQL — Implicit conversion kills index use<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Column is INT, parameter is VARCHAR → implicit conversion, index ignored</span>
+<span class="kw">DECLARE</span> @ID <span class="kw">VARCHAR</span>(<span class="num">10</span>) = <span class="str">'42'</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Orders <span class="kw">WHERE</span> CustomerID = @ID;  <span class="cmt">-- BAD</span>
+
+<span class="cmt">-- Fix: matching types</span>
+<span class="kw">DECLARE</span> @ID <span class="kw">INT</span> = <span class="num">42</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Orders <span class="kw">WHERE</span> CustomerID = @ID;  <span class="cmt">-- GOOD</span></code></pre>
+</div>
+
+<div class="tip">Always specify column list — never <code>SELECT *</code>. Fetching all columns prevents covering indexes from working and increases network payload.</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor" id="problems"></span>
+<h2>11. Coding Problems</h2>
+
+<!-- P1 -->
+<span class="section-anchor" id="p1"></span>
+<div class="problem">
+  <div class="problem-header">
+    <div class="problem-num">1</div>
+    <h3>Delete Duplicate Rows — Keep One</h3>
+  </div>
+  <div class="problem-body">
+    <p>The <code>Employees</code> table has duplicate rows (same Name, Department, Salary). Keep the row with the lowest EmployeeID; delete all others.</p>
+
+    <div class="code-block">
+      <div class="code-label">SQL — Setup<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">CREATE TABLE</span> EmpDupes (
+    EmployeeID <span class="kw">INT IDENTITY</span>(<span class="num">1</span>,<span class="num">1</span>) <span class="kw">PRIMARY KEY</span>,
+    Name       <span class="kw">NVARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+    Department <span class="kw">NVARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+    Salary     <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>
+);
+<span class="kw">INSERT INTO</span> EmpDupes (Name, Department, Salary) <span class="kw">VALUES</span>
+    (<span class="str">'Alice'</span>,   <span class="str">'Engineering'</span>, <span class="num">95000</span>),
+    (<span class="str">'Alice'</span>,   <span class="str">'Engineering'</span>, <span class="num">95000</span>),  <span class="cmt">-- duplicate</span>
+    (<span class="str">'Alice'</span>,   <span class="str">'Engineering'</span>, <span class="num">95000</span>),  <span class="cmt">-- duplicate</span>
+    (<span class="str">'Bob'</span>,     <span class="str">'Marketing'</span>,   <span class="num">72000</span>),
+    (<span class="str">'Bob'</span>,     <span class="str">'Marketing'</span>,   <span class="num">72000</span>),  <span class="cmt">-- duplicate</span>
+    (<span class="str">'Charlie'</span>, <span class="str">'HR'</span>,          <span class="num">65000</span>);</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — Approach 1: CTE + ROW_NUMBER (preferred)<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">WITH</span> Dupes <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> EmployeeID,
+           <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+               <span class="kw">PARTITION BY</span> Name, Department, Salary
+               <span class="kw">ORDER BY</span> EmployeeID    <span class="cmt">-- keep the lowest ID</span>
+           ) <span class="kw">AS</span> rn
+    <span class="kw">FROM</span>   EmpDupes
+)
+<span class="kw">DELETE FROM</span> Dupes <span class="kw">WHERE</span> rn > <span class="num">1</span>;
+
+<span class="cmt">-- Verify: 3 rows remain (Alice, Bob, Charlie)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> EmpDupes;</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — Approach 2: Self-Join<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">DELETE</span> e1
+<span class="kw">FROM</span>   EmpDupes e1
+<span class="kw">JOIN</span>   EmpDupes e2
+    <span class="kw">ON</span>  e1.Name       = e2.Name
+   <span class="kw">AND</span>  e1.Department = e2.Department
+   <span class="kw">AND</span>  e1.Salary     = e2.Salary
+   <span class="kw">AND</span>  e1.EmployeeID > e2.EmployeeID;  <span class="cmt">-- keep lower ID</span></code></pre>
+    </div>
+
+    <div class="qa">CTE + ROW_NUMBER is preferred: more readable, handles 3+ duplicates cleanly, and you can verify by replacing DELETE with SELECT before committing. Self-join can become a cross-product on large tables with many duplicates.</div>
+  </div>
+</div>
+
+<!-- P2 -->
+<span class="section-anchor" id="p2"></span>
+<div class="problem">
+  <div class="problem-header">
+    <div class="problem-num">2</div>
+    <h3>Nth Highest Salary</h3>
+  </div>
+  <div class="problem-body">
+    <div class="code-block">
+      <div class="code-label">SQL — Setup<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">CREATE TABLE</span> SalaryTest (
+    EmpID  <span class="kw">INT IDENTITY PRIMARY KEY</span>,
+    Name   <span class="kw">NVARCHAR</span>(<span class="num">100</span>),
+    Salary <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>)
+);
+<span class="kw">INSERT INTO</span> SalaryTest (Name, Salary) <span class="kw">VALUES</span>
+    (<span class="str">'Alice'</span>,  <span class="num">120000</span>),
+    (<span class="str">'Bob'</span>,    <span class="num">110000</span>),
+    (<span class="str">'Charlie'</span>,<span class="num">110000</span>),  <span class="cmt">-- tie with Bob</span>
+    (<span class="str">'Diana'</span>,   <span class="num">95000</span>),
+    (<span class="str">'Eve'</span>,     <span class="num">85000</span>),
+    (<span class="str">'Frank'</span>,   <span class="num">80000</span>);</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — DENSE_RANK (handles ties correctly)<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">DECLARE</span> @N <span class="kw">INT</span> = <span class="num">3</span>;
+
+<span class="kw">WITH</span> Ranked <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> Salary,
+           <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> Rnk
+    <span class="kw">FROM</span>   SalaryTest
+)
+<span class="kw">SELECT DISTINCT</span> Salary
+<span class="kw">FROM</span>   Ranked
+<span class="kw">WHERE</span>  Rnk = @N;
+<span class="cmt">-- 1st=120k, 2nd=110k (tie), 3rd=95k → Returns: 95000</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — OFFSET/FETCH approach<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">DECLARE</span> @N <span class="kw">INT</span> = <span class="num">3</span>;
+
+<span class="kw">SELECT DISTINCT</span> Salary
+<span class="kw">FROM</span>   SalaryTest
+<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>
+<span class="kw">OFFSET</span>  (@N - <span class="num">1</span>) <span class="kw">ROWS</span>
+<span class="kw">FETCH NEXT</span> <span class="num">1</span> <span class="kw">ROW ONLY</span>;
+<span class="cmt">-- Note: DISTINCT + OFFSET works when DISTINCT reduces before OFFSET
+-- For ties, DENSE_RANK approach is more reliable</span></code></pre>
+    </div>
+
+    <div class="warn">Using <code>RANK()</code> instead of <code>DENSE_RANK()</code> produces gaps after ties. If two employees share rank 2, <code>RANK()</code> jumps to 4 — there is no rank 3. <code>DENSE_RANK()</code> produces 1, 2, 2, 3 — no gaps.</div>
+  </div>
+</div>
+
+<!-- P3 -->
+<span class="section-anchor" id="p3"></span>
+<div class="problem">
+  <div class="problem-header">
+    <div class="problem-num">3</div>
+    <h3>Running Total by Date</h3>
+  </div>
+  <div class="problem-body">
+
+    <div class="code-block">
+      <div class="code-label">SQL — Setup + solution<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">CREATE TABLE</span> DailySales (
+    SaleDate <span class="kw">DATE          NOT NULL PRIMARY KEY</span>,
+    Amount   <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>
+);
+<span class="kw">INSERT INTO</span> DailySales <span class="kw">VALUES</span>
+    (<span class="str">'2024-01-01'</span>,  <span class="num">500.00</span>),
+    (<span class="str">'2024-01-02'</span>,  <span class="num">750.00</span>),
+    (<span class="str">'2024-01-03'</span>,  <span class="num">300.00</span>),
+    (<span class="str">'2024-01-04'</span>, <span class="num">1200.00</span>),
+    (<span class="str">'2024-01-05'</span>,  <span class="num">450.00</span>);
+
+<span class="kw">SELECT</span> SaleDate,
+       Amount,
+       <span class="fn">SUM</span>(Amount) <span class="kw">OVER</span> (
+           <span class="kw">ORDER BY</span> SaleDate
+           <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+       ) <span class="kw">AS</span> RunningTotal,
+       <span class="fn">AVG</span>(Amount) <span class="kw">OVER</span> (
+           <span class="kw">ORDER BY</span> SaleDate
+           <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+       ) <span class="kw">AS</span> RunningAvg
+<span class="kw">FROM</span>   DailySales
+<span class="kw">ORDER BY</span> SaleDate;</code></pre>
+    </div>
+
+    <div class="io-row">
+      <div class="io-box">
+        <h4>Input</h4>
+        <pre>2024-01-01   500.00
+2024-01-02   750.00
+2024-01-03   300.00
+2024-01-04  1200.00
+2024-01-05   450.00</pre>
+      </div>
+      <div class="io-box">
+        <h4>Output</h4>
+        <pre>01-01   500   500.00   500.00
+01-02   750  1250.00   625.00
+01-03   300  1550.00   516.67
+01-04  1200  2750.00   687.50
+01-05   450  3200.00   640.00</pre>
+      </div>
+    </div>
+
+    <div class="tip"><code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> is explicit and avoids the default <code>RANGE</code> frame which groups ties. When dates are unique, both frames give the same result.</div>
+  </div>
+</div>
+
+<!-- P4 -->
+<span class="section-anchor" id="p4"></span>
+<div class="problem">
+  <div class="problem-header">
+    <div class="problem-num">4</div>
+    <h3>Recursive Employee Hierarchy (Org Chart)</h3>
+  </div>
+  <div class="problem-body">
+
+    <div class="code-block">
+      <div class="code-label">SQL — Full recursive CTE with level + path<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">CREATE TABLE</span> OrgChart (
+    EmployeeID <span class="kw">INT          NOT NULL PRIMARY KEY</span>,
+    Name       <span class="kw">NVARCHAR</span>(<span class="num">100</span>)<span class="kw">NOT NULL</span>,
+    ManagerID  <span class="kw">INT          NULL REFERENCES</span> OrgChart(EmployeeID),
+    Title      <span class="kw">NVARCHAR</span>(<span class="num">100</span>)<span class="kw">NOT NULL</span>
+);
+<span class="kw">INSERT INTO</span> OrgChart <span class="kw">VALUES</span>
+    (<span class="num">1</span>, <span class="str">'Sarah Chen'</span>, <span class="kw">NULL</span>, <span class="str">'CEO'</span>),
+    (<span class="num">2</span>, <span class="str">'Mark Torres'</span>,<span class="num">1</span>,  <span class="str">'VP Engineering'</span>),
+    (<span class="num">3</span>, <span class="str">'Lisa Park'</span>,  <span class="num">1</span>,   <span class="str">'VP Marketing'</span>),
+    (<span class="num">4</span>, <span class="str">'James Liu'</span>,  <span class="num">2</span>,   <span class="str">'Senior Engineer'</span>),
+    (<span class="num">5</span>, <span class="str">'Ryan Kim'</span>,   <span class="num">4</span>,   <span class="str">'Engineer'</span>),
+    (<span class="num">6</span>, <span class="str">'Anna Smith'</span>, <span class="num">3</span>,   <span class="str">'Marketing Manager'</span>),
+    (<span class="num">7</span>, <span class="str">'Zoe Wilson'</span>, <span class="num">6</span>,   <span class="str">'Marketing Coordinator'</span>);
+
+<span class="kw">WITH</span> OrgHierarchy <span class="kw">AS</span> (
+    <span class="cmt">-- Anchor: root employees (no manager)</span>
+    <span class="kw">SELECT</span> EmployeeID, Name, Title, ManagerID,
+           <span class="num">0</span> <span class="kw">AS</span> Level,
+           <span class="kw">CAST</span>(Name <span class="kw">AS NVARCHAR</span>(<span class="kw">MAX</span>)) <span class="kw">AS</span> OrgPath
+    <span class="kw">FROM</span>   OrgChart <span class="kw">WHERE</span> ManagerID <span class="kw">IS NULL</span>
+
+    <span class="kw">UNION ALL</span>
+
+    <span class="cmt">-- Recursive: each direct report, one level deeper</span>
+    <span class="kw">SELECT</span> e.EmployeeID, e.Name, e.Title, e.ManagerID,
+           h.Level + <span class="num">1</span>,
+           h.OrgPath + <span class="str">N' → '</span> + e.Name
+    <span class="kw">FROM</span>   OrgChart e
+    <span class="kw">INNER JOIN</span> OrgHierarchy h <span class="kw">ON</span> e.ManagerID = h.EmployeeID
+)
+<span class="kw">SELECT</span> Level,
+       <span class="fn">REPLICATE</span>(<span class="str">N'    '</span>, Level) + Name <span class="kw">AS</span> IndentedName,
+       Title, OrgPath
+<span class="kw">FROM</span>   OrgHierarchy
+<span class="kw">ORDER BY</span> OrgPath
+<span class="kw">OPTION</span> (MAXRECURSION <span class="num">50</span>);</code></pre>
+    </div>
+
+    <div class="io-box" style="margin:12px 0">
+      <h4>Output (indented)</h4>
+      <pre>Level 0  Sarah Chen         CEO
+Level 1    Mark Torres      VP Engineering
+Level 2      James Liu      Senior Engineer
+Level 3        Ryan Kim     Engineer
+Level 1    Lisa Park        VP Marketing
+Level 2      Anna Smith     Marketing Manager
+Level 3        Zoe Wilson   Marketing Coordinator</pre>
+    </div>
+  </div>
+</div>
+
+<!-- P5 -->
+<span class="section-anchor" id="p5"></span>
+<div class="problem">
+  <div class="problem-header">
+    <div class="problem-num">5</div>
+    <h3>Find Gaps in a Sequence</h3>
+  </div>
+  <div class="problem-body">
+
+    <div class="code-block">
+      <div class="code-label">SQL — Setup<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">CREATE TABLE</span> OrderSeq (OrderID <span class="kw">INT NOT NULL PRIMARY KEY</span>);
+<span class="kw">INSERT INTO</span> OrderSeq <span class="kw">VALUES</span>
+    (<span class="num">1</span>),(<span class="num">2</span>),(<span class="num">3</span>),(<span class="num">5</span>),(<span class="num">6</span>),(<span class="num">9</span>),(<span class="num">10</span>),(<span class="num">11</span>),(<span class="num">15</span>);
+<span class="cmt">-- Missing: 4, 7, 8, 12, 13, 14</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — Approach 1: LAG() to find gap boundaries<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">WITH</span> Gaps <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> OrderID,
+           <span class="fn">LAG</span>(OrderID) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> OrderID) <span class="kw">AS</span> PrevID
+    <span class="kw">FROM</span>   OrderSeq
+)
+<span class="kw">SELECT</span> PrevID + <span class="num">1</span>    <span class="kw">AS</span> GapStart,
+       OrderID - <span class="num">1</span>   <span class="kw">AS</span> GapEnd,
+       OrderID - PrevID - <span class="num">1</span> <span class="kw">AS</span> MissingCount
+<span class="kw">FROM</span>   Gaps
+<span class="kw">WHERE</span>  OrderID - PrevID > <span class="num">1</span>;
+
+<span class="cmt">-- Output:
+-- GapStart  GapEnd  MissingCount
+--    4         4        1
+--    7         8        2
+--   12        14        3</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — Approach 2: Generate all expected IDs, LEFT JOIN<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">DECLARE</span> @Min <span class="kw">INT</span> = (<span class="kw">SELECT MIN</span>(OrderID) <span class="kw">FROM</span> OrderSeq);
+<span class="kw">DECLARE</span> @Max <span class="kw">INT</span> = (<span class="kw">SELECT MAX</span>(OrderID) <span class="kw">FROM</span> OrderSeq);
+
+<span class="kw">WITH</span> Numbers <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> @Min <span class="kw">AS</span> n
+    <span class="kw">UNION ALL</span>
+    <span class="kw">SELECT</span> n + <span class="num">1</span> <span class="kw">FROM</span> Numbers <span class="kw">WHERE</span> n < @Max
+)
+<span class="kw">SELECT</span> n <span class="kw">AS</span> MissingID
+<span class="kw">FROM</span>   Numbers
+<span class="kw">WHERE</span>  n <span class="kw">NOT IN</span> (<span class="kw">SELECT</span> OrderID <span class="kw">FROM</span> OrderSeq)
+<span class="kw">OPTION</span> (MAXRECURSION <span class="num">10000</span>);
+<span class="cmt">-- Output: 4, 7, 8, 12, 13, 14</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — Bonus: Find missing dates<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">WITH</span> DateRange <span class="kw">AS</span> (
+    <span class="kw">SELECT CAST</span>(<span class="str">'2024-01-01'</span> <span class="kw">AS DATE</span>) <span class="kw">AS</span> d
+    <span class="kw">UNION ALL</span>
+    <span class="kw">SELECT</span> <span class="fn">DATEADD</span>(<span class="kw">DAY</span>, <span class="num">1</span>, d)
+    <span class="kw">FROM</span>   DateRange
+    <span class="kw">WHERE</span>  d < <span class="str">'2024-01-31'</span>
+)
+<span class="kw">SELECT</span> d <span class="kw">AS</span> MissingDate
+<span class="kw">FROM</span>   DateRange
+<span class="kw">WHERE</span>  d <span class="kw">NOT IN</span> (<span class="kw">SELECT</span> RevenueDate <span class="kw">FROM</span> DailyRevenue)
+<span class="kw">OPTION</span> (MAXRECURSION <span class="num">400</span>);</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- P6 -->
+<span class="section-anchor" id="p6"></span>
+<div class="problem">
+  <div class="problem-header">
+    <div class="problem-num">6</div>
+    <h3>Pivot / Cross-Tab — Rows to Columns</h3>
+  </div>
+  <div class="problem-body">
+
+    <div class="code-block">
+      <div class="code-label">SQL — Setup<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">CREATE TABLE</span> MonthlyCategorySales (
+    SaleYear  <span class="kw">INT            NOT NULL</span>,
+    SaleMonth <span class="kw">INT            NOT NULL</span>,
+    Category  <span class="kw">NVARCHAR</span>(<span class="num">50</span>)  <span class="kw">NOT NULL</span>,
+    Revenue   <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+    <span class="kw">PRIMARY KEY</span> (SaleYear, SaleMonth, Category)
+);
+<span class="kw">INSERT INTO</span> MonthlyCategorySales <span class="kw">VALUES</span>
+    (<span class="num">2024</span>,<span class="num">1</span>,<span class="str">'Electronics'</span>,<span class="num">50000</span>), (<span class="num">2024</span>,<span class="num">2</span>,<span class="str">'Electronics'</span>,<span class="num">62000</span>), (<span class="num">2024</span>,<span class="num">3</span>,<span class="str">'Electronics'</span>,<span class="num">58000</span>),
+    (<span class="num">2024</span>,<span class="num">1</span>,<span class="str">'Clothing'</span>,   <span class="num">30000</span>), (<span class="num">2024</span>,<span class="num">2</span>,<span class="str">'Clothing'</span>,   <span class="num">28000</span>), (<span class="num">2024</span>,<span class="num">3</span>,<span class="str">'Clothing'</span>,   <span class="num">35000</span>),
+    (<span class="num">2024</span>,<span class="num">1</span>,<span class="str">'Books'</span>,      <span class="num">12000</span>), (<span class="num">2024</span>,<span class="num">2</span>,<span class="str">'Books'</span>,      <span class="num">14000</span>), (<span class="num">2024</span>,<span class="num">3</span>,<span class="str">'Books'</span>,      <span class="num">11000</span>);</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — CASE WHEN pivot (portable, flexible)<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">SELECT</span> Category,
+       <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> SaleMonth = <span class="num">1</span> <span class="kw">THEN</span> Revenue <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Jan,
+       <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> SaleMonth = <span class="num">2</span> <span class="kw">THEN</span> Revenue <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Feb,
+       <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> SaleMonth = <span class="num">3</span> <span class="kw">THEN</span> Revenue <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Mar
+<span class="kw">FROM</span>   MonthlyCategorySales
+<span class="kw">WHERE</span>  SaleYear = <span class="num">2024</span>
+<span class="kw">GROUP BY</span> Category
+<span class="kw">ORDER BY</span> Category;</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — PIVOT operator (SQL Server)<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">SELECT</span> Category, [<span class="num">1</span>] <span class="kw">AS</span> Jan, [<span class="num">2</span>] <span class="kw">AS</span> Feb, [<span class="num">3</span>] <span class="kw">AS</span> Mar
+<span class="kw">FROM</span> (
+    <span class="kw">SELECT</span> Category, SaleMonth, Revenue
+    <span class="kw">FROM</span>   MonthlyCategorySales <span class="kw">WHERE</span> SaleYear = <span class="num">2024</span>
+) <span class="kw">AS</span> src
+<span class="kw">PIVOT</span> (
+    <span class="fn">SUM</span>(Revenue)
+    <span class="kw">FOR</span> SaleMonth <span class="kw">IN</span> ([<span class="num">1</span>], [<span class="num">2</span>], [<span class="num">3</span>])
+) <span class="kw">AS</span> pvt
+<span class="kw">ORDER BY</span> Category;</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">SQL — Dynamic PIVOT (columns known at runtime)<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">DECLARE</span> @Cols <span class="kw">NVARCHAR</span>(<span class="kw">MAX</span>), @SQL <span class="kw">NVARCHAR</span>(<span class="kw">MAX</span>), @Year <span class="kw">INT</span> = <span class="num">2024</span>;
+
+<span class="kw">SELECT</span> @Cols = <span class="fn">STRING_AGG</span>(<span class="fn">QUOTENAME</span>(SaleMonth), <span class="str">', '</span>)
+<span class="kw">FROM</span> (<span class="kw">SELECT DISTINCT</span> SaleMonth <span class="kw">FROM</span> MonthlyCategorySales <span class="kw">WHERE</span> SaleYear = @Year) <span class="kw">AS</span> m;
+
+<span class="kw">SET</span> @SQL = <span class="str">N'SELECT Category, '</span> + @Cols + <span class="str">N'
+FROM (SELECT Category, SaleMonth, Revenue
+      FROM MonthlyCategorySales WHERE SaleYear = '</span> + <span class="kw">CAST</span>(@Year <span class="kw">AS NVARCHAR</span>) + <span class="str">N') AS src
+PIVOT (SUM(Revenue) FOR SaleMonth IN ('</span> + @Cols + <span class="str">N')) AS pvt ORDER BY Category;'</span>;
+
+<span class="kw">EXEC</span> sp_executesql @SQL;
+<span class="cmt">-- Always use QUOTENAME() — prevents SQL injection on column names</span></code></pre>
+    </div>
+
+    <div class="io-row">
+      <div class="io-box">
+        <h4>Input (rows)</h4>
+        <pre>Electronics  1  50000
+Electronics  2  62000
+Clothing     1  30000
+Books        2  14000
+...</pre>
+      </div>
+      <div class="io-box">
+        <h4>Output (columns)</h4>
+        <pre>Category       Jan    Feb    Mar
+Books        12000  14000  11000
+Clothing     30000  28000  35000
+Electronics  50000  62000  58000</pre>
+      </div>
+    </div>
+
+    <div class="qa"><strong>Q: CASE WHEN vs PIVOT — when to use which?</strong><br><br>
+CASE WHEN is portable (works across databases), supports conditions beyond simple aggregation, and is clear to anyone. PIVOT gives cleaner syntax for straightforward pivots in SQL Server. Use Dynamic PIVOT with <code>sp_executesql</code> when columns are unknown at query-write time — always sanitize with <code>QUOTENAME()</code>.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr>
+<h2>Quick Reference Q&amp;A</h2>
+
+<div class="qa"><strong>Q: What happens when you update a clustered index key column?</strong><br><br>
+SQL Server performs a delete + insert (a "row move") because physical ordering must be maintained. All non-clustered indexes that hold the clustering key as a row locator are also updated.</div>
+
+<div class="qa"><strong>Q: Why can a query be slow even with the right indexes?</strong><br><br>
+Stale statistics (bad cardinality estimates); non-SARGable predicates preventing seeks; implicit type conversions; index fragmentation; parameter sniffing; blocking/lock waits; tempdb spills from hash joins or sorts.</div>
+
+<div class="qa"><strong>Q: DELETE vs TRUNCATE vs DROP?</strong><br><br>
+DELETE is logged row-by-row, fires triggers, supports WHERE, fully rollback-able. TRUNCATE is minimally logged, removes all rows, resets identity, cannot have WHERE or fire row triggers, rollback-able if inside explicit transaction. DROP removes the table object entirely.</div>
+
+<div class="qa"><strong>Q: What is a covering index and when to use it?</strong><br><br>
+A covering index includes all columns a query needs (via INCLUDE) so the engine never performs a Key Lookup against the clustered index. Use it when the execution plan shows Key Lookups — add the missing columns to the INCLUDE list of the existing non-clustered index.</div>
+
+<div class="qa"><strong>Q: What is the difference between RANK and DENSE_RANK?</strong><br><br>
+Both assign the same rank to tied rows. RANK skips the next rank value(s) after a tie — producing gaps. DENSE_RANK never skips — no gaps. For "Nth highest salary" problems, always use DENSE_RANK so ties do not displace lower ranks.</div>
+
+</div><!-- .content -->
+</main>
+
+<script>
+// Copy button
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Active TOC highlighting
+const sections = document.querySelectorAll('.section-anchor');
+const tocLinks = document.querySelectorAll('#toc a');
+
+function setActive() {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  tocLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}
+
+window.addEventListener('scroll', setActive, { passive: true });
+setActive();
+</script>
+</body>
+</html>

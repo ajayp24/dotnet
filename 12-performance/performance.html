@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance &amp; Optimization — Lead .NET Interview Prep</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --heading: #58a6ff;
+  --keyword: #ff7b72;
+  --string: #a5d6ff;
+  --comment: #8b949e;
+  --number: #79c0ff;
+  --type: #ffa657;
+  --method: #d2a8ff;
+  --green: #3fb950;
+  --red: #f85149;
+  --yellow: #d29922;
+  --orange: #ffa657;
+  --purple: #bc8cff;
+  --teal: #39d353;
+  --sidebar-w: 260px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  display: flex;
+}
+
+/* ─── SIDEBAR ─── */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0 40px;
+  z-index: 100;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  padding: 0 18px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.toc-list { list-style: none; }
+.toc-list a {
+  display: block;
+  padding: 5px 18px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  border-left: 3px solid transparent;
+  transition: all .15s;
+  line-height: 1.4;
+}
+.toc-list a:hover,
+.toc-list a.active {
+  color: var(--heading);
+  background: rgba(88,166,255,.08);
+  border-left-color: var(--heading);
+}
+.toc-num {
+  display: inline-block;
+  width: 20px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* ─── MAIN ─── */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 48px 40px 80px;
+  max-width: calc(var(--sidebar-w) + 860px);
+}
+
+/* ─── HEADER ─── */
+.page-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 28px;
+  margin-bottom: 48px;
+}
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--heading);
+  margin-bottom: 8px;
+}
+.page-header p {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+.header-badges { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.hbadge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.hbadge.green { color: var(--teal); border-color: var(--teal); background: rgba(63,185,80,.1); }
+.hbadge.blue  { color: var(--heading); border-color: var(--heading); background: rgba(88,166,255,.1); }
+.hbadge.orange{ color: var(--orange); border-color: var(--orange); background: rgba(255,166,87,.1); }
+
+/* ─── SECTIONS ─── */
+.section { margin-bottom: 72px; scroll-margin-top: 24px; }
+
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--heading);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+h3 { font-size: 16px; font-weight: 600; color: var(--orange); margin: 28px 0 12px; }
+h4 { font-size: 14px; font-weight: 600; color: var(--text); margin: 20px 0 8px; }
+
+p { margin-bottom: 14px; color: var(--text); }
+ul, ol { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 5px; line-height: 1.6; }
+
+/* ─── CODE BLOCKS ─── */
+.code-wrap {
+  position: relative;
+  margin: 16px 0 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.code-lang {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+}
+.copy-btn {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--text-muted); }
+.copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  background: var(--surface);
+  color: var(--text);
+  tab-size: 4;
+}
+code { font-family: inherit; }
+
+/* Basic syntax highlighting via spans (applied by JS) */
+.kw  { color: var(--keyword); }
+.str { color: var(--string); }
+.num { color: var(--number); }
+.cm  { color: var(--comment); font-style: italic; }
+.typ { color: var(--type); }
+.mth { color: var(--method); }
+.good{ color: var(--green); font-weight: 600; }
+.bad { color: var(--red); font-weight: 600; }
+
+/* ─── INLINE CODE ─── */
+p code, li code, td code {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 12.5px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--orange);
+}
+
+/* ─── BEFORE / AFTER ─── */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0 20px;
+}
+.compare-side { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+.compare-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.compare-label.bad-label  { background: rgba(248,81,73,.12); color: var(--red); border-bottom: 1px solid rgba(248,81,73,.25); }
+.compare-label.good-label { background: rgba(63,185,80,.12); color: var(--green); border-bottom: 1px solid rgba(63,185,80,.25); }
+.compare pre { border-radius: 0; border: none; }
+
+/* ─── CARDS ─── */
+.card {
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-left: 4px solid;
+  background: var(--surface2);
+}
+.card.interview { border-color: var(--heading); }
+.card.pitfall   { border-color: var(--red); }
+.card.tip       { border-color: var(--green); }
+.card.warn      { border-color: var(--yellow); }
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 10px;
+}
+.card.interview .card-title { color: var(--heading); }
+.card.pitfall   .card-title { color: var(--red); }
+.card.tip       .card-title { color: var(--green); }
+.card.warn      .card-title { color: var(--yellow); }
+
+.card p:last-child { margin-bottom: 0; }
+
+/* ─── TABLES ─── */
+.table-wrap { overflow-x: auto; margin: 16px 0 20px; border-radius: 8px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(48,54,61,.6);
+  font-size: 13.5px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.02); }
+td strong { color: var(--orange); }
+
+/* ─── BADGES ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin: 0 4px 4px 0;
+}
+.badge.perf   { background: rgba(63,185,80,.15); color: var(--teal); border: 1px solid rgba(63,185,80,.35); }
+.badge.alloc  { background: rgba(88,166,255,.15); color: var(--heading); border: 1px solid rgba(88,166,255,.35); }
+.badge.warn   { background: rgba(210,153,34,.15); color: var(--yellow); border: 1px solid rgba(210,153,34,.35); }
+.badge.danger { background: rgba(248,81,73,.15);  color: var(--red);    border: 1px solid rgba(248,81,73,.35); }
+
+.badge-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 12px 0; }
+
+/* ─── BENCHMARK RESULTS ─── */
+.benchmark-table {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.7;
+  margin: 16px 0;
+}
+.bm-header { color: var(--text-muted); }
+.bm-winner { color: var(--green); font-weight: bold; }
+.bm-loser  { color: var(--red); }
+.bm-normal { color: var(--text); }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 0px; }
+  #sidebar { display: none; }
+  #main { padding: 24px 20px 60px; }
+  .compare { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<nav id="sidebar">
+  <div class="sidebar-title">Performance &amp; Optimization</div>
+  <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+  <ul class="toc-list">
+    <li><a href="#s1"><span class="toc-num">01</span> Garbage Collection</a></li>
+    <li><a href="#s2"><span class="toc-num">02</span> Memory Leak Detection</a></li>
+    <li><a href="#s3"><span class="toc-num">03</span> Object Pooling</a></li>
+    <li><a href="#s4"><span class="toc-num">04</span> Caching</a></li>
+    <li><a href="#s5"><span class="toc-num">05</span> Response Compression</a></li>
+    <li><a href="#s6"><span class="toc-num">06</span> Connection Pooling</a></li>
+    <li><a href="#s7"><span class="toc-num">07</span> Database Optimization</a></li>
+    <li><a href="#s8"><span class="toc-num">08</span> Async Performance</a></li>
+    <li><a href="#s9"><span class="toc-num">09</span> BenchmarkDotNet</a></li>
+    <li><a href="#s10"><span class="toc-num">10</span> String Performance</a></li>
+    <li><a href="#s11"><span class="toc-num">11</span> JSON Serialization</a></li>
+    <li><a href="#s12"><span class="toc-num">12</span> HTTP Client</a></li>
+  </ul>
+</nav>
+
+<!-- ─── MAIN CONTENT ─── -->
+<main id="main">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>Performance &amp; Optimization</h1>
+    <p>Lead .NET Software Engineer — Interview Preparation</p>
+    <div class="header-badges">
+      <span class="hbadge green">.NET 8</span>
+      <span class="hbadge blue">ASP.NET Core</span>
+      <span class="hbadge orange">C# 12</span>
+      <span class="hbadge green">BenchmarkDotNet</span>
+      <span class="hbadge blue">Redis</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: GARBAGE COLLECTION -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s1">
+    <h2>1. .NET Garbage Collection</h2>
+
+    <h3>How the GC Works</h3>
+    <p>The .NET GC is a <strong>generational, tracing garbage collector</strong>. It walks object references from GC roots (static fields, stack variables, CPU registers), marks reachable objects, and collects everything else. Objects are promoted through generations based on survival.</p>
+
+    <h3>Generations</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Generation</th><th>Description</th><th>Collection Frequency</th><th>Typical Objects</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gen 0</strong></td><td>Short-lived objects</td><td>Most frequent (~every few MB)</td><td>Local vars, temp buffers</td></tr>
+          <tr><td><strong>Gen 1</strong></td><td>Survived one Gen 0 sweep</td><td>Moderate</td><td>Medium-lived objects</td></tr>
+          <tr><td><strong>Gen 2</strong></td><td>Long-lived objects</td><td>Least frequent</td><td>Caches, static data</td></tr>
+          <tr><td><strong>LOH</strong></td><td>Objects &gt;= 85,000 bytes</td><td>Only with Gen 2</td><td>Large arrays, streams</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card interview">
+      <div class="card-title">&#128172; Interview Q — What is the LOH and why does it matter?</div>
+      <p>"The Large Object Heap stores objects 85KB or larger. Unlike the small object heap, the LOH is <strong>not compacted</strong> during collection — moving large objects is too expensive. Because LOH collections only happen during Gen 2 GCs, repeated large allocations create Gen 2 pressure and heap fragmentation. In a high-throughput API processing large JSON payloads, this causes measurable latency spikes (GC pause times). The solution: use <code>ArrayPool&lt;byte&gt;.Shared</code> — rent a buffer, use it, return it. Zero new allocations on the hot path."</p>
+    </div>
+
+    <h3>GC Modes</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mode</th><th>Best For</th><th>Threads</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Workstation GC</strong></td><td>Desktop apps, CLI tools</td><td>Single dedicated GC thread</td></tr>
+          <tr><td><strong>Server GC</strong></td><td>Web servers, microservices</td><td>One GC thread per logical CPU</td></tr>
+          <tr><td><strong>Background/Concurrent</strong></td><td>Low-latency apps</td><td>GC runs concurrently with app</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">json — runtimeconfig.json</span><button class="copy-btn">Copy</button></div>
+<pre><code>{
+  "configProperties": {
+    "System.GC.Server": true,
+    "System.GC.Concurrent": true,
+    "System.GC.HeapHardLimit": 2147483648
+  }
+}</code></pre>
+    </div>
+
+    <h3>GC.Collect() — When and When NOT</h3>
+    <div class="card pitfall">
+      <div class="card-title">&#9888; Pitfall — Never Call GC.Collect() in Hot Paths</div>
+      <p>Calling <code>GC.Collect()</code> forces a full collection of ALL generations. The GC is self-tuning — calling it manually disrupts adaptive heuristics and almost always makes performance worse. Only acceptable after a known bulk operation (e.g., loading large startup data).</p>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm">// ❌ NEVER — in request handlers or hot paths</span>
+<span class="kw">public void</span> <span class="mth">ProcessRequest</span>()
+{
+    <span class="mth">DoWork</span>();
+    GC.<span class="mth">Collect</span>(); <span class="cm">// Destroys generational heuristics — never do this</span>
+}
+
+<span class="cm">// ✅ ACCEPTABLE — one-time bulk operation at startup</span>
+<span class="kw">public void</span> <span class="mth">LoadAllReferenceData</span>()
+{
+    <span class="mth">LoadCountries</span>();   <span class="cm">// Allocates many temp objects</span>
+    <span class="mth">LoadCurrencies</span>();
+    <span class="mth">LoadTimezones</span>();
+
+    <span class="cm">// Hint GC after known large allocation burst</span>
+    GC.<span class="mth">Collect</span>(<span class="num">2</span>, GCCollectionMode.Forced, blocking: <span class="kw">true</span>);
+    GC.<span class="mth">WaitForPendingFinalizers</span>();
+}
+
+<span class="cm">// ✅ LOH compaction (compact once on next collection)</span>
+GCSettings.LargeObjectHeapCompactionMode =
+    GCLargeObjectHeapCompactionMode.CompactOnce;
+GC.<span class="mth">Collect</span>(); <span class="cm">// Resets to Default after this collection</span></code></pre>
+    </div>
+
+    <h3>Real Example: String Concatenation — Before vs After</h3>
+    <div class="badge-row">
+      <span class="badge danger">O(n²) allocations</span>
+      <span class="badge perf">66x faster with StringBuilder</span>
+      <span class="badge alloc">99% fewer bytes allocated</span>
+    </div>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Before — O(n²) garbage</div>
+<pre><code><span class="kw">public string</span> <span class="mth">BuildReportBad</span>(
+    IEnumerable&lt;<span class="typ">string</span>&gt; lines)
+{
+    <span class="typ">string</span> result = <span class="str">""</span>;
+    <span class="kw">foreach</span> (<span class="kw">var</span> line <span class="kw">in</span> lines)
+    {
+        <span class="cm">// ❌ New string each iteration</span>
+        result += line + <span class="str">"\n"</span>;
+    }
+    <span class="kw">return</span> result;
+}
+<span class="cm">// 10,000 lines → ~4GB string allocations!</span></code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; After — O(n) with StringBuilder</div>
+<pre><code><span class="kw">public string</span> <span class="mth">BuildReportGood</span>(
+    IEnumerable&lt;<span class="typ">string</span>&gt; lines)
+{
+    <span class="kw">var</span> sb = <span class="kw">new</span> <span class="typ">StringBuilder</span>(
+        capacity: <span class="num">8192</span>);
+    <span class="kw">foreach</span> (<span class="kw">var</span> line <span class="kw">in</span> lines)
+    {
+        sb.<span class="mth">AppendLine</span>(line); <span class="cm">// ✅ Buffer reuse</span>
+    }
+    <span class="kw">return</span> sb.<span class="mth">ToString</span>(); <span class="cm">// Single allocation</span>
+}
+<span class="cm">// 10,000 lines → ~800KB total</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: MEMORY LEAK DETECTION -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s2">
+    <h2>2. Memory Leak Detection in .NET</h2>
+
+    <h3>Common Causes</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Cause</th><th>Why It Leaks</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Event handlers not unsubscribed</strong></td><td>Publisher delegate holds subscriber reference</td><td><code>IDisposable</code>, unsubscribe in <code>Dispose()</code></td></tr>
+          <tr><td><strong>Static collections growing unbounded</strong></td><td>Static lifetime = app lifetime</td><td>Bounded cache, <code>IMemoryCache</code></td></tr>
+          <tr><td><strong>Closures capturing large objects</strong></td><td>Lambda keeps reference to outer scope</td><td>Pass as parameter, avoid capture</td></tr>
+          <tr><td><strong>IDisposable not disposed</strong></td><td>Native handles held indefinitely</td><td><code>using</code> / <code>await using</code></td></tr>
+          <tr><td><strong>MemoryCache without size limits</strong></td><td>Cache grows without bound</td><td>Set <code>SizeLimit</code> and eviction policy</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Tools</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tool</th><th>Type</th><th>Best Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><strong>JetBrains dotMemory</strong></td><td>Commercial, GUI</td><td>Full snapshot diff, allocation tracking</td></tr>
+          <tr><td><strong>VS Diagnostic Tools</strong></td><td>Built-in, GUI</td><td>Heap snapshots during debug session</td></tr>
+          <tr><td><strong>dotnet-counters</strong></td><td>CLI, live</td><td>Real-time GC metrics, heap size trends</td></tr>
+          <tr><td><strong>dotnet-gcdump</strong></td><td>CLI, snapshot</td><td>GC-rooted object graph, lightweight</td></tr>
+          <tr><td><strong>dotnet-dump</strong></td><td>CLI, post-mortem</td><td>Full heap analysis from production</td></tr>
+          <tr><td><strong>PerfView</strong></td><td>Free, advanced</td><td>ETW events, GC allocation stacks</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">bash — diagnostics</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm"># Live GC monitoring</span>
+dotnet-counters monitor --process-id 12345 --counters System.Runtime
+<span class="cm"># Watch: gc-heap-size, gen-2-gc-count, loh-size, time-in-gc, alloc-rate</span>
+
+<span class="cm"># Lightweight heap snapshot (no app pause)</span>
+dotnet-gcdump collect --process-id 12345 --output myapp.gcdump
+
+<span class="cm"># Full memory dump</span>
+dotnet-dump collect --process-id 12345
+
+<span class="cm"># Analyze dump interactively</span>
+dotnet-dump analyze myapp.dmp
+<span class="cm"># Inside REPL:</span>
+dumpheap -stat           <span class="cm"># Object count/size by type</span>
+dumpheap -type Product   <span class="cm"># All Product instances</span>
+gcroot 0x00007f1234      <span class="cm"># Why is this object alive?</span></code></pre>
+    </div>
+
+    <h3>Real Example: Event Handler Memory Leak — Before vs After</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Memory Leak — subscriber never freed</div>
+<pre><code><span class="kw">public class</span> <span class="typ">EventSubscriber</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">EventPublisher</span> _publisher;
+    <span class="cm">// 500KB held per subscriber</span>
+    <span class="kw">private readonly byte</span>[] _buffer =
+        <span class="kw">new byte</span>[<span class="num">500_000</span>];
+
+    <span class="kw">public</span> <span class="mth">EventSubscriber</span>(<span class="typ">EventPublisher</span> pub)
+    {
+        _publisher = pub;
+        <span class="cm">// ❌ Never unsubscribed</span>
+        _publisher.DataReceived +=
+            <span class="mth">HandleData</span>;
+    }
+
+    <span class="kw">private void</span> <span class="mth">HandleData</span>(<span class="kw">object</span>? s,
+        <span class="typ">DataEventArgs</span> e) { <span class="cm">/* ... */</span> }
+
+    <span class="cm">// No Dispose — subscriber can NEVER</span>
+    <span class="cm">// be GC'd while publisher is alive!</span>
+}</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Fix — IDisposable + unsubscribe</div>
+<pre><code><span class="kw">public class</span> <span class="typ">EventSubscriber</span> : <span class="typ">IDisposable</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">EventPublisher</span> _publisher;
+    <span class="kw">private readonly byte</span>[] _buffer =
+        <span class="kw">new byte</span>[<span class="num">500_000</span>];
+    <span class="kw">private bool</span> _disposed;
+
+    <span class="kw">public</span> <span class="mth">EventSubscriber</span>(<span class="typ">EventPublisher</span> pub)
+    {
+        _publisher = pub;
+        _publisher.DataReceived +=
+            <span class="mth">HandleData</span>; <span class="cm">// ✅ Will be removed</span>
+    }
+
+    <span class="kw">private void</span> <span class="mth">HandleData</span>(<span class="kw">object</span>? s,
+        <span class="typ">DataEventArgs</span> e)
+    {
+        <span class="kw">if</span> (_disposed) <span class="kw">return</span>;
+        <span class="cm">/* process */</span>
+    }
+
+    <span class="kw">public void</span> <span class="mth">Dispose</span>()
+    {
+        <span class="kw">if</span> (_disposed) <span class="kw">return</span>;
+        <span class="cm">// ✅ Remove delegate reference</span>
+        _publisher.DataReceived -=
+            <span class="mth">HandleData</span>;
+        _disposed = <span class="kw">true</span>;
+    }
+}
+<span class="cm">// using var sub = new EventSubscriber(pub);</span>
+<span class="cm">// On Dispose: publisher releases ref → GC can collect</span></code></pre>
+      </div>
+    </div>
+
+    <h3>WeakReference&lt;T&gt; — Cache Without Preventing GC</h3>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">public class</span> <span class="typ">WeakReferenceCache</span>&lt;<span class="typ">TKey</span>, <span class="typ">TValue</span>&gt; <span class="kw">where</span> <span class="typ">TValue</span> : <span class="kw">class</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">Dictionary</span>&lt;<span class="typ">TKey</span>, <span class="typ">WeakReference</span>&lt;<span class="typ">TValue</span>&gt;&gt; _cache = <span class="kw">new</span>();
+
+    <span class="kw">public</span> <span class="typ">TValue</span>? <span class="mth">GetOrCreate</span>(<span class="typ">TKey</span> key, <span class="typ">Func</span>&lt;<span class="typ">TKey</span>, <span class="typ">TValue</span>&gt; factory)
+    {
+        <span class="kw">if</span> (_cache.<span class="mth">TryGetValue</span>(key, <span class="kw">out var</span> weakRef) &amp;&amp;
+            weakRef.<span class="mth">TryGetTarget</span>(<span class="kw">out var</span> value))
+            <span class="kw">return</span> value; <span class="cm">// Still alive</span>
+
+        <span class="cm">// GC'd or not yet cached — recreate</span>
+        value = <span class="mth">factory</span>(key);
+        _cache[key] = <span class="kw">new</span> <span class="typ">WeakReference</span>&lt;<span class="typ">TValue</span>&gt;(value);
+        <span class="kw">return</span> value;
+    }
+}
+<span class="cm">// If GC needs memory, cached objects CAN be collected — they'll be recreated on demand</span></code></pre>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: OBJECT POOLING -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s3">
+    <h2>3. Object Pooling</h2>
+
+    <div class="card tip">
+      <div class="card-title">&#128161; When to Use Object Pooling</div>
+      <p>Use pooling when: frequent allocation of same-sized objects causes LOH pressure, object creation is expensive, high-throughput paths require minimal GC pauses. Classic candidates: <code>byte[]</code> buffers for I/O, <code>StringBuilder</code> instances, DB connections, <code>HttpClient</code> message handlers.</p>
+    </div>
+
+    <h3>ArrayPool&lt;T&gt; — Before vs After</h3>
+    <div class="badge-row">
+      <span class="badge perf">Zero LOH allocations on hot path</span>
+      <span class="badge alloc">Buffer reused across requests</span>
+    </div>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Before — LOH allocation per request</div>
+<pre><code><span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="kw">byte</span>[]&gt; <span class="mth">ProcessRequestBad</span>(
+    <span class="typ">Stream</span> body)
+{
+    <span class="cm">// ❌ 64KB → Large Object Heap!</span>
+    <span class="cm">// New allocation on every request</span>
+    <span class="kw">var</span> buffer = <span class="kw">new byte</span>[<span class="num">65536</span>];
+    <span class="kw">int</span> read = <span class="kw">await</span> body.<span class="mth">ReadAsync</span>(buffer);
+    <span class="kw">return</span> buffer[..read].<span class="mth">ToArray</span>();
+}</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; After — rent from shared pool</div>
+<pre><code><span class="kw">public async</span> <span class="typ">Task</span> <span class="mth">ProcessRequestGood</span>(
+    <span class="typ">Stream</span> body, <span class="typ">Stream</span> output)
+{
+    <span class="cm">// ✅ Rent from pool — zero new allocation</span>
+    <span class="kw">byte</span>[] buf =
+        <span class="typ">ArrayPool</span>&lt;<span class="kw">byte</span>&gt;.Shared.<span class="mth">Rent</span>(<span class="num">65536</span>);
+    <span class="kw">try</span>
+    {
+        <span class="kw">int</span> read = <span class="kw">await</span> body.<span class="mth">ReadAsync</span>(
+            buf.<span class="mth">AsMemory</span>());
+        <span class="kw">await</span> output.<span class="mth">WriteAsync</span>(
+            buf.<span class="mth">AsMemory</span>(<span class="num">0</span>, read));
+    }
+    <span class="kw">finally</span>
+    {
+        <span class="cm">// ✅ ALWAYS return in finally</span>
+        <span class="typ">ArrayPool</span>&lt;<span class="kw">byte</span>&gt;.Shared.<span class="mth">Return</span>(buf);
+    }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card pitfall">
+      <div class="card-title">&#9888; Pitfall — Never Use Rented Array After Return</div>
+      <p>After calling <code>ArrayPool.Return(buffer)</code>, another thread may immediately rent that same array. Any access to <code>buffer</code> after return is a concurrency bug. Set the variable to null or let it go out of scope immediately after returning.</p>
+    </div>
+
+    <h3>ObjectPool&lt;StringBuilder&gt; via DI</h3>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm">// Program.cs</span>
+builder.Services.<span class="mth">AddSingleton</span>&lt;<span class="typ">ObjectPoolProvider</span>, <span class="typ">DefaultObjectPoolProvider</span>&gt;();
+builder.Services.<span class="mth">AddSingleton</span>(sp =&gt;
+{
+    <span class="kw">var</span> provider = sp.<span class="mth">GetRequiredService</span>&lt;<span class="typ">ObjectPoolProvider</span>&gt;();
+    <span class="kw">return</span> provider.<span class="mth">Create</span>(<span class="kw">new</span> <span class="typ">StringBuilderPooledObjectPolicy</span>());
+});
+
+<span class="kw">public class</span> <span class="typ">ReportGenerator</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">ObjectPool</span>&lt;<span class="typ">StringBuilder</span>&gt; _sbPool;
+
+    <span class="kw">public</span> <span class="mth">ReportGenerator</span>(<span class="typ">ObjectPool</span>&lt;<span class="typ">StringBuilder</span>&gt; sbPool) =&gt; _sbPool = sbPool;
+
+    <span class="kw">public string</span> <span class="mth">GenerateReport</span>(<span class="typ">IEnumerable</span>&lt;<span class="typ">ReportLine</span>&gt; lines)
+    {
+        <span class="kw">var</span> sb = _sbPool.<span class="mth">Get</span>(); <span class="cm">// Rent (Clear() was called on previous return)</span>
+        <span class="kw">try</span>
+        {
+            sb.<span class="mth">AppendLine</span>(<span class="str">"# Report"</span>);
+            <span class="kw">foreach</span> (<span class="kw">var</span> line <span class="kw">in</span> lines)
+                sb.<span class="mth">AppendLine</span>(line.Description);
+            <span class="kw">return</span> sb.<span class="mth">ToString</span>();
+        }
+        <span class="kw">finally</span>
+        {
+            _sbPool.<span class="mth">Return</span>(sb); <span class="cm">// Returns to pool — Clear() called automatically</span>
+        }
+    }
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: CACHING -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s4">
+    <h2>4. Caching</h2>
+
+    <h3>In-Memory — IMemoryCache</h3>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm">// Program.cs</span>
+builder.Services.<span class="mth">AddMemoryCache</span>(options =&gt;
+{
+    options.SizeLimit = <span class="num">10_000</span>;           <span class="cm">// 10,000 "size units"</span>
+    options.CompactionPercentage = <span class="num">0.20</span>;   <span class="cm">// Remove 20% when limit hit</span>
+    options.ExpirationScanFrequency = <span class="typ">TimeSpan</span>.<span class="mth">FromMinutes</span>(<span class="num">5</span>);
+});
+
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">Product</span>?&gt; <span class="mth">GetProductAsync</span>(<span class="kw">int</span> id, <span class="typ">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    <span class="typ">string</span> key = $<span class="str">"product:{id}"</span>;
+
+    <span class="kw">if</span> (_cache.<span class="mth">TryGetValue</span>(key, <span class="kw">out</span> <span class="typ">Product</span>? product))
+        <span class="kw">return</span> product; <span class="cm">// ✅ Cache HIT</span>
+
+    product = <span class="kw">await</span> _repo.<span class="mth">GetByIdAsync</span>(id, ct);
+    <span class="kw">if</span> (product == <span class="kw">null</span>) <span class="kw">return null</span>;
+
+    <span class="kw">var</span> opts = <span class="kw">new</span> <span class="typ">MemoryCacheEntryOptions</span>
+    {
+        AbsoluteExpirationRelativeToNow = <span class="typ">TimeSpan</span>.<span class="mth">FromHours</span>(<span class="num">1</span>),
+        SlidingExpiration = <span class="typ">TimeSpan</span>.<span class="mth">FromMinutes</span>(<span class="num">10</span>),
+        Size = <span class="num">1</span>,
+        Priority = CacheItemPriority.Normal
+    };
+    opts.<span class="mth">RegisterPostEvictionCallback</span>((k, v, reason, _) =&gt;
+        _logger.<span class="mth">LogInformation</span>(<span class="str">"Cache evicted: {Key}, reason: {Reason}"</span>, k, reason));
+
+    _cache.<span class="mth">Set</span>(key, product, opts);
+    <span class="kw">return</span> product;
+}</code></pre>
+    </div>
+
+    <h3>Distributed Caching — Redis with Cache Stampede Prevention</h3>
+    <div class="badge-row">
+      <span class="badge perf">Cache-aside pattern</span>
+      <span class="badge alloc">Double-checked lock prevents stampede</span>
+    </div>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm">// Program.cs</span>
+builder.Services.<span class="mth">AddStackExchangeRedisCache</span>(options =&gt;
+{
+    options.Configuration = <span class="str">"localhost:6379,abortConnect=false"</span>;
+    options.InstanceName = <span class="str">"MyApp:"</span>;
+});
+
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">Product</span>?&gt; <span class="mth">GetProductAsync</span>(<span class="kw">int</span> id, <span class="typ">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    <span class="typ">string</span> key = $<span class="str">"product:{id}"</span>;
+
+    <span class="cm">// 1. Fast path — try cache without lock</span>
+    <span class="kw">var</span> cached = <span class="kw">await</span> _cache.<span class="mth">GetAsync</span>(key, ct);
+    <span class="kw">if</span> (cached != <span class="kw">null</span>) <span class="kw">return</span> <span class="mth">Deserialize</span>&lt;<span class="typ">Product</span>&gt;(cached);
+
+    <span class="cm">// 2. Cache miss — per-key lock prevents stampede</span>
+    <span class="kw">var</span> keyLock = _locks.<span class="mth">GetOrAdd</span>(key, _ =&gt; <span class="kw">new</span> <span class="typ">SemaphoreSlim</span>(<span class="num">1</span>, <span class="num">1</span>));
+    <span class="kw">await</span> keyLock.<span class="mth">WaitAsync</span>(ct);
+    <span class="kw">try</span>
+    {
+        <span class="cm">// 3. Double-check after lock (another thread may have populated)</span>
+        cached = <span class="kw">await</span> _cache.<span class="mth">GetAsync</span>(key, ct);
+        <span class="kw">if</span> (cached != <span class="kw">null</span>) <span class="kw">return</span> <span class="mth">Deserialize</span>&lt;<span class="typ">Product</span>&gt;(cached);
+
+        <span class="cm">// 4. Load from DB</span>
+        <span class="kw">var</span> product = <span class="kw">await</span> _repo.<span class="mth">GetByIdAsync</span>(id, ct);
+        <span class="kw">if</span> (product == <span class="kw">null</span>) <span class="kw">return null</span>;
+
+        <span class="cm">// 5. Store with TTL</span>
+        <span class="kw">var</span> cacheOpts = <span class="kw">new</span> <span class="typ">DistributedCacheEntryOptions</span>
+        {
+            AbsoluteExpirationRelativeToNow = <span class="typ">TimeSpan</span>.<span class="mth">FromHours</span>(<span class="num">2</span>),
+            SlidingExpiration = <span class="typ">TimeSpan</span>.<span class="mth">FromMinutes</span>(<span class="num">20</span>)
+        };
+        <span class="kw">await</span> _cache.<span class="mth">SetAsync</span>(key, <span class="mth">Serialize</span>(product), cacheOpts, ct);
+        <span class="kw">return</span> product;
+    }
+    <span class="kw">finally</span>
+    {
+        keyLock.<span class="mth">Release</span>();
+        _locks.<span class="mth">TryRemove</span>(key, <span class="kw">out</span> _);
+    }
+}</code></pre>
+    </div>
+
+    <h3>Output Caching (.NET 7+)</h3>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm">// Program.cs</span>
+builder.Services.<span class="mth">AddOutputCache</span>(options =&gt;
+{
+    options.<span class="mth">AddPolicy</span>(<span class="str">"Products"</span>, p =&gt;
+        p.<span class="mth">Expire</span>(<span class="typ">TimeSpan</span>.<span class="mth">FromMinutes</span>(<span class="num">5</span>))
+         .<span class="mth">SetVaryByQuery</span>(<span class="str">"category"</span>, <span class="str">"page"</span>)
+         .<span class="mth">Tag</span>(<span class="str">"products"</span>));
+});
+app.<span class="mth">UseOutputCache</span>();
+
+[HttpGet(<span class="str">"products"</span>)]
+[OutputCache(PolicyName = <span class="str">"Products"</span>)]
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="mth">GetProducts</span>(<span class="typ">string</span>? category)
+    =&gt; Ok(<span class="kw">await</span> _service.<span class="mth">GetProductsAsync</span>(category));
+
+<span class="cm">// Invalidate by tag when products change</span>
+[HttpPut(<span class="str">"products/{id}"</span>)]
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="mth">UpdateProduct</span>(<span class="kw">int</span> id, <span class="typ">UpdateDto</span> dto)
+{
+    <span class="kw">await</span> _service.<span class="mth">UpdateAsync</span>(id, dto);
+    <span class="kw">await</span> _outputCacheStore.<span class="mth">EvictByTagAsync</span>(<span class="str">"products"</span>, <span class="typ">CancellationToken</span>.None);
+    <span class="kw">return</span> <span class="mth">NoContent</span>();
+}</code></pre>
+    </div>
+
+    <div class="card interview">
+      <div class="card-title">&#128172; Interview Q — How do you handle cache invalidation?</div>
+      <p>"Cache invalidation is genuinely hard. My approach uses three layers: <strong>1) TTL as safety net</strong> — always set an absolute expiration so data is eventually consistent even if invalidation fails. <strong>2) Event-driven invalidation</strong> — when data changes, publish a domain event that removes the specific cache key. For distributed caches, I use Redis pub/sub to broadcast invalidation to all app instances simultaneously. <strong>3) Cache tags for bulk invalidation</strong> — Output Cache tags let you evict groups atomically. The main pitfall to avoid: relying solely on TTL for frequently-changing data."</p>
+    </div>
+
+    <h3>TTL Strategy Guide</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Data Type</th><th>Recommended TTL</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>User session</td><td>20–30 min sliding</td><td>Reset on activity</td></tr>
+          <tr><td>Product catalog</td><td>1–6 hours absolute</td><td>Changes infrequently</td></tr>
+          <tr><td>Stock / prices</td><td>30–60 seconds</td><td>Changes often</td></tr>
+          <tr><td>Reference data (countries)</td><td>24 hours</td><td>Almost never changes</td></tr>
+          <tr><td>Feature flags</td><td>5–15 minutes</td><td>Stale flags cause incidents</td></tr>
+          <tr><td>Search results</td><td>5 minutes</td><td>Personalized: shorter</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: RESPONSE COMPRESSION -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s5">
+    <h2>5. Response Compression</h2>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp — Program.cs</span><button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="mth">AddResponseCompression</span>(options =&gt;
+{
+    options.EnableForHttps = <span class="kw">true</span>; <span class="cm">// Understand BREACH risk first</span>
+    options.Providers.<span class="mth">Add</span>&lt;<span class="typ">BrotliCompressionProvider</span>&gt;();
+    options.Providers.<span class="mth">Add</span>&lt;<span class="typ">GzipCompressionProvider</span>&gt;();
+    options.MimeTypes = <span class="kw">new</span>[]
+    {
+        <span class="str">"text/plain"</span>, <span class="str">"text/html"</span>, <span class="str">"text/css"</span>,
+        <span class="str">"application/javascript"</span>, <span class="str">"application/json"</span>, <span class="str">"application/xml"</span>
+        <span class="cm">// ❌ NOT: image/jpeg, image/png, video/mp4, application/zip</span>
+    };
+});
+
+builder.Services.<span class="mth">Configure</span>&lt;<span class="typ">BrotliCompressionProviderOptions</span>&gt;(o =&gt;
+    o.Level = CompressionLevel.Fastest); <span class="cm">// Dynamic content: fastest wins</span>
+
+builder.Services.<span class="mth">Configure</span>&lt;<span class="typ">GzipCompressionProviderOptions</span>&gt;(o =&gt;
+    o.Level = CompressionLevel.Optimal);
+
+app.<span class="mth">UseResponseCompression</span>(); <span class="cm">// Must be BEFORE UseStaticFiles, UseRouting</span></code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Format</th><th>Ratio vs Uncompressed</th><th>CPU Cost</th><th>Browser Support</th><th>Best For</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Brotli</strong></td><td>~20% better than Gzip</td><td>Higher</td><td>All modern browsers</td><td>Dynamic JSON APIs</td></tr>
+          <tr><td><strong>Gzip</strong></td><td>60-80% reduction</td><td>Lower</td><td>Universal</td><td>Universal fallback</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card pitfall">
+      <div class="card-title">&#9888; Pitfall — Never Compress Already-Compressed Formats</div>
+      <p>Adding <code>image/jpeg</code>, <code>image/png</code>, <code>video/mp4</code>, or <code>application/zip</code> to MIME types wastes CPU and often increases response size by 1-3%. These formats use their own internal compression. Always specify MIME types explicitly — never use a wildcard.</p>
+    </div>
+
+    <p><strong>Real-world impact on a 50KB JSON API response:</strong></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Encoding</th><th>Size</th><th>Reduction</th></tr></thead>
+        <tbody>
+          <tr><td>Uncompressed</td><td>50,000 bytes</td><td>—</td></tr>
+          <tr><td>Gzip (Optimal)</td><td>~8,500 bytes</td><td>83% reduction</td></tr>
+          <tr><td>Brotli (Fastest)</td><td>~7,800 bytes</td><td>84% reduction</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: CONNECTION POOLING -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s6">
+    <h2>6. Connection Pooling</h2>
+
+    <h3>How ADO.NET Connection Pooling Works</h3>
+    <p>Connection pooling is <strong>automatic and transparent</strong> in ADO.NET. The pool key is the exact connection string. When you call <code>conn.Open()</code>, ADO.NET reuses an idle physical connection. When you call <code>conn.Dispose()</code>, the physical connection is <strong>not closed</strong> — it returns to the pool for reuse.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Connection String Parameters</span><button class="copy-btn">Copy</button></div>
+<pre><code>Server=myserver;Database=mydb;User Id=sa;Password=secret;
+Min Pool Size=5;              <span class="cm">-- Pre-create connections at startup</span>
+Max Pool Size=100;            <span class="cm">-- Hard cap — requests block at this limit</span>
+Connection Timeout=30;        <span class="cm">-- Wait timeout for pooled connection</span>
+Connect Timeout=15;           <span class="cm">-- Timeout for new physical connection</span>
+Pooling=true;                 <span class="cm">-- Default: true</span></code></pre>
+    </div>
+
+    <h3>Connection Leak — Before vs After</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Leak — pool exhausted after 100 requests</div>
+<pre><code><span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">List</span>&lt;<span class="typ">Product</span>&gt;&gt; <span class="mth">GetProductsLeaky</span>()
+{
+    <span class="cm">// ❌ Never disposed</span>
+    <span class="kw">var</span> conn = <span class="kw">new</span> <span class="typ">SqlConnection</span>(_cs);
+    <span class="kw">await</span> conn.<span class="mth">OpenAsync</span>();
+
+    <span class="kw">var</span> cmd = <span class="kw">new</span> <span class="typ">SqlCommand</span>(
+        <span class="str">"SELECT * FROM Products"</span>, conn);
+    <span class="kw">var</span> reader =
+        <span class="kw">await</span> cmd.<span class="mth">ExecuteReaderAsync</span>();
+
+    <span class="kw">var</span> list = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="typ">Product</span>&gt;();
+    <span class="kw">while</span> (<span class="kw">await</span> reader.<span class="mth">ReadAsync</span>())
+        list.<span class="mth">Add</span>(<span class="mth">Map</span>(reader));
+    <span class="kw">return</span> list;
+    <span class="cm">// ❌ conn never Dispose()d</span>
+    <span class="cm">// Pool exhausts → SqlException on</span>
+    <span class="cm">// new requests</span>
+}</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Fix — await using returns to pool</div>
+<pre><code><span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">List</span>&lt;<span class="typ">Product</span>&gt;&gt; <span class="mth">GetProductsGood</span>()
+{
+    <span class="cm">// ✅ await using — always Dispose()</span>
+    <span class="kw">await using var</span> conn =
+        <span class="kw">new</span> <span class="typ">SqlConnection</span>(_cs);
+    <span class="kw">await</span> conn.<span class="mth">OpenAsync</span>();
+
+    <span class="kw">await using var</span> cmd = <span class="kw">new</span> <span class="typ">SqlCommand</span>(
+        <span class="str">"SELECT Id, Name FROM Products WHERE IsActive=1"</span>, conn);
+    <span class="kw">await using var</span> reader =
+        <span class="kw">await</span> cmd.<span class="mth">ExecuteReaderAsync</span>();
+
+    <span class="kw">var</span> list = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="typ">Product</span>&gt;();
+    <span class="kw">while</span> (<span class="kw">await</span> reader.<span class="mth">ReadAsync</span>())
+        list.<span class="mth">Add</span>(<span class="mth">Map</span>(reader));
+    <span class="kw">return</span> list;
+} <span class="cm">// ✅ conn.Dispose() → back to pool</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card tip">
+      <div class="card-title">&#128161; Tip — Size Your Pool to Peak Concurrency</div>
+      <p>For an API handling 500 concurrent requests each holding a connection for 100ms, you need ~50 connections. Set <code>Max Pool Size</code> to ~2× expected peak to absorb traffic spikes. Monitor <code>sys.dm_exec_connections</code> in SQL Server to see actual usage.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 7: DATABASE QUERY OPTIMIZATION -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s7">
+    <h2>7. Database Query Optimization</h2>
+
+    <h3>Avoid N+1 Queries</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; N+1 — 101 queries for 100 orders</div>
+<pre><code><span class="kw">var</span> orders = <span class="kw">await</span> _db.Orders
+    .<span class="mth">Where</span>(o =&gt; o.Status == <span class="str">"Pending"</span>)
+    .<span class="mth">ToListAsync</span>(); <span class="cm">// Query 1</span>
+
+<span class="kw">foreach</span> (<span class="kw">var</span> order <span class="kw">in</span> orders)
+{
+    <span class="cm">// ❌ Query 2, 3, 4... per order</span>
+    <span class="kw">var</span> cust = <span class="kw">await</span> _db.Customers
+        .<span class="mth">FindAsync</span>(order.CustomerId);
+    Console.<span class="mth">WriteLine</span>($<span class="str">"{cust.Name}: {order.Total}"</span>);
+}
+<span class="cm">// 100 orders = 101 queries!</span></code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; JOIN — 1 query for everything</div>
+<pre><code><span class="kw">var</span> summaries = <span class="kw">await</span> _db.Orders
+    .<span class="mth">Where</span>(o =&gt; o.Status == <span class="str">"Pending"</span>)
+    .<span class="mth">Select</span>(o =&gt; <span class="kw">new</span> <span class="typ">OrderSummary</span>
+    {
+        OrderId = o.Id,
+        <span class="cm">// ✅ EF Core generates JOIN</span>
+        CustomerName = o.Customer.Name,
+        Total = o.Total
+    })
+    .<span class="mth">AsNoTracking</span>() <span class="cm">// ✅ Read-only</span>
+    .<span class="mth">ToListAsync</span>(); <span class="cm">// 1 query!</span></code></pre>
+      </div>
+    </div>
+
+    <h3>Keyset Pagination vs Offset</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Offset — slows down at page 10,000+</div>
+<pre><code><span class="kw">var</span> page = <span class="kw">await</span> _db.Orders
+    .<span class="mth">OrderBy</span>(o =&gt; o.CreatedAt)
+    <span class="cm">// ❌ DB scans N rows just to skip</span>
+    .<span class="mth">Skip</span>(pageNum * pageSize)
+    .<span class="mth">Take</span>(pageSize)
+    .<span class="mth">AsNoTracking</span>()
+    .<span class="mth">ToListAsync</span>();</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Keyset — O(log n) always</div>
+<pre><code><span class="kw">var</span> page = <span class="kw">await</span> _db.Orders
+    <span class="cm">// ✅ Skip using indexed value</span>
+    .<span class="mth">Where</span>(o =&gt; o.Id &gt; lastSeenId)
+    .<span class="mth">OrderBy</span>(o =&gt; o.Id)
+    .<span class="mth">Take</span>(pageSize)
+    .<span class="mth">AsNoTracking</span>()
+    .<span class="mth">ToListAsync</span>();
+<span class="cm">// Works great for infinite scroll / APIs</span></code></pre>
+      </div>
+    </div>
+
+    <h3>Select Only Needed Columns</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; SELECT * with blob columns</div>
+<pre><code><span class="cm">// ❌ Loads Avatar (blob), all 20 cols</span>
+<span class="kw">var</span> users = <span class="kw">await</span> _db.Users
+    .<span class="mth">ToListAsync</span>();
+<span class="kw">return</span> users.<span class="mth">Select</span>(u =&gt; <span class="kw">new</span> { u.Id, u.Email });</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Project in SQL</div>
+<pre><code><span class="cm">// ✅ Only fetches Id, Email, FullName</span>
+<span class="kw">var</span> users = <span class="kw">await</span> _db.Users
+    .<span class="mth">Select</span>(u =&gt; <span class="kw">new</span> <span class="typ">UserSummaryDto</span>
+    {
+        Id = u.Id,
+        Email = u.Email,
+        Name = u.FullName
+    })
+    .<span class="mth">AsNoTracking</span>()
+    .<span class="mth">ToListAsync</span>();</code></pre>
+      </div>
+    </div>
+
+    <div class="card tip">
+      <div class="card-title">&#128161; Tip — Compiled Queries for Frequently-Executed EF Queries</div>
+      <p>EF Core translates LINQ to SQL on every call. Compiled queries skip this translation overhead for hot paths that are called thousands of times per second.</p>
+    </div>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp — EF Core Compiled Query</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">private static readonly</span> <span class="typ">Func</span>&lt;<span class="typ">AppDbContext</span>, <span class="kw">int</span>, <span class="typ">Task</span>&lt;<span class="typ">Product</span>?&gt;&gt; GetProductById =
+    EF.<span class="mth">CompileAsyncQuery</span>((<span class="typ">AppDbContext</span> db, <span class="kw">int</span> id) =&gt;
+        db.Products.<span class="mth">AsNoTracking</span>().<span class="mth">FirstOrDefault</span>(p =&gt; p.Id == id));
+
+<span class="cm">// Usage — skips LINQ-to-SQL translation on each call</span>
+<span class="kw">var</span> product = <span class="kw">await</span> <span class="mth">GetProductById</span>(_db, id);</code></pre>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 8: ASYNC PERFORMANCE -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s8">
+    <h2>8. Async Performance</h2>
+
+    <h3>ValueTask vs Task — Zero-Allocation Hot Paths</h3>
+    <div class="badge-row">
+      <span class="badge alloc">Zero allocation on synchronous path</span>
+      <span class="badge warn">Don't await ValueTask more than once</span>
+    </div>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Task — always allocates</div>
+<pre><code><span class="cm">// ❌ Always allocates Task object</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">Product</span>?&gt; <span class="mth">GetProductAsync</span>(<span class="kw">int</span> id)
+{
+    <span class="kw">return await</span> _db.Products.<span class="mth">FindAsync</span>(id);
+}
+<span class="cm">// Even on cache hit: Task allocated</span></code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; ValueTask — zero alloc on sync path</div>
+<pre><code><span class="cm">// ✅ Struct on stack when cache hits</span>
+<span class="kw">public</span> <span class="typ">ValueTask</span>&lt;<span class="typ">Product</span>?&gt; <span class="mth">GetProductAsync</span>(<span class="kw">int</span> id)
+{
+    <span class="kw">if</span> (_cache.<span class="mth">TryGetValue</span>(id, <span class="kw">out var</span> p))
+        <span class="kw">return</span> <span class="typ">ValueTask</span>.<span class="mth">FromResult</span>(p); <span class="cm">// ✅ No alloc</span>
+
+    <span class="kw">return new</span> <span class="typ">ValueTask</span>&lt;<span class="typ">Product</span>?&gt;(
+        <span class="mth">FetchFromDbAsync</span>(id)); <span class="cm">// Async path</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>Thread Pool Starvation — The Deadlock Pattern</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Sync-over-async — blocks threads</div>
+<pre><code>[HttpGet(<span class="str">"data"</span>)]
+<span class="kw">public</span> <span class="typ">IActionResult</span> <span class="mth">GetData</span>()
+{
+    <span class="cm">// ❌ .Result blocks thread pool thread</span>
+    <span class="cm">// Under load: all threads blocked,</span>
+    <span class="cm">// new requests starve</span>
+    <span class="kw">var</span> result = _service
+        .<span class="mth">GetDataAsync</span>().Result;
+    <span class="kw">return</span> <span class="mth">Ok</span>(result);
+}</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Async all the way</div>
+<pre><code>[HttpGet(<span class="str">"data"</span>)]
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="mth">GetData</span>()
+{
+    <span class="cm">// ✅ Thread released while awaiting</span>
+    <span class="cm">// Thread pool thread serves other</span>
+    <span class="cm">// requests while I/O completes</span>
+    <span class="kw">var</span> result = <span class="kw">await</span> _service.<span class="mth">GetDataAsync</span>();
+    <span class="kw">return</span> <span class="mth">Ok</span>(result);
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>CPU-Bound vs I/O-Bound</h3>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm">// I/O-bound — async/await directly (no Task.Run)</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="kw">byte</span>[]&gt; <span class="mth">DownloadFileAsync</span>(<span class="typ">string</span> url)
+{
+    <span class="kw">return await</span> _httpClient.<span class="mth">GetByteArrayAsync</span>(url);
+    <span class="cm">// Thread released during network wait</span>
+}
+
+<span class="cm">// CPU-bound — use Task.Run to free the calling thread</span>
+<span class="kw">public</span> <span class="typ">Task</span>&lt;<span class="typ">ResizeResult</span>&gt; <span class="mth">ResizeImageAsync</span>(<span class="kw">byte</span>[] data, <span class="kw">int</span> w, <span class="kw">int</span> h)
+{
+    <span class="cm">// Moves CPU work to a thread pool thread</span>
+    <span class="kw">return</span> <span class="typ">Task</span>.<span class="mth">Run</span>(() =&gt; <span class="mth">ApplyResize</span>(data, w, h));
+}
+
+<span class="cm">// Parallel with bounded concurrency — Parallel.ForEachAsync (.NET 6+)</span>
+<span class="kw">await</span> <span class="typ">Parallel</span>.<span class="mth">ForEachAsync</span>(userIds,
+    <span class="kw">new</span> <span class="typ">ParallelOptions</span> { MaxDegreeOfParallelism = <span class="num">10</span> },
+    <span class="kw">async</span> (userId, ct) =&gt; <span class="kw">await</span> _emailService.<span class="mth">SendAsync</span>(userId));
+<span class="cm">// 100 users, 10 at a time: 10× faster than sequential</span></code></pre>
+    </div>
+
+    <div class="card interview">
+      <div class="card-title">&#128172; Interview Q — How do you detect thread pool starvation?</div>
+      <p>"I use <code>dotnet-counters</code> to monitor <code>threadpool-thread-count</code> and <code>threadpool-queue-length</code> in real time. Starvation shows as: thread count growing steadily, queue length growing, request latency increasing. Root cause is almost always sync-over-async (<code>.Result</code> or <code>.Wait()</code>) in a high-concurrency path. Fix: make the entire call chain async. Never mix blocking calls with async code."</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 9: BENCHMARKDOTNET -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s9">
+    <h2>9. BenchmarkDotNet</h2>
+
+    <p>BenchmarkDotNet is the standard for .NET micro-benchmarking. It handles JIT warmup, statistical analysis, outlier detection, and memory diagnostics automatically. Always run in <strong>Release mode</strong>.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp — Full String Benchmark</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="kw">using</span> BenchmarkDotNet.Attributes;
+<span class="kw">using</span> BenchmarkDotNet.Running;
+
+[MemoryDiagnoser]
+[SimpleJob(RuntimeMoniker.Net80)]
+[RankColumn]
+[Orderer(SummaryOrderPolicy.FastestToSlowest)]
+<span class="kw">public class</span> <span class="typ">StringConcatBenchmarks</span>
+{
+    [Params(<span class="num">10</span>, <span class="num">100</span>, <span class="num">1000</span>)]
+    <span class="kw">public int</span> Iterations { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="kw">private string</span>[] _words = <span class="kw">null</span>!;
+
+    [GlobalSetup] <span class="cm">// Runs ONCE before all benchmark iterations</span>
+    <span class="kw">public void</span> <span class="mth">Setup</span>()
+    {
+        _words = <span class="typ">Enumerable</span>.<span class="mth">Range</span>(<span class="num">0</span>, Iterations)
+            .<span class="mth">Select</span>(i =&gt; $<span class="str">"word{i:D4}"</span>)
+            .<span class="mth">ToArray</span>();
+    }
+
+    [Benchmark(Baseline = <span class="kw">true</span>)]
+    <span class="kw">public string</span> <span class="mth">PlusOperator</span>()
+    {
+        <span class="typ">string</span> result = <span class="str">""</span>;
+        <span class="kw">foreach</span> (<span class="kw">var</span> word <span class="kw">in</span> _words) result += word;
+        <span class="kw">return</span> result;
+    }
+
+    [Benchmark]
+    <span class="kw">public string</span> <span class="mth">StringBuilderPreSized</span>()
+    {
+        <span class="kw">var</span> sb = <span class="kw">new</span> <span class="typ">StringBuilder</span>(Iterations * <span class="num">8</span>);
+        <span class="kw">foreach</span> (<span class="kw">var</span> word <span class="kw">in</span> _words) sb.<span class="mth">Append</span>(word);
+        <span class="kw">return</span> sb.<span class="mth">ToString</span>();
+    }
+
+    [Benchmark]
+    <span class="kw">public string</span> <span class="mth">StringConcat</span>() =&gt; <span class="typ">string</span>.<span class="mth">Concat</span>(_words);
+
+    [Benchmark]
+    <span class="kw">public string</span> <span class="mth">StringCreate</span>()
+    {
+        <span class="kw">int</span> len = _words.<span class="mth">Sum</span>(w =&gt; w.Length);
+        <span class="kw">return</span> <span class="typ">string</span>.<span class="mth">Create</span>(len, _words, (span, words) =&gt;
+        {
+            <span class="kw">int</span> pos = <span class="num">0</span>;
+            <span class="kw">foreach</span> (<span class="kw">var</span> w <span class="kw">in</span> words)
+            {
+                w.<span class="mth">AsSpan</span>().<span class="mth">CopyTo</span>(span[pos..]);
+                pos += w.Length;
+            }
+        });
+    }
+}
+
+BenchmarkRunner.<span class="mth">Run</span>&lt;<span class="typ">StringConcatBenchmarks</span>&gt;();</code></pre>
+    </div>
+
+    <h3>Simulated Results — 1,000 Iterations</h3>
+    <div class="benchmark-table"><span class="bm-header">BenchmarkDotNet v0.13.12, .NET 8.0.6 (Intel Core i7-12700K, 20 logical cores)
+
+| Method                 | Mean         | Ratio  | Gen0      | Allocated  | Alloc Ratio |</span>
+<span class="bm-loser">| PlusOperator           | 14,278.6 μs  |  1.00  | 2,031.25  | 16,996 KB  |        1.00 |</span>
+<span class="bm-normal">| StringBuilderPreSized  |     84.1 μs  |  0.006 |    5.371  |    44.5 KB |       0.003 |</span>
+<span class="bm-normal">| StringConcat           |     68.2 μs  |  0.005 |    5.371  |    44.5 KB |       0.003 |</span>
+<span class="bm-winner">| StringCreate           |     52.8 μs  |  0.004 |    3.906  |    31.3 KB |       0.002 |</span></div>
+
+    <div class="badge-row">
+      <span class="badge perf">270x faster than string +</span>
+      <span class="badge alloc">554x fewer bytes allocated</span>
+      <span class="badge perf">Zero Gen2 collections</span>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 10: STRING PERFORMANCE -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s10">
+    <h2>10. String Performance</h2>
+
+    <h3>Span&lt;char&gt; — Zero-Allocation CSV Parsing</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; Split — 3+ allocations per line</div>
+<pre><code><span class="kw">public static</span> (<span class="kw">int</span>, <span class="typ">string</span>, <span class="kw">decimal</span>) <span class="mth">ParseBad</span>(<span class="typ">string</span> line)
+{
+    <span class="cm">// ❌ Allocates: string[], each field</span>
+    <span class="kw">var</span> parts = line.<span class="mth">Split</span>(<span class="str">','</span>);
+    <span class="kw">return</span> (
+        <span class="kw">int</span>.<span class="mth">Parse</span>(parts[<span class="num">0</span>]),
+        parts[<span class="num">1</span>],           <span class="cm">// new string</span>
+        <span class="kw">decimal</span>.<span class="mth">Parse</span>(parts[<span class="num">2</span>])
+    );
+}</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Span — zero heap allocations</div>
+<pre><code><span class="kw">public static</span> (<span class="kw">int</span>, <span class="typ">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt;, <span class="kw">decimal</span>)
+    <span class="mth">ParseGood</span>(<span class="typ">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; line)
+{
+    <span class="kw">int</span> c1 = line.<span class="mth">IndexOf</span>(<span class="str">','</span>);
+    <span class="kw">int</span> c2 = line[(c1+<span class="num">1</span>)..].<span class="mth">IndexOf</span>(<span class="str">','</span>)+c1+<span class="num">1</span>;
+    <span class="kw">return</span> (
+        <span class="kw">int</span>.<span class="mth">Parse</span>(line[..c1]),    <span class="cm">// ✅ No alloc</span>
+        line[(c1+<span class="num">1</span>)..c2],         <span class="cm">// ✅ Slice</span>
+        <span class="kw">decimal</span>.<span class="mth">Parse</span>(line[(c2+<span class="num">1</span>)..]) <span class="cm">// ✅ No alloc</span>
+    );
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>String Decision Guide</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>Best Choice</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Known at compile time</td><td><code>"literal"</code> or <code>$""</code></td><td>Interned, zero runtime cost</td></tr>
+          <tr><td>1-3 concatenations</td><td><code>+</code> or <code>$""</code></td><td>Compiler optimizes</td></tr>
+          <tr><td>Loop / unknown count</td><td><code>StringBuilder</code></td><td>Avoids O(n²) allocations</td></tr>
+          <tr><td>Hot path, read-only parsing</td><td><code>ReadOnlySpan&lt;char&gt;</code></td><td>Stack-based, zero allocation</td></tr>
+          <tr><td>Write to stream</td><td><code>StreamWriter</code> / <code>Utf8JsonWriter</code></td><td>No intermediate string</td></tr>
+          <tr><td>Known final length</td><td><code>string.Create()</code></td><td>Single allocation, no copies</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card warn">
+      <div class="card-title">&#9888; Warning — String Interning Pitfall</div>
+      <p>Never call <code>string.Intern(userInput)</code> on user-supplied strings. Interned strings live for the entire app lifetime and cannot be GC'd. An attacker could exhaust memory by submitting unique strings. Only intern known, bounded sets of strings (e.g., XML element names, enum labels).</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 11: JSON SERIALIZATION -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s11">
+    <h2>11. JSON Serialization Performance</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>System.Text.Json</th><th>Newtonsoft.Json</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Throughput</strong></td><td>~3-5x faster</td><td>Baseline</td></tr>
+          <tr><td><strong>Allocations</strong></td><td>~50% lower</td><td>Baseline</td></tr>
+          <tr><td><strong>AOT / NativeAOT</strong></td><td>Yes (source generators)</td><td>No</td></tr>
+          <tr><td><strong>Source generators</strong></td><td>Yes — zero reflection</td><td>No</td></tr>
+          <tr><td><strong>UTF-8 streaming</strong></td><td>Utf8JsonWriter</td><td>Limited</td></tr>
+          <tr><td><strong>Dynamic / JObject</strong></td><td>Limited</td><td>Rich</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Source Generators — Zero Reflection, AOT-Compatible</h3>
+    <div class="badge-row">
+      <span class="badge perf">No runtime reflection</span>
+      <span class="badge alloc">AOT / NativeAOT compatible</span>
+      <span class="badge perf">Code generated at compile time</span>
+    </div>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code><span class="cm">// Define context — code generated at compile time</span>
+[JsonSerializable(<span class="kw">typeof</span>(<span class="typ">Product</span>))]
+[JsonSerializable(<span class="kw">typeof</span>(<span class="typ">List</span>&lt;<span class="typ">Product</span>&gt;))]
+[JsonSerializable(<span class="kw">typeof</span>(<span class="typ">PagedResult</span>&lt;<span class="typ">Product</span>&gt;))]
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    WriteIndented = <span class="kw">false</span>,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+<span class="kw">public partial class</span> <span class="typ">AppJsonContext</span> : <span class="typ">JsonSerializerContext</span> { }
+
+<span class="cm">// Register in ASP.NET Core</span>
+builder.Services.<span class="mth">ConfigureHttpJsonOptions</span>(options =&gt;
+    options.SerializerOptions.TypeInfoResolverChain
+           .<span class="mth">Insert</span>(<span class="num">0</span>, AppJsonContext.Default));
+
+<span class="cm">// Usage — zero reflection, compile-time type info</span>
+<span class="typ">string</span> json = <span class="typ">JsonSerializer</span>.<span class="mth">Serialize</span>(product, AppJsonContext.Default.Product);
+<span class="kw">byte</span>[] bytes = <span class="typ">JsonSerializer</span>.<span class="mth">SerializeToUtf8Bytes</span>(product, AppJsonContext.Default.Product);
+<span class="typ">Product</span>? obj = <span class="typ">JsonSerializer</span>.<span class="mth">Deserialize</span>(json, AppJsonContext.Default.Product);</code></pre>
+    </div>
+
+    <h3>Async Serialization to Stream — Before vs After</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; String intermediate — 2 allocations</div>
+<pre><code>[HttpGet(<span class="str">"products"</span>)]
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="mth">GetBad</span>()
+{
+    <span class="kw">var</span> products = <span class="kw">await</span> _service.<span class="mth">GetAllAsync</span>();
+    <span class="cm">// ❌ Allocation 1: UTF-16 string</span>
+    <span class="typ">string</span> json = <span class="typ">JsonSerializer</span>.<span class="mth">Serialize</span>(products);
+    <span class="cm">// ❌ Allocation 2: write to response</span>
+    <span class="kw">return</span> <span class="mth">Content</span>(json, <span class="str">"application/json"</span>);
+}</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Direct to response stream</div>
+<pre><code>[HttpGet(<span class="str">"products"</span>)]
+<span class="kw">public async</span> <span class="typ">Task</span> <span class="mth">GetGood</span>()
+{
+    <span class="kw">var</span> products = <span class="kw">await</span> _service.<span class="mth">GetAllAsync</span>();
+    Response.ContentType = <span class="str">"application/json"</span>;
+    <span class="cm">// ✅ Serialize directly to response</span>
+    <span class="cm">// ✅ No intermediate string allocation</span>
+    <span class="kw">await</span> <span class="typ">JsonSerializer</span>.<span class="mth">SerializeAsync</span>(
+        Response.Body, products,
+        AppJsonContext.Default.ListProduct);
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 12: HTTP CLIENT -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="s12">
+    <h2>12. HTTP Client Performance</h2>
+
+    <div class="card pitfall">
+      <div class="card-title">&#9888; Pitfall — Why new HttpClient() Per Request Causes Port Exhaustion</div>
+      <p>When you <code>Dispose()</code> an <code>HttpClient</code>, the underlying socket enters <strong>TIME_WAIT</strong> state at the OS level (~240 seconds). At 100 requests/sec × 240 seconds = 24,000 ports exhausted. Result: <code>SocketException: address already in use</code>. <code>IHttpClientFactory</code> solves this by pooling <code>HttpMessageHandler</code> instances and rotating them every 2 minutes to respect DNS changes.</p>
+    </div>
+
+    <h3>Typed Client — Preferred Pattern</h3>
+    <div class="compare">
+      <div class="compare-side">
+        <div class="compare-label bad-label">&#10060; New client per request</div>
+<pre><code><span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">string</span>&gt; <span class="mth">GetDataBad</span>(<span class="typ">string</span> url)
+{
+    <span class="cm">// ❌ New socket per request</span>
+    <span class="cm">// ❌ Socket enters TIME_WAIT on dispose</span>
+    <span class="cm">// ❌ Port exhaustion under load</span>
+    <span class="kw">using var</span> client = <span class="kw">new</span> <span class="typ">HttpClient</span>();
+    <span class="kw">return await</span> client.<span class="mth">GetStringAsync</span>(url);
+}</code></pre>
+      </div>
+      <div class="compare-side">
+        <div class="compare-label good-label">&#10003; Typed client via IHttpClientFactory</div>
+<pre><code><span class="cm">// ✅ Program.cs</span>
+builder.Services.<span class="mth">AddHttpClient</span>&lt;<span class="typ">IGitHubClient</span>, <span class="typ">GitHubClient</span>&gt;(client =&gt;
+{
+    client.BaseAddress = <span class="kw">new</span> <span class="typ">Uri</span>(<span class="str">"https://api.github.com"</span>);
+    client.Timeout = <span class="typ">TimeSpan</span>.<span class="mth">FromSeconds</span>(<span class="num">30</span>);
+}).<span class="mth">SetHandlerLifetime</span>(<span class="typ">TimeSpan</span>.<span class="mth">FromMinutes</span>(<span class="num">5</span>));
+
+<span class="cm">// ✅ Typed client — HttpClient injected, shared</span>
+<span class="kw">public class</span> <span class="typ">GitHubClient</span> : <span class="typ">IGitHubClient</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">HttpClient</span> _client;
+    <span class="kw">public</span> <span class="mth">GitHubClient</span>(<span class="typ">HttpClient</span> c) =&gt; _client = c;
+
+    <span class="kw">public</span> <span class="typ">Task</span>&lt;<span class="typ">GitHubRepo</span>?&gt; <span class="mth">GetRepoAsync</span>(<span class="typ">string</span> o, <span class="typ">string</span> r) =&gt;
+        _client.<span class="mth">GetFromJsonAsync</span>&lt;<span class="typ">GitHubRepo</span>&gt;($<span class="str">"/repos/{o}/{r}"</span>);
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>Resilience with Polly (.NET 8 — Microsoft.Extensions.Http.Resilience)</h3>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn">Copy</button></div>
+<pre><code>builder.Services.<span class="mth">AddHttpClient</span>&lt;<span class="typ">IGitHubClient</span>, <span class="typ">GitHubClient</span>&gt;()
+    .<span class="mth">AddStandardResilienceHandler</span>(options =&gt;
+    {
+        options.Retry.MaxRetryAttempts = <span class="num">3</span>;
+        options.Retry.BackoffType = DelayBackoffType.Exponential;
+        options.Retry.Delay = <span class="typ">TimeSpan</span>.<span class="mth">FromSeconds</span>(<span class="num">1</span>);
+        options.CircuitBreaker.FailureRatio = <span class="num">0.5</span>;           <span class="cm">// Open at 50% failure</span>
+        options.CircuitBreaker.SamplingDuration = <span class="typ">TimeSpan</span>.<span class="mth">FromSeconds</span>(<span class="num">30</span>);
+        options.CircuitBreaker.MinimumThroughput = <span class="num">10</span>;
+        options.TotalRequestTimeout.Timeout = <span class="typ">TimeSpan</span>.<span class="mth">FromSeconds</span>(<span class="num">10</span>);
+    });
+<span class="cm">// Retry: 3 attempts with exponential backoff (1s, 2s, 4s)
+// Circuit breaker: opens after 50% failures over 30s, min 10 requests
+// Total timeout: abort request after 10s regardless of retry state</span></code></pre>
+    </div>
+
+    <div class="card interview">
+      <div class="card-title">&#128172; Interview Q — Why does new HttpClient() per request cause problems?</div>
+      <p>"HttpClient internally uses <code>HttpMessageHandler</code> which owns socket connections. When you <code>Dispose()</code> an HttpClient, the underlying socket doesn't immediately close — it enters TIME_WAIT at the OS level for ~240 seconds. Creating 100 HttpClient instances per second exhausts available ports (~65,535 total). IHttpClientFactory solves this by maintaining a pool of HttpMessageHandler instances — they're shared across requests. It also rotates handlers every 2 minutes (configurable) to respect DNS TTL changes, which matters for Kubernetes services and AWS Route 53."</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- QUICK REFERENCE -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="section" id="checklist">
+    <h2>Quick Reference — Performance Checklist</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Area</th><th>Check</th><th>Tool / Fix</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Memory</strong></td><td>LOH allocation rate</td><td><code>dotnet-counters</code>, <code>ArrayPool&lt;byte&gt;</code></td></tr>
+          <tr><td><strong>Memory</strong></td><td>Heap growing unbounded</td><td><code>dotnet-gcdump</code>, find GC roots</td></tr>
+          <tr><td><strong>Memory</strong></td><td>Event handler leaks</td><td>Code review, <code>IDisposable</code> pattern</td></tr>
+          <tr><td><strong>CPU</strong></td><td>Hot path allocations</td><td>BenchmarkDotNet + <code>[MemoryDiagnoser]</code></td></tr>
+          <tr><td><strong>Database</strong></td><td>N+1 queries</td><td>EF Core logging, MiniProfiler</td></tr>
+          <tr><td><strong>Database</strong></td><td>Full table scans</td><td>SQL Server DMVs, query plans</td></tr>
+          <tr><td><strong>Database</strong></td><td>Connection exhaustion</td><td><code>await using</code> everywhere</td></tr>
+          <tr><td><strong>HTTP</strong></td><td>Socket exhaustion</td><td><code>IHttpClientFactory</code></td></tr>
+          <tr><td><strong>Async</strong></td><td>Thread pool starvation</td><td><code>dotnet-counters</code> threadpool metrics</td></tr>
+          <tr><td><strong>Async</strong></td><td>Sync-over-async</td><td>No <code>.Result</code> / <code>.Wait()</code></td></tr>
+          <tr><td><strong>Cache</strong></td><td>Hit rate below 80%</td><td>Review TTL and eviction strategy</td></tr>
+          <tr><td><strong>Cache</strong></td><td>Stampede under load</td><td>Double-checked lock pattern</td></tr>
+          <tr><td><strong>JSON</strong></td><td>Reflection overhead</td><td>Source generators</td></tr>
+          <tr><td><strong>Strings</strong></td><td>Loop concatenation</td><td><code>StringBuilder</code> or <code>string.Concat</code></td></tr>
+          <tr><td><strong>Buffers</strong></td><td>LOH byte arrays</td><td><code>ArrayPool&lt;byte&gt;.Shared</code></td></tr>
+          <tr><td><strong>Compression</strong></td><td>Large JSON responses</td><td><code>AddResponseCompression</code> + Brotli</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ─── COPY BUTTONS ───
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  });
+});
+
+// ─── ACTIVE TOC HIGHLIGHT ───
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.toc-list a');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const id = entry.target.getAttribute('id');
+      const active = document.querySelector(`.toc-list a[href="#${id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '-80px 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// ─── SMOOTH SCROLL ───
+document.querySelectorAll('.toc-list a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>

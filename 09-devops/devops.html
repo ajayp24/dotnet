@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps — Lead .NET Interview Prep</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --heading: #58a6ff;
+    --keyword: #ff7b72;
+    --string: #a5d6ff;
+    --comment: #8b949e;
+    --number: #79c0ff;
+    --func: #d2a8ff;
+    --tag: #7ee787;
+    --accent: #f0883e;
+    --tip-bg: #0e4429;
+    --tip-border: #2ea043;
+    --warn-bg: #341a00;
+    --warn-border: #f0883e;
+    --table-head: #1c2128;
+    --sidebar-width: 280px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ───────────────────────────────────── */
+  #sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    padding: 20px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    flex-shrink: 0;
+  }
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  #sidebar .brand {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  #sidebar .brand h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--heading);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  #sidebar .brand p {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  #sidebar nav a {
+    display: block;
+    padding: 6px 16px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #sidebar nav a:hover,
+  #sidebar nav a.active {
+    color: var(--heading);
+    border-left-color: var(--heading);
+    background: rgba(88,166,255,.06);
+  }
+  #sidebar nav .section-head {
+    padding: 10px 16px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-muted);
+    opacity: .7;
+  }
+
+  /* ── MAIN CONTENT ──────────────────────────────── */
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    height: 100vh;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  #main::-webkit-scrollbar { width: 6px; }
+  #main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 36px 80px;
+  }
+
+  /* ── TYPOGRAPHY ────────────────────────────────── */
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--heading);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    margin-bottom: 32px;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--heading);
+    margin: 48px 0 16px;
+    padding-top: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    scroll-margin-top: 20px;
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--func);
+    margin: 28px 0 12px;
+    scroll-margin-top: 20px;
+  }
+  h4 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 20px 0 8px;
+  }
+  p { margin-bottom: 12px; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+  strong { color: #e6edf3; font-weight: 600; }
+  code {
+    font-family: 'SF Mono', 'Consolas', 'Fira Code', monospace;
+    font-size: 12.5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--string);
+  }
+  a { color: var(--heading); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── CODE BLOCKS ───────────────────────────────── */
+  .code-block {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-muted);
+  }
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--surface); }
+  .copy-btn.copied { color: var(--tag); border-color: var(--tag); }
+
+  pre {
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: 'SF Mono', 'Consolas', 'Fira Code', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* YAML syntax tokens */
+  .y-key    { color: var(--string); }
+  .y-val    { color: var(--tag); }
+  .y-str    { color: #a5d6ff; }
+  .y-kw     { color: var(--keyword); }
+  .y-num    { color: var(--number); }
+  .y-comment{ color: var(--comment); font-style: italic; }
+  .y-anchor { color: var(--accent); }
+  .y-bool   { color: var(--keyword); }
+  .sh-cmd   { color: var(--tag); }
+  .sh-flag  { color: var(--string); }
+  .sh-comment{ color: var(--comment); font-style: italic; }
+  .sh-str   { color: #a5d6ff; }
+  .cs-kw    { color: var(--keyword); }
+  .cs-type  { color: var(--func); }
+  .cs-str   { color: var(--string); }
+  .cs-comment{ color: var(--comment); font-style: italic; }
+  .cs-num   { color: var(--number); }
+  .json-key { color: var(--string); }
+  .json-val { color: var(--tag); }
+  .json-str { color: #a5d6ff; }
+  .xml-tag  { color: var(--keyword); }
+  .xml-attr { color: var(--string); }
+  .xml-val  { color: var(--tag); }
+
+  /* ── TABLES ────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: var(--table-head);
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--heading);
+    border: 1px solid var(--border);
+  }
+  td {
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,.025); }
+
+  /* ── CALLOUTS ──────────────────────────────────── */
+  .tip, .warn, .note {
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+  .tip {
+    background: var(--tip-bg);
+    border-left: 3px solid var(--tip-border);
+  }
+  .tip::before { content: 'TIP  '; font-weight: 700; color: var(--tag); }
+  .warn {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-border);
+  }
+  .warn::before { content: 'PITFALL  '; font-weight: 700; color: var(--accent); }
+  .note {
+    background: #16202c;
+    border-left: 3px solid var(--heading);
+  }
+  .note::before { content: 'NOTE  '; font-weight: 700; color: var(--heading); }
+
+  /* ── SECTION DIVIDER ───────────────────────────── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* ── Q&A CARDS ─────────────────────────────────── */
+  .qa-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .qa-q {
+    background: var(--surface2);
+    padding: 10px 16px;
+    font-weight: 600;
+    color: var(--func);
+    font-size: 13.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .qa-q::before { content: 'Q: '; color: var(--keyword); }
+  .qa-a {
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  /* ── BADGE ROW ─────────────────────────────────── */
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .badge.blue  { border-color: var(--heading); color: var(--heading); }
+  .badge.green { border-color: var(--tag); color: var(--tag); }
+  .badge.orange{ border-color: var(--accent); color: var(--accent); }
+  .badge.red   { border-color: var(--keyword); color: var(--keyword); }
+  .badge.purple{ border-color: var(--func); color: var(--func); }
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════ -->
+<aside id="sidebar">
+  <div class="brand">
+    <h2>DevOps</h2>
+    <p>Lead .NET Interview Prep</p>
+  </div>
+  <nav>
+    <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+    <div class="section-head">Topics</div>
+    <a href="#git-strategies">1. Git Branch Strategies</a>
+    <a href="#github-actions">2. GitHub Actions CI/CD</a>
+    <a href="#azure-devops">3. Azure DevOps</a>
+    <a href="#harness">4. Harness CI/CD</a>
+    <a href="#sonarqube">5. SonarQube &amp; Quality</a>
+    <a href="#coverage">6. Code Coverage</a>
+    <a href="#artifacts">7. Artifact Repositories</a>
+    <a href="#feature-flags">8. Feature Flags</a>
+    <a href="#blue-green">9. Blue/Green Deployment</a>
+    <a href="#canary">10. Canary Deployment</a>
+    <a href="#iac">11. Infrastructure as Code</a>
+    <div class="section-head">Interview</div>
+    <a href="#qa">Q&amp;A Cheat Sheet</a>
+    <a href="#pitfalls">Pitfalls Table</a>
+  </nav>
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════════ -->
+<div id="main">
+<div class="content">
+
+<h1>DevOps — Lead .NET Engineer Interview Prep</h1>
+<p class="subtitle">Git strategies &bull; CI/CD pipelines &bull; Quality gates &bull; Deployment patterns &bull; IaC</p>
+
+<div class="badge-row">
+  <span class="badge blue">GitHub Actions</span>
+  <span class="badge blue">Azure DevOps</span>
+  <span class="badge orange">Harness</span>
+  <span class="badge green">SonarQube</span>
+  <span class="badge purple">Feature Flags</span>
+  <span class="badge red">Blue/Green</span>
+  <span class="badge red">Canary</span>
+  <span class="badge green">Terraform</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="git-strategies">1. Git Branch Strategies</h2>
+
+<h3>GitFlow</h3>
+<p>Long-lived branches designed for teams with scheduled, versioned releases.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="y-key">main</span>         ← production-ready, tagged releases
+<span class="y-key">develop</span>      ← integration branch, nightly builds
+<span class="y-key">feature/*</span>    ← feature/JIRA-123-user-login (off develop)
+<span class="y-key">release/*</span>    ← release/1.4.0 — stabilization, bug fixes only
+<span class="y-key">hotfix/*</span>     ← hotfix/1.3.1 — off main, merged back to main + develop</pre>
+</div>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Factor</th><th>GitFlow</th><th>GitHub Flow</th><th>Trunk-Based</th></tr></thead>
+  <tbody>
+    <tr><td>Release cadence</td><td>Scheduled (biweekly/monthly)</td><td>Continuous</td><td>Multiple/day</td></tr>
+    <tr><td>Branch lifetime</td><td>Weeks–months</td><td>Days</td><td>Hours–1 day</td></tr>
+    <tr><td>Complexity</td><td>High</td><td>Low</td><td>Low–Medium</td></tr>
+    <tr><td>Merge conflicts</td><td>High risk</td><td>Medium</td><td>Low</td></tr>
+    <tr><td>Feature flags needed</td><td>Optional</td><td>Sometimes</td><td>Always</td></tr>
+    <tr><td>Best for</td><td>Enterprise, regulated</td><td>SaaS startups</td><td>High-maturity teams</td></tr>
+    <tr><td>Rollback strategy</td><td>Revert on release branch</td><td>Revert merge commit</td><td>Feature flag off</td></tr>
+  </tbody>
+</table></div>
+
+<div class="qa-card">
+  <div class="qa-q">What branching strategy does your team use and why?</div>
+  <div class="qa-a">
+    "We use GitHub Flow with elements of trunk-based development. Branches live no longer than 2–3 days.
+    We use feature flags via LaunchDarkly to deploy incomplete features safely to production without exposing
+    them to users. This gives us continuous integration without the overhead of GitFlow's long-lived release
+    branches. We protect <code>main</code> with required PR reviews and passing CI — nobody force-pushes.
+    Hotfixes use the same process: short branch off main, fix, PR, merge, tag."
+  </div>
+</div>
+
+<div class="warn">Avoid saying "we just commit to main" without mentioning feature flags — the interviewer will immediately ask about incomplete features in flight.</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="github-actions">2. GitHub Actions CI/CD</h2>
+
+<h3>Trigger Types</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="y-key">on:</span>
+  <span class="y-key">push:</span>
+    <span class="y-key">branches:</span> <span class="y-val">[main, develop]</span>
+    <span class="y-key">tags:</span> <span class="y-val">['v*.*.*']</span>          <span class="y-comment"># version tags</span>
+  <span class="y-key">pull_request:</span>
+    <span class="y-key">branches:</span> <span class="y-val">[main]</span>
+    <span class="y-key">types:</span> <span class="y-val">[opened, synchronize, reopened]</span>
+  <span class="y-key">schedule:</span>
+    - <span class="y-key">cron:</span> <span class="y-str">'0 2 * * 1'</span>      <span class="y-comment"># Monday 2am UTC</span>
+  <span class="y-key">workflow_dispatch:</span>        <span class="y-comment"># manual trigger</span>
+    <span class="y-key">inputs:</span>
+      <span class="y-key">environment:</span>
+        <span class="y-key">description:</span> <span class="y-str">'Target environment'</span>
+        <span class="y-key">required:</span> <span class="y-bool">true</span>
+        <span class="y-key">default:</span> <span class="y-str">'staging'</span></pre>
+</div>
+
+<h3>Complete Pipeline — .NET → ECR → ECS</h3>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">yaml — .github/workflows/cicd.yml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="y-key">name:</span> <span class="y-str">CI/CD Pipeline</span>
+
+<span class="y-key">on:</span>
+  <span class="y-key">push:</span>
+    <span class="y-key">branches:</span> <span class="y-val">[main]</span>
+  <span class="y-key">pull_request:</span>
+    <span class="y-key">branches:</span> <span class="y-val">[main]</span>
+
+<span class="y-key">env:</span>
+  <span class="y-key">DOTNET_VERSION:</span> <span class="y-str">'8.0.x'</span>
+  <span class="y-key">AWS_REGION:</span> <span class="y-str">us-east-1</span>
+  <span class="y-key">ECR_REPOSITORY:</span> <span class="y-str">myapp-api</span>
+  <span class="y-key">ECS_SERVICE:</span> <span class="y-str">myapp-api-service</span>
+  <span class="y-key">ECS_CLUSTER:</span> <span class="y-str">myapp-cluster</span>
+  <span class="y-key">CONTAINER_NAME:</span> <span class="y-str">myapp-api</span>
+  <span class="y-key">IMAGE_TAG:</span> <span class="y-val">${{ github.sha }}</span>
+
+<span class="y-key">jobs:</span>
+  <span class="y-comment"># ─────────────────────────────────────────────</span>
+  <span class="y-comment"># JOB 1: Build, Test, Coverage, SonarQube</span>
+  <span class="y-comment"># ─────────────────────────────────────────────</span>
+  <span class="y-key">build-test:</span>
+    <span class="y-key">name:</span> <span class="y-str">Build &amp; Test</span>
+    <span class="y-key">runs-on:</span> <span class="y-str">ubuntu-latest</span>
+    <span class="y-key">permissions:</span>
+      <span class="y-key">contents:</span> <span class="y-str">read</span>
+      <span class="y-key">pull-requests:</span> <span class="y-str">write</span>
+
+    <span class="y-key">steps:</span>
+      - <span class="y-key">name:</span> <span class="y-str">Checkout code</span>
+        <span class="y-key">uses:</span> <span class="y-str">actions/checkout@v4</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">fetch-depth:</span> <span class="y-num">0</span>    <span class="y-comment"># SonarQube needs full history</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Setup .NET</span>
+        <span class="y-key">uses:</span> <span class="y-str">actions/setup-dotnet@v4</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">dotnet-version:</span> <span class="y-val">${{ env.DOTNET_VERSION }}</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Cache NuGet packages</span>
+        <span class="y-key">uses:</span> <span class="y-str">actions/cache@v4</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">path:</span> <span class="y-str">~/.nuget/packages</span>
+          <span class="y-key">key:</span> <span class="y-str">nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj','**/packages.lock.json') }}</span>
+          <span class="y-key">restore-keys:</span> <span class="y-val">|</span>
+            <span class="y-str">nuget-${{ runner.os }}-</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Restore dependencies</span>
+        <span class="y-key">run:</span> <span class="y-str">dotnet restore MyApp.sln --locked-mode</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Build</span>
+        <span class="y-key">run:</span> <span class="y-val">|</span>
+          <span class="sh-cmd">dotnet build</span> MyApp.sln \
+            <span class="sh-flag">--configuration</span> Release \
+            <span class="sh-flag">--no-restore</span> \
+            /p:TreatWarningsAsErrors=true
+
+      - <span class="y-key">name:</span> <span class="y-str">Install coverage tools</span>
+        <span class="y-key">run:</span> <span class="y-val">|</span>
+          <span class="sh-cmd">dotnet tool install</span> <span class="sh-flag">--global</span> dotnet-reportgenerator-globaltool
+          <span class="sh-cmd">dotnet tool install</span> <span class="sh-flag">--global</span> coverlet.console
+
+      - <span class="y-key">name:</span> <span class="y-str">Run tests with code coverage</span>
+        <span class="y-key">run:</span> <span class="y-val">|</span>
+          <span class="sh-cmd">dotnet test</span> MyApp.sln \
+            <span class="sh-flag">--configuration</span> Release \
+            <span class="sh-flag">--no-build</span> \
+            <span class="sh-flag">--collect:</span><span class="sh-str">"XPlat Code Coverage"</span> \
+            <span class="sh-flag">--results-directory</span> ./coverage \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector\
+               .Configuration.Format=opencover
+
+      - <span class="y-key">name:</span> <span class="y-str">Generate coverage report</span>
+        <span class="y-key">run:</span> <span class="y-val">|</span>
+          <span class="sh-cmd">reportgenerator</span> \
+            <span class="sh-flag">-reports:</span><span class="sh-str">"coverage/**/coverage.opencover.xml"</span> \
+            <span class="sh-flag">-targetdir:</span><span class="sh-str">"coverage/report"</span> \
+            <span class="sh-flag">-reporttypes:</span><span class="sh-str">"HtmlInline_AzurePipelines;Cobertura;TextSummary"</span>
+          cat coverage/report/Summary.txt
+
+      - <span class="y-key">name:</span> <span class="y-str">Upload coverage artifacts</span>
+        <span class="y-key">uses:</span> <span class="y-str">actions/upload-artifact@v4</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">name:</span> <span class="y-str">coverage-report</span>
+          <span class="y-key">path:</span> <span class="y-str">coverage/report/</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Set up JDK 17 (required by SonarScanner)</span>
+        <span class="y-key">uses:</span> <span class="y-str">actions/setup-java@v4</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">java-version:</span> <span class="y-str">'17'</span>
+          <span class="y-key">distribution:</span> <span class="y-str">'temurin'</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Install dotnet-sonarscanner</span>
+        <span class="y-key">run:</span> <span class="y-str">dotnet tool install --global dotnet-sonarscanner</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">SonarQube Begin</span>
+        <span class="y-key">run:</span> <span class="y-val">|</span>
+          <span class="sh-cmd">dotnet sonarscanner begin</span> \
+            /k:<span class="sh-str">"myapp-api"</span> \
+            /d:sonar.host.url=<span class="sh-str">"${{ secrets.SONAR_HOST_URL }}"</span> \
+            /d:sonar.login=<span class="sh-str">"${{ secrets.SONAR_TOKEN }}"</span> \
+            /d:sonar.cs.opencover.reportsPaths=<span class="sh-str">"coverage/**/coverage.opencover.xml"</span> \
+            /d:sonar.qualitygate.wait=<span class="y-bool">true</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Build for SonarQube</span>
+        <span class="y-key">run:</span> <span class="y-str">dotnet build MyApp.sln --configuration Release --no-restore</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">SonarQube End</span>
+        <span class="y-key">run:</span> <span class="y-str">dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Post coverage comment to PR</span>
+        <span class="y-key">if:</span> <span class="y-str">github.event_name == 'pull_request'</span>
+        <span class="y-key">uses:</span> <span class="y-str">marocchino/sticky-pull-request-comment@v2</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">path:</span> <span class="y-str">coverage/report/Summary.txt</span>
+
+  <span class="y-comment"># ─────────────────────────────────────────────</span>
+  <span class="y-comment"># JOB 2: Docker Build &amp; Push to ECR</span>
+  <span class="y-comment"># ─────────────────────────────────────────────</span>
+  <span class="y-key">docker:</span>
+    <span class="y-key">name:</span> <span class="y-str">Docker Build &amp; Push</span>
+    <span class="y-key">needs:</span> <span class="y-str">build-test</span>
+    <span class="y-key">runs-on:</span> <span class="y-str">ubuntu-latest</span>
+    <span class="y-key">if:</span> <span class="y-str">github.ref == 'refs/heads/main' &amp;&amp; github.event_name == 'push'</span>
+    <span class="y-key">outputs:</span>
+      <span class="y-key">image-uri:</span> <span class="y-val">${{ steps.build-push.outputs.image-uri }}</span>
+
+    <span class="y-key">steps:</span>
+      - <span class="y-key">name:</span> <span class="y-str">Checkout code</span>
+        <span class="y-key">uses:</span> <span class="y-str">actions/checkout@v4</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Configure AWS credentials</span>
+        <span class="y-key">uses:</span> <span class="y-str">aws-actions/configure-aws-credentials@v4</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">aws-access-key-id:</span> <span class="y-val">${{ secrets.AWS_ACCESS_KEY_ID }}</span>
+          <span class="y-key">aws-secret-access-key:</span> <span class="y-val">${{ secrets.AWS_SECRET_ACCESS_KEY }}</span>
+          <span class="y-key">aws-region:</span> <span class="y-val">${{ env.AWS_REGION }}</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Login to Amazon ECR</span>
+        <span class="y-key">id:</span> <span class="y-str">login-ecr</span>
+        <span class="y-key">uses:</span> <span class="y-str">aws-actions/amazon-ecr-login@v2</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Set up Docker Buildx</span>
+        <span class="y-key">uses:</span> <span class="y-str">docker/setup-buildx-action@v3</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Build and push Docker image</span>
+        <span class="y-key">id:</span> <span class="y-str">build-push</span>
+        <span class="y-key">uses:</span> <span class="y-str">docker/build-push-action@v5</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">context:</span> <span class="y-str">.</span>
+          <span class="y-key">file:</span> <span class="y-str">./src/MyApp.Api/Dockerfile</span>
+          <span class="y-key">push:</span> <span class="y-bool">true</span>
+          <span class="y-key">tags:</span> <span class="y-val">|</span>
+            <span class="y-str">${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}</span>
+            <span class="y-str">${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest</span>
+          <span class="y-key">cache-from:</span> <span class="y-str">type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:buildcache</span>
+          <span class="y-key">cache-to:</span> <span class="y-str">type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:buildcache,mode=max</span>
+
+  <span class="y-comment"># ─────────────────────────────────────────────</span>
+  <span class="y-comment"># JOB 3: Deploy to ECS</span>
+  <span class="y-comment"># ─────────────────────────────────────────────</span>
+  <span class="y-key">deploy:</span>
+    <span class="y-key">name:</span> <span class="y-str">Deploy to ECS</span>
+    <span class="y-key">needs:</span> <span class="y-str">docker</span>
+    <span class="y-key">runs-on:</span> <span class="y-str">ubuntu-latest</span>
+    <span class="y-key">environment:</span>
+      <span class="y-key">name:</span> <span class="y-str">production</span>
+      <span class="y-key">url:</span> <span class="y-str">https://api.myapp.com</span>
+
+    <span class="y-key">steps:</span>
+      - <span class="y-key">name:</span> <span class="y-str">Checkout code</span>
+        <span class="y-key">uses:</span> <span class="y-str">actions/checkout@v4</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Configure AWS credentials</span>
+        <span class="y-key">uses:</span> <span class="y-str">aws-actions/configure-aws-credentials@v4</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">aws-access-key-id:</span> <span class="y-val">${{ secrets.AWS_ACCESS_KEY_ID }}</span>
+          <span class="y-key">aws-secret-access-key:</span> <span class="y-val">${{ secrets.AWS_SECRET_ACCESS_KEY }}</span>
+          <span class="y-key">aws-region:</span> <span class="y-val">${{ env.AWS_REGION }}</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Download current ECS task definition</span>
+        <span class="y-key">run:</span> <span class="y-val">|</span>
+          <span class="sh-cmd">aws ecs describe-task-definition</span> \
+            <span class="sh-flag">--task-definition</span> myapp-api-task \
+            <span class="sh-flag">--query</span> taskDefinition \
+            > task-definition.json
+
+      - <span class="y-key">name:</span> <span class="y-str">Update task definition with new image</span>
+        <span class="y-key">id:</span> <span class="y-str">task-def</span>
+        <span class="y-key">uses:</span> <span class="y-str">aws-actions/amazon-ecs-render-task-definition@v1</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">task-definition:</span> <span class="y-str">task-definition.json</span>
+          <span class="y-key">container-name:</span> <span class="y-val">${{ env.CONTAINER_NAME }}</span>
+          <span class="y-key">image:</span> <span class="y-val">${{ needs.docker.outputs.image-uri }}</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Deploy to ECS (rolling update)</span>
+        <span class="y-key">uses:</span> <span class="y-str">aws-actions/amazon-ecs-deploy-task-definition@v1</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">task-definition:</span> <span class="y-val">${{ steps.task-def.outputs.task-definition }}</span>
+          <span class="y-key">service:</span> <span class="y-val">${{ env.ECS_SERVICE }}</span>
+          <span class="y-key">cluster:</span> <span class="y-val">${{ env.ECS_CLUSTER }}</span>
+          <span class="y-key">wait-for-service-stability:</span> <span class="y-bool">true</span>
+          <span class="y-key">wait-for-minutes:</span> <span class="y-num">10</span>
+
+      - <span class="y-key">name:</span> <span class="y-str">Notify Slack on success</span>
+        <span class="y-key">if:</span> <span class="y-str">success()</span>
+        <span class="y-key">uses:</span> <span class="y-str">slackapi/slack-github-action@v1.26.0</span>
+        <span class="y-key">with:</span>
+          <span class="y-key">payload:</span> <span class="y-val">|</span>
+            <span class="y-str">{"text": "Deployment successful! :rocket: myapp-api @ ${{ github.sha }}"}</span>
+        <span class="y-key">env:</span>
+          <span class="y-key">SLACK_WEBHOOK_URL:</span> <span class="y-val">${{ secrets.SLACK_WEBHOOK_URL }}</span></pre>
+</div>
+
+<h3>Secrets — OIDC (Preferred)</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="y-comment"># No long-lived AWS keys needed — assume IAM role via OIDC</span>
+- <span class="y-key">name:</span> <span class="y-str">Configure AWS credentials via OIDC</span>
+  <span class="y-key">uses:</span> <span class="y-str">aws-actions/configure-aws-credentials@v4</span>
+  <span class="y-key">with:</span>
+    <span class="y-key">role-to-assume:</span> <span class="y-str">arn:aws:iam::123456789:role/github-actions-role</span>
+    <span class="y-key">aws-region:</span> <span class="y-str">us-east-1</span>
+<span class="y-comment"># Required IAM trust policy — allows GitHub Actions OIDC provider</span>
+<span class="y-comment"># Token is short-lived, no rotation needed, no secrets stored</span></pre>
+</div>
+
+<div class="tip">Use OIDC federation over static AWS access keys. The token is short-lived and requires no rotation. Store only the role ARN in GitHub secrets, never the key pair.</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="azure-devops">3. Azure DevOps CI/CD</h2>
+
+<h3>YAML vs Classic Pipelines</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th></th><th>YAML Pipeline</th><th>Classic (GUI)</th></tr></thead>
+  <tbody>
+    <tr><td>Version controlled</td><td>Yes — lives in repo</td><td>No — stored in ADO</td></tr>
+    <tr><td>PR review on changes</td><td>Yes</td><td>Not possible</td></tr>
+    <tr><td>Templates / reuse</td><td>Yes (extends, template)</td><td>Limited</td></tr>
+    <tr><td>Recommended (2024+)</td><td>Yes</td><td>Legacy only</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Complete Azure DevOps YAML Pipeline</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">yaml — azure-pipelines.yml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="y-key">trigger:</span>
+  <span class="y-key">branches:</span>
+    <span class="y-key">include:</span> <span class="y-val">[main]</span>
+  <span class="y-key">paths:</span>
+    <span class="y-key">exclude:</span> <span class="y-val">['**/*.md', 'docs/**']</span>
+
+<span class="y-key">pr:</span>
+  <span class="y-key">branches:</span>
+    <span class="y-key">include:</span> <span class="y-val">[main]</span>
+
+<span class="y-key">variables:</span>
+  - <span class="y-key">group:</span> <span class="y-str">myapp-secrets</span>        <span class="y-comment"># Variable group from Library</span>
+  - <span class="y-key">name:</span> <span class="y-str">dotnetVersion</span>
+    <span class="y-key">value:</span> <span class="y-str">'8.0.x'</span>
+  - <span class="y-key">name:</span> <span class="y-str">buildConfiguration</span>
+    <span class="y-key">value:</span> <span class="y-str">'Release'</span>
+
+<span class="y-key">pool:</span>
+  <span class="y-key">vmImage:</span> <span class="y-str">'ubuntu-latest'</span>
+
+<span class="y-key">stages:</span>
+  <span class="y-comment"># ── STAGE 1: Build &amp; Test ──────────────────────</span>
+  - <span class="y-key">stage:</span> <span class="y-str">Build</span>
+    <span class="y-key">displayName:</span> <span class="y-str">'Build &amp; Test'</span>
+    <span class="y-key">jobs:</span>
+      - <span class="y-key">job:</span> <span class="y-str">BuildAndTest</span>
+        <span class="y-key">steps:</span>
+          - <span class="y-key">task:</span> <span class="y-str">UseDotNet@2</span>
+            <span class="y-key">inputs:</span>
+              <span class="y-key">version:</span> <span class="y-str">$(dotnetVersion)</span>
+
+          - <span class="y-key">task:</span> <span class="y-str">Cache@2</span>
+            <span class="y-key">inputs:</span>
+              <span class="y-key">key:</span> <span class="y-str">'nuget | "$(Agent.OS)" | **/*.csproj'</span>
+              <span class="y-key">path:</span> <span class="y-str">$(NUGET_PACKAGES)</span>
+
+          - <span class="y-key">task:</span> <span class="y-str">DotNetCoreCLI@2</span>
+            <span class="y-key">displayName:</span> <span class="y-str">'Restore'</span>
+            <span class="y-key">inputs:</span>
+              <span class="y-key">command:</span> <span class="y-str">'restore'</span>
+              <span class="y-key">projects:</span> <span class="y-str">'**/*.sln'</span>
+
+          - <span class="y-key">task:</span> <span class="y-str">SonarQubePrepare@5</span>
+            <span class="y-key">inputs:</span>
+              <span class="y-key">SonarQube:</span> <span class="y-str">'SonarQube-ServiceConnection'</span>
+              <span class="y-key">scannerMode:</span> <span class="y-str">'MSBuild'</span>
+              <span class="y-key">projectKey:</span> <span class="y-str">'myapp-api'</span>
+
+          - <span class="y-key">task:</span> <span class="y-str">DotNetCoreCLI@2</span>
+            <span class="y-key">displayName:</span> <span class="y-str">'Test with Coverage'</span>
+            <span class="y-key">inputs:</span>
+              <span class="y-key">command:</span> <span class="y-str">'test'</span>
+              <span class="y-key">projects:</span> <span class="y-str">'**/*Tests.csproj'</span>
+              <span class="y-key">arguments:</span> <span class="y-str">'--collect:"XPlat Code Coverage"'</span>
+              <span class="y-key">publishTestResults:</span> <span class="y-bool">true</span>
+
+          - <span class="y-key">task:</span> <span class="y-str">SonarQubeAnalyze@5</span>
+          - <span class="y-key">task:</span> <span class="y-str">SonarQubePublish@5</span>
+            <span class="y-key">inputs:</span>
+              <span class="y-key">pollingTimeoutSec:</span> <span class="y-str">'300'</span>
+
+  <span class="y-comment"># ── STAGE 2: Docker Build &amp; Push ───────────────</span>
+  - <span class="y-key">stage:</span> <span class="y-str">DockerBuildPush</span>
+    <span class="y-key">dependsOn:</span> <span class="y-str">Build</span>
+    <span class="y-key">condition:</span> <span class="y-str">and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))</span>
+    <span class="y-key">jobs:</span>
+      - <span class="y-key">job:</span> <span class="y-str">Docker</span>
+        <span class="y-key">steps:</span>
+          - <span class="y-key">task:</span> <span class="y-str">Docker@2</span>
+            <span class="y-key">inputs:</span>
+              <span class="y-key">command:</span> <span class="y-str">'buildAndPush'</span>
+              <span class="y-key">repository:</span> <span class="y-str">myapp-api</span>
+              <span class="y-key">containerRegistry:</span> <span class="y-str">'ACR-ServiceConnection'</span>
+              <span class="y-key">tags:</span> <span class="y-val">|</span>
+                <span class="y-str">$(Build.BuildId)</span>
+                <span class="y-str">latest</span>
+
+  <span class="y-comment"># ── STAGE 3: Deploy Dev ──────────────────────────</span>
+  - <span class="y-key">stage:</span> <span class="y-str">DeployDev</span>
+    <span class="y-key">dependsOn:</span> <span class="y-str">DockerBuildPush</span>
+    <span class="y-key">jobs:</span>
+      - <span class="y-key">deployment:</span> <span class="y-str">DeployToDev</span>
+        <span class="y-key">environment:</span> <span class="y-str">'dev'</span>        <span class="y-comment"># ADO Environment — tracks deployments</span>
+        <span class="y-key">strategy:</span>
+          <span class="y-key">runOnce:</span>
+            <span class="y-key">deploy:</span>
+              <span class="y-key">steps:</span>
+                - <span class="y-key">task:</span> <span class="y-str">KubernetesManifest@0</span>
+                  <span class="y-key">inputs:</span>
+                    <span class="y-key">action:</span> <span class="y-str">'deploy'</span>
+                    <span class="y-key">kubernetesServiceConnection:</span> <span class="y-str">'AKS-Dev-ServiceConnection'</span>
+                    <span class="y-key">namespace:</span> <span class="y-str">'myapp-dev'</span>
+                    <span class="y-key">manifests:</span> <span class="y-str">'k8s/deployment.yaml'</span>
+                    <span class="y-key">containers:</span> <span class="y-str">'myacr.azurecr.io/myapp-api:$(Build.BuildId)'</span>
+
+  <span class="y-comment"># ── STAGE 4: Production (approval gate on Environment) ──</span>
+  - <span class="y-key">stage:</span> <span class="y-str">DeployProd</span>
+    <span class="y-key">dependsOn:</span> <span class="y-str">DeployDev</span>
+    <span class="y-key">jobs:</span>
+      - <span class="y-key">deployment:</span> <span class="y-str">DeployToProd</span>
+        <span class="y-key">environment:</span> <span class="y-str">'production'</span>  <span class="y-comment"># Approval configured in ADO Environment UI</span>
+        <span class="y-key">strategy:</span>
+          <span class="y-key">runOnce:</span>
+            <span class="y-key">deploy:</span>
+              <span class="y-key">steps:</span>
+                - <span class="y-key">task:</span> <span class="y-str">AzureRmWebAppDeployment@4</span>
+                  <span class="y-key">inputs:</span>
+                    <span class="y-key">azureSubscription:</span> <span class="y-str">'Azure-ServiceConnection'</span>
+                    <span class="y-key">WebAppName:</span> <span class="y-str">'myapp-prod'</span>
+                    <span class="y-key">packageForLinux:</span> <span class="y-str">'$(Pipeline.Workspace)/app-drop/*.zip'</span></pre>
+</div>
+
+<div class="tip">Approvals in ADO are configured on the <strong>Environment</strong> resource (not in YAML). Navigate to Environments → production → Approvals &amp; Checks → Add required approvers, business hours gates, or query-work-items gates.</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="harness">4. Harness CI/CD</h2>
+<p>Enterprise-grade CI/CD platform with AI-driven deployment verification and built-in DORA metrics.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Strategy</th><th>Mechanism</th><th>Rollback</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Rolling</strong></td><td>Replace instances one batch at a time</td><td>Redeploy old version</td></tr>
+    <tr><td><strong>Blue/Green</strong></td><td>Shift ALB traffic from old to new env</td><td>Flip ALB back to Blue</td></tr>
+    <tr><td><strong>Canary</strong></td><td>Route X% traffic, verify, promote</td><td>Shift 100% back to stable</td></tr>
+  </tbody>
+</table></div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">text — Harness hierarchy</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>Account
+└── Organization
+    └── Project
+        └── Pipeline
+            ├── Stage: CI (build/test)
+            ├── Stage: Deploy Dev
+            │   ├── Step: HTTP (smoke test)
+            │   └── Step: Shell script
+            ├── Stage: Approval (manual gate)
+            └── Stage: Deploy Prod
+                └── Step: Canary / Blue-Green</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="sonarqube">5. SonarQube &amp; Code Quality</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Category</th><th>Examples</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Bugs</strong></td><td>Null dereference, unreachable code</td></tr>
+    <tr><td><strong>Vulnerabilities</strong></td><td>SQL injection, hardcoded credentials</td></tr>
+    <tr><td><strong>Code Smells</strong></td><td>Long methods, dead code, naming violations</td></tr>
+    <tr><td><strong>Duplications</strong></td><td>Copy-pasted blocks &gt; N lines</td></tr>
+    <tr><td><strong>Coverage</strong></td><td>% lines/branches hit by tests</td></tr>
+    <tr><td><strong>Security Hotspots</strong></td><td>Areas requiring manual review</td></tr>
+  </tbody>
+</table></div>
+
+<h3>dotnet-sonarscanner Integration</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="sh-comment"># Step 1: Begin (before build — instruments the compiler)</span>
+<span class="sh-cmd">dotnet sonarscanner begin</span> \
+  /k:<span class="sh-str">"project-key"</span> \
+  /d:sonar.host.url=<span class="sh-str">"https://sonar.company.com"</span> \
+  /d:sonar.login=<span class="sh-str">"$SONAR_TOKEN"</span> \
+  /d:sonar.cs.opencover.reportsPaths=<span class="sh-str">"**/coverage.opencover.xml"</span> \
+  /d:sonar.exclusions=<span class="sh-str">"**/Migrations/**"</span> \
+  /d:sonar.qualitygate.wait=<span class="sh-str">true</span>   <span class="sh-comment"># blocks pipeline until gate evaluated</span>
+
+<span class="sh-comment"># Step 2: Build (sonarscanner hooks into the compiler output)</span>
+<span class="sh-cmd">dotnet build</span> MyApp.sln
+
+<span class="sh-comment"># Step 3: End (ship analysis to SonarQube server)</span>
+<span class="sh-cmd">dotnet sonarscanner end</span> /d:sonar.login=<span class="sh-str">"$SONAR_TOKEN"</span></pre>
+</div>
+
+<h3>Quality Gate Example</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>Quality Gate "Sonar way" (default):
+  ✓  Coverage on new code          ≥ 80%
+  ✓  Duplicated lines on new code  ≤ 3%
+  ✓  Maintainability rating        = A
+  ✓  Reliability rating            = A
+  ✓  Security rating               = A
+
+Pipeline result: FAIL if gate status = ERROR</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="coverage">6. Code Coverage</h2>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="sh-comment"># Run tests and collect coverage (opencover format for SonarQube)</span>
+<span class="sh-cmd">dotnet test</span> MyApp.sln \
+  <span class="sh-flag">--collect:</span><span class="sh-str">"XPlat Code Coverage"</span> \
+  <span class="sh-flag">--results-directory</span> ./coverage \
+  -- DataCollectionRunSettings.DataCollectors.DataCollector\
+     .Configuration.Format=opencover
+
+<span class="sh-comment"># Generate HTML + Cobertura report</span>
+<span class="sh-cmd">reportgenerator</span> \
+  <span class="sh-flag">-reports:</span><span class="sh-str">"coverage/**/coverage.opencover.xml"</span> \
+  <span class="sh-flag">-targetdir:</span><span class="sh-str">"coverage/html"</span> \
+  <span class="sh-flag">-reporttypes:</span><span class="sh-str">"Html;Cobertura;TextSummary;Badges"</span>
+
+<span class="sh-comment"># Generate lock file (for cache-busting in CI)</span>
+<span class="sh-cmd">dotnet restore</span> <span class="sh-flag">--use-lock-file</span></pre>
+</div>
+
+<h3>Coverage Targets by Layer</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Layer</th><th>Target</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Domain / business logic</td><td>90%+</td><td>Most critical, most testable</td></tr>
+    <tr><td>Application services</td><td>80%+</td><td>Use cases, orchestration</td></tr>
+    <tr><td>Controllers / thin wrappers</td><td>60%+</td><td>Integration tests cover most paths</td></tr>
+    <tr><td>Infrastructure / DB adapters</td><td>50%+</td><td>Integration tests preferred</td></tr>
+    <tr><td>Generated code (migrations, proto)</td><td>Excluded</td><td>Add to sonar.exclusions</td></tr>
+    <tr><td>Program.cs / startup</td><td>Excluded</td><td>Framework boilerplate</td></tr>
+  </tbody>
+</table></div>
+
+<div class="warn">100% coverage is not the goal — it creates test theater. Meaningful tests on meaningful code. Exclude auto-generated files, migrations, and framework startup code from measurement.</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="artifacts">7. Artifact Repositories</h2>
+
+<h3>NuGet Package Registries</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Registry</th><th>Best For</th><th>Auth</th></tr></thead>
+  <tbody>
+    <tr><td>NuGet.org</td><td>Public OSS</td><td>API key</td></tr>
+    <tr><td>GitHub Packages</td><td>Internal packages, OSS</td><td>PAT / GITHUB_TOKEN</td></tr>
+    <tr><td>Azure Artifacts</td><td>Enterprise internal</td><td>Azure AD / PAT</td></tr>
+    <tr><td>JFrog Artifactory</td><td>Enterprise universal</td><td>API key / AD</td></tr>
+    <tr><td>Sonatype Nexus</td><td>Enterprise universal</td><td>LDAP / API key</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Docker Image Registries</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Registry</th><th>Cloud</th><th>Best For</th></tr></thead>
+  <tbody>
+    <tr><td>Amazon ECR</td><td>AWS</td><td>ECS/EKS workloads</td></tr>
+    <tr><td>Azure Container Registry (ACR)</td><td>Azure</td><td>AKS workloads</td></tr>
+    <tr><td>GitHub Container Registry (GHCR)</td><td>Any</td><td>Open-source, GitHub Actions</td></tr>
+    <tr><td>Docker Hub</td><td>Any</td><td>Public images</td></tr>
+    <tr><td>JFrog Artifactory</td><td>Any</td><td>Enterprise universal</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Artifact Promotion — Never Rebuild for Prod</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>Build →  push :1.2.0-dev.42   to dev-registry
+  ↓  (integration tests pass)
+Promote → retag :1.2.0-staging  push to staging-registry
+  ↓  (staging sign-off)
+Promote → retag :1.2.0          push to prod-registry</pre>
+</div>
+<div class="tip"><strong>Key principle:</strong> promote the artifact, not the build. The same binary image moves dev → staging → prod. You never rebuild for staging or production — a rebuild would be a different artifact and invalidates the testing done earlier.</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="feature-flags">8. Feature Flags</h2>
+
+<h3>Why Feature Flags?</h3>
+<p>Decouple <strong>deployment</strong> (code is running in production) from <strong>release</strong> (users see the feature). Deploy incomplete work safely, enable gradual rollout, and get a kill switch without a deploy.</p>
+
+<h3>Microsoft.FeatureManagement (.NET)</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="sh-comment">// Program.cs</span>
+builder.Services.AddFeatureManagement()
+    .AddFeatureFilter&lt;<span class="cs-type">PercentageFilter</span>&gt;()
+    .AddFeatureFilter&lt;<span class="cs-type">TargetingFilter</span>&gt;();</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">json — appsettings.json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>{
+  <span class="json-key">"FeatureManagement"</span>: {
+    <span class="json-key">"NewPaymentFlow"</span>: <span class="y-bool">false</span>,
+    <span class="json-key">"BetaDashboard"</span>: {
+      <span class="json-key">"EnabledFor"</span>: [
+        {
+          <span class="json-key">"Name"</span>: <span class="json-str">"Percentage"</span>,
+          <span class="json-key">"Parameters"</span>: { <span class="json-key">"Value"</span>: <span class="cs-num">25</span> }
+        }
+      ]
+    },
+    <span class="json-key">"AdminPanel"</span>: {
+      <span class="json-key">"EnabledFor"</span>: [
+        {
+          <span class="json-key">"Name"</span>: <span class="json-str">"Targeting"</span>,
+          <span class="json-key">"Parameters"</span>: {
+            <span class="json-key">"Audience"</span>: {
+              <span class="json-key">"Users"</span>: [<span class="json-str">"admin@company.com"</span>],
+              <span class="json-key">"Groups"</span>: [{ <span class="json-key">"Name"</span>: <span class="json-str">"beta-users"</span>, <span class="json-key">"RolloutPercentage"</span>: <span class="cs-num">50</span> }]
+            }
+          }
+        }
+      ]
+    }
+  }
+}</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="cs-kw">public class</span> <span class="cs-type">PaymentController</span> : <span class="cs-type">ControllerBase</span>
+{
+    <span class="cs-kw">private readonly</span> <span class="cs-type">IFeatureManager</span> _features;
+
+    <span class="cs-kw">public</span> <span class="cs-type">PaymentController</span>(<span class="cs-type">IFeatureManager</span> features) =&gt; _features = features;
+
+    [<span class="cs-type">HttpPost</span>(<span class="cs-str">"process"</span>)]
+    <span class="cs-kw">public async</span> <span class="cs-type">Task</span>&lt;<span class="cs-type">IActionResult</span>&gt; ProcessPayment(<span class="cs-type">PaymentRequest</span> request)
+    {
+        <span class="cs-kw">if</span> (<span class="cs-kw">await</span> _features.IsEnabledAsync(<span class="cs-str">"NewPaymentFlow"</span>))
+            <span class="cs-kw">return</span> Ok(<span class="cs-kw">await</span> _newPaymentService.ProcessAsync(request));
+
+        <span class="cs-kw">return</span> Ok(<span class="cs-kw">await</span> _legacyPaymentService.ProcessAsync(request));
+    }
+}</pre>
+</div>
+
+<h3>Gradual Rollout Timeline</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Week</th><th>% Traffic</th><th>Monitor</th></tr></thead>
+  <tbody>
+    <tr><td>Week 1</td><td>0% (internal team only)</td><td>Functional correctness</td></tr>
+    <tr><td>Week 2</td><td>5%</td><td>Error rates, P99 latency</td></tr>
+    <tr><td>Week 3</td><td>25%</td><td>Conversion rates, business KPIs</td></tr>
+    <tr><td>Week 4</td><td>50%</td><td>Continued monitoring</td></tr>
+    <tr><td>Week 5</td><td>100%</td><td>Full release, clean up old code path</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="blue-green">9. Blue/Green Deployment</h2>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="y-comment">Before switch:</span>
+  Blue  = v1.2.0 — 100% production traffic  ← LIVE
+  Green = v1.3.0 — deployed, tested, ready
+
+<span class="y-comment">Switch (ALB weight change — milliseconds):</span>
+  Blue  = v1.2.0 — 0% traffic  (kept for rollback)
+  Green = v1.3.0 — 100% traffic ← NOW LIVE
+
+<span class="y-comment">Rollback: flip weights back — instant, no redeploy</span></pre>
+</div>
+
+<h3>AWS ALB Weighted Routing</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>{
+  <span class="json-key">"Type"</span>: <span class="json-str">"forward"</span>,
+  <span class="json-key">"ForwardConfig"</span>: {
+    <span class="json-key">"TargetGroups"</span>: [
+      { <span class="json-key">"TargetGroupArn"</span>: <span class="json-str">"arn:...:blue-tg"</span>,  <span class="json-key">"Weight"</span>: <span class="cs-num">0</span>   },
+      { <span class="json-key">"TargetGroupArn"</span>: <span class="json-str">"arn:...:green-tg"</span>, <span class="json-key">"Weight"</span>: <span class="cs-num">100</span> }
+    ]
+  }
+}</pre>
+</div>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Pros</th><th>Cons</th></tr></thead>
+  <tbody>
+    <tr><td>Instant rollback — flip traffic back</td><td>Double infrastructure cost</td></tr>
+    <tr><td>Zero downtime deployment</td><td>DB migrations must be backward-compatible</td></tr>
+    <tr><td>Test Green before switch</td><td>Session affinity needs careful handling</td></tr>
+    <tr><td>No mixed-version requests</td><td>More complex to orchestrate</td></tr>
+  </tbody>
+</table></div>
+
+<div class="note">Database migrations with Blue/Green require the <strong>expand/contract pattern</strong>: (1) add nullable column — both versions work; (2) deploy Green, start writing new column; (3) backfill old rows; (4) next release: remove old column once Blue is retired.</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="canary">10. Canary Deployment</h2>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>Step 1:  5% → new (v1.3.0) | 95% → old (v1.2.0)
+         Monitor: error rate, P99, business KPIs
+Step 2: 25% → new | 75% → old   (if healthy)
+Step 3: 50% → new | 50% → old
+Step 4: 100% → new  ← canary complete, old pods removed
+         OR
+         ROLLBACK: shift 100% back to v1.2.0 if metrics degrade</pre>
+</div>
+
+<h3>Argo Rollouts (Kubernetes)</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="y-key">apiVersion:</span> <span class="y-str">argoproj.io/v1alpha1</span>
+<span class="y-key">kind:</span> <span class="y-str">Rollout</span>
+<span class="y-key">metadata:</span>
+  <span class="y-key">name:</span> <span class="y-str">myapp-api</span>
+<span class="y-key">spec:</span>
+  <span class="y-key">replicas:</span> <span class="y-num">10</span>
+  <span class="y-key">strategy:</span>
+    <span class="y-key">canary:</span>
+      <span class="y-key">steps:</span>
+        - <span class="y-key">setWeight:</span> <span class="y-num">5</span>
+        - <span class="y-key">pause:</span> {<span class="y-key">duration:</span> <span class="y-str">5m</span>}
+        - <span class="y-key">setWeight:</span> <span class="y-num">25</span>
+        - <span class="y-key">pause:</span> {<span class="y-key">duration:</span> <span class="y-str">10m</span>}
+        - <span class="y-key">setWeight:</span> <span class="y-num">50</span>
+        - <span class="y-key">pause:</span> {<span class="y-key">duration:</span> <span class="y-str">10m</span>}
+        - <span class="y-key">setWeight:</span> <span class="y-num">100</span>
+      <span class="y-key">analysis:</span>
+        <span class="y-key">templates:</span>
+          - <span class="y-key">templateName:</span> <span class="y-str">success-rate</span>
+        <span class="y-key">args:</span>
+          - <span class="y-key">name:</span> <span class="y-str">service-name</span>
+            <span class="y-key">value:</span> <span class="y-str">myapp-api-canary</span>
+<span class="y-comment">---</span>
+<span class="y-key">apiVersion:</span> <span class="y-str">argoproj.io/v1alpha1</span>
+<span class="y-key">kind:</span> <span class="y-str">AnalysisTemplate</span>
+<span class="y-key">metadata:</span>
+  <span class="y-key">name:</span> <span class="y-str">success-rate</span>
+<span class="y-key">spec:</span>
+  <span class="y-key">metrics:</span>
+    - <span class="y-key">name:</span> <span class="y-str">success-rate</span>
+      <span class="y-key">interval:</span> <span class="y-str">2m</span>
+      <span class="y-key">successCondition:</span> <span class="y-str">result[0] &gt;= 0.95</span>
+      <span class="y-key">failureLimit:</span> <span class="y-num">3</span>
+      <span class="y-key">provider:</span>
+        <span class="y-key">prometheus:</span>
+          <span class="y-key">address:</span> <span class="y-str">http://prometheus:9090</span>
+          <span class="y-key">query:</span> <span class="y-val">|</span>
+            <span class="y-str">sum(rate(http_requests_total{status!~"5.."}[5m]))</span>
+            <span class="y-str">/</span>
+            <span class="y-str">sum(rate(http_requests_total[5m]))</span></pre>
+</div>
+
+<h3>Canary vs Blue/Green — Decision Guide</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th></th><th>Blue/Green</th><th>Canary</th></tr></thead>
+  <tbody>
+    <tr><td>Rollback speed</td><td>Instant (traffic flip)</td><td>Graceful (reduce %)</td></tr>
+    <tr><td>Infrastructure cost</td><td>2× (whole env)</td><td>Minimal (few extra pods)</td></tr>
+    <tr><td>Risk exposure</td><td>All-or-nothing</td><td>Gradual</td></tr>
+    <tr><td>Automation needed</td><td>Low</td><td>High (metrics analysis)</td></tr>
+    <tr><td>Best for</td><td>Simple apps, large changes</td><td>High-traffic, confidence-building</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="iac">11. Infrastructure as Code</h2>
+
+<h3>Terraform</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">hcl</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="cs-comment">// ECS Service with circuit breaker</span>
+<span class="y-key">resource</span> <span class="y-str">"aws_ecs_service"</span> <span class="y-str">"myapp_api"</span> {
+  <span class="y-key">name</span>            = <span class="y-str">"myapp-api"</span>
+  <span class="y-key">cluster</span>         = aws_ecs_cluster.main.id
+  <span class="y-key">task_definition</span> = aws_ecs_task_definition.myapp_api.arn
+  <span class="y-key">desired_count</span>   = <span class="cs-num">3</span>
+
+  <span class="y-key">load_balancer</span> {
+    <span class="y-key">target_group_arn</span> = aws_lb_target_group.myapp_api.arn
+    <span class="y-key">container_name</span>   = <span class="y-str">"myapp-api"</span>
+    <span class="y-key">container_port</span>   = <span class="cs-num">8080</span>
+  }
+
+  <span class="y-key">deployment_circuit_breaker</span> {
+    <span class="y-key">enable</span>   = <span class="y-bool">true</span>
+    <span class="y-key">rollback</span> = <span class="y-bool">true</span>
+  }
+}
+
+<span class="sh-comment"># terraform plan -out=tfplan   → show changes, no apply</span>
+<span class="sh-comment"># terraform apply tfplan        → execute the plan</span>
+<span class="sh-comment"># State stored in S3 + DynamoDB lock (shared team state)</span></pre>
+</div>
+
+<h3>AWS CDK (C#)</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">csharp</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="cs-kw">public class</span> <span class="cs-type">MyAppStack</span> : <span class="cs-type">Stack</span>
+{
+    <span class="cs-kw">public</span> <span class="cs-type">MyAppStack</span>(<span class="cs-type">Construct</span> scope, <span class="cs-kw">string</span> id) : <span class="cs-kw">base</span>(scope, id)
+    {
+        <span class="cs-kw">var</span> cluster = <span class="cs-kw">new</span> <span class="cs-type">Cluster</span>(<span class="cs-kw">this</span>, <span class="cs-str">"MyCluster"</span>);
+
+        <span class="cs-kw">new</span> <span class="cs-type">ApplicationLoadBalancedFargateService</span>(<span class="cs-kw">this</span>, <span class="cs-str">"MyAppService"</span>,
+            <span class="cs-kw">new</span> <span class="cs-type">ApplicationLoadBalancedFargateServiceProps</span>
+            {
+                Cluster = cluster,
+                Cpu = <span class="cs-num">512</span>,
+                DesiredCount = <span class="cs-num">2</span>,
+                MemoryLimitMiB = <span class="cs-num">1024</span>,
+                TaskImageOptions = <span class="cs-kw">new</span> <span class="cs-type">ApplicationLoadBalancedTaskImageOptions</span>
+                {
+                    Image = <span class="cs-type">ContainerImage</span>.FromEcrRepository(
+                        <span class="cs-type">Repository</span>.FromRepositoryName(<span class="cs-kw">this</span>, <span class="cs-str">"Repo"</span>, <span class="cs-str">"myapp-api"</span>),
+                        <span class="cs-str">"latest"</span>)
+                }
+            });
+    }
+}</pre>
+</div>
+
+<h3>IaC Tool Comparison</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Tool</th><th>Language</th><th>Cloud</th><th>State</th></tr></thead>
+  <tbody>
+    <tr><td>Terraform</td><td>HCL</td><td>Multi-cloud</td><td>Remote (S3, Terraform Cloud)</td></tr>
+    <tr><td>AWS CDK</td><td>TS, Python, C#, Java</td><td>AWS only</td><td>CloudFormation</td></tr>
+    <tr><td>Pulumi</td><td>TS, Python, C#, Go</td><td>Multi-cloud</td><td>Pulumi Cloud / S3</td></tr>
+    <tr><td>CloudFormation</td><td>YAML/JSON</td><td>AWS only</td><td>Managed by AWS</td></tr>
+    <tr><td>Bicep / ARM</td><td>Bicep / JSON</td><td>Azure only</td><td>Managed by Azure</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="qa">12. Interview Q&amp;A Cheat Sheet</h2>
+
+<div class="qa-card">
+  <div class="qa-q">Walk me through your CI/CD pipeline.</div>
+  <div class="qa-a">
+    "Our GitHub Actions pipeline triggers on every PR to main. It runs restore, build, test with
+    coverage collection, and SonarQube analysis. If the quality gate passes and coverage is above 80%,
+    the Docker image is built using BuildKit with layer caching to ECR. Deployment to ECS uses the Amazon
+    ECS deploy action and waits for service stability. We use OIDC federation — no static AWS keys stored
+    anywhere as secrets."
+  </div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-q">How do you handle secrets in your pipelines?</div>
+  <div class="qa-a">
+    "We use OIDC federation for AWS — the pipeline assumes an IAM role via a temporary JWT token, so
+    there are no long-lived AWS keys. Application secrets like database passwords live in AWS Secrets
+    Manager, injected as ECS task environment variables at runtime. GitHub repository secrets hold only
+    the OIDC role ARN and non-sensitive config like region names."
+  </div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-q">What is the difference between canary and blue/green deployments?</div>
+  <div class="qa-a">
+    "Blue/green is a binary switch — two full environments, flip all traffic at once. Fast rollback but
+    costs double. Canary gradually shifts traffic — 5% → 25% → 100% — with automated metric analysis to
+    promote or abort. Canary exposes fewer users to risk and gives you confidence before full exposure.
+    Blue/green is simpler and better when you want a clean cut with minimal automation overhead."
+  </div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-q">How do you enforce code coverage thresholds?</div>
+  <div class="qa-a">
+    "We configure a SonarQube quality gate that fails the pipeline if coverage on new code drops below
+    80%. The <code>sonar.qualitygate.wait=true</code> flag blocks the pipeline until the server-side
+    evaluation completes. We also generate a Cobertura XML report that Azure DevOps displays inline on
+    the PR so reviewers see coverage without leaving the review UI."
+  </div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-q">What are feature flags and when do you use them?</div>
+  <div class="qa-a">
+    "Feature flags decouple when you deploy from when users see the feature. We use
+    Microsoft.FeatureManagement in .NET for simple flags backed by Azure App Configuration, and
+    LaunchDarkly for complex targeting. A typical use case: deploy a new payment flow behind a flag,
+    enable for internal team first, roll out to 5% of users, monitor error rates and conversion metrics,
+    and expand to 100% over two weeks. If something goes wrong, flip the flag — no deploy, no incident."
+  </div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-q">How do you implement zero-downtime deployment?</div>
+  <div class="qa-a">
+    "For ECS, rolling update with minimum healthy percent of 100% — new tasks must start successfully
+    before old ones stop. ALB health checks ensure traffic only reaches a task once it returns 200 on
+    <code>/health</code>. For databases, we use expand/contract migrations: add nullable columns in one
+    release, backfill, then remove the old column in a subsequent release — never breaking the currently
+    deployed version."
+  </div>
+</div>
+
+<div class="qa-card">
+  <div class="qa-q">What is SonarQube and how does it fit in CI?</div>
+  <div class="qa-a">
+    "SonarQube provides static code analysis — it detects bugs, security vulnerabilities, code smells,
+    and duplication without running the code. It tracks technical debt over time. In our pipeline,
+    dotnet-sonarscanner wraps the build. After tests run and coverage reports generate, the scanner ships
+    everything to SonarQube. We fail the pipeline if the quality gate is ERROR — typically coverage below
+    80% or new critical vulnerabilities. This enforces quality as a hard gate, not a suggestion."
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="pitfalls">Common Pitfalls Table</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Topic</th><th>Common Mistake</th><th>Better Answer</th></tr></thead>
+  <tbody>
+    <tr><td>Branching</td><td>"We use GitFlow" without context</td><td>Explain why your cadence fits that strategy</td></tr>
+    <tr><td>Secrets</td><td>"Stored in GitHub secrets"</td><td>Mention OIDC or secret rotation policy</td></tr>
+    <tr><td>Coverage</td><td>"We aim for 100%"</td><td>"80%+ on business logic, exclude generated code"</td></tr>
+    <tr><td>Blue/Green</td><td>Forgetting database migrations</td><td>Expand/contract pattern, backward-compatible first</td></tr>
+    <tr><td>Feature flags</td><td>"We use env vars as flags"</td><td>Named flag system with targeting and audit trail</td></tr>
+    <tr><td>IaC</td><td>"We use CloudFormation" (no detail)</td><td>Mention diff-ability, PR review, state management</td></tr>
+    <tr><td>Docker</td><td>"We cache Docker layers"</td><td>Mention BuildKit, cache-from ECR, multi-stage builds</td></tr>
+    <tr><td>Deployment</td><td>"We just push to prod"</td><td>Describe the specific strategy, rollback mechanism</td></tr>
+  </tbody>
+</table></div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  // ── Copy button logic ──────────────────────────
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // ── Active sidebar link on scroll ─────────────
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links    = document.querySelectorAll('#sidebar nav a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`#sidebar nav a[href="#${entry.target.id}"]`);
+        if (active) {
+          active.classList.add('active');
+          active.scrollIntoView({ block: 'nearest' });
+        }
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px', threshold: 0 });
+
+  headings.forEach(h => observer.observe(h));
+</script>
+</body>
+</html>

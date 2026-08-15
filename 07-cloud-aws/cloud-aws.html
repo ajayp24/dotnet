@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud (AWS) — Lead .NET Interview Prep</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --heading: #58a6ff;
+    --keyword: #ff7b72;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --orange: #f0883e;
+    --cyan: #39d353;
+    --code-bg: #0d1117;
+    --sidebar-w: 280px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+  }
+
+  /* ── Sidebar ── */
+  #sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    padding: 20px 0 40px;
+    flex-shrink: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-muted);
+    padding: 0 20px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  #sidebar a {
+    display: block;
+    padding: 5px 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 2px solid transparent;
+    transition: all .15s;
+    line-height: 1.4;
+  }
+  #sidebar a:hover, #sidebar a.active {
+    color: var(--heading);
+    border-left-color: var(--heading);
+    background: rgba(88,166,255,.06);
+  }
+  .toc-section { margin-bottom: 4px; }
+  .toc-h2 { font-weight: 600; color: var(--text); }
+  .toc-h3 { padding-left: 32px !important; font-size: 12px !important; }
+
+  /* ── Main ── */
+  #main {
+    flex: 1;
+    padding: 48px 56px 80px;
+    max-width: calc(860px + 56px * 2);
+    overflow-x: hidden;
+  }
+
+  /* Page header */
+  .page-header {
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 8px;
+  }
+  .page-header p { color: var(--text-muted); font-size: 14px; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+  /* AWS service badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .badge-ecs   { background: rgba(63,185,80,.15);  color: #3fb950; border: 1px solid rgba(63,185,80,.3); }
+  .badge-eks   { background: rgba(88,166,255,.15); color: #58a6ff; border: 1px solid rgba(88,166,255,.3); }
+  .badge-lambda{ background: rgba(240,136,62,.15); color: #f0883e; border: 1px solid rgba(240,136,62,.3); }
+  .badge-s3    { background: rgba(188,140,255,.15);color: #bc8cff; border: 1px solid rgba(188,140,255,.3); }
+  .badge-sqs   { background: rgba(210,153,34,.15); color: #d29922; border: 1px solid rgba(210,153,34,.3); }
+  .badge-sns   { background: rgba(255,123,114,.15);color: #ff7b72; border: 1px solid rgba(255,123,114,.3); }
+  .badge-dynamo{ background: rgba(57,211,83,.15);  color: #39d353; border: 1px solid rgba(57,211,83,.3); }
+  .badge-rds   { background: rgba(88,166,255,.15); color: #58a6ff; border: 1px solid rgba(88,166,255,.3); }
+  .badge-iam   { background: rgba(255,123,114,.15);color: #ff7b72; border: 1px solid rgba(255,123,114,.3); }
+  .badge-vpc   { background: rgba(63,185,80,.15);  color: #3fb950; border: 1px solid rgba(63,185,80,.3); }
+  .badge-cw    { background: rgba(240,136,62,.15); color: #f0883e; border: 1px solid rgba(240,136,62,.3); }
+  .badge-alb   { background: rgba(188,140,255,.15);color: #bc8cff; border: 1px solid rgba(188,140,255,.3); }
+  .badge-r53   { background: rgba(210,153,34,.15); color: #d29922; border: 1px solid rgba(210,153,34,.3); }
+  .badge-sm    { background: rgba(255,123,114,.15);color: #ff7b72; border: 1px solid rgba(255,123,114,.3); }
+  .badge-cf    { background: rgba(57,211,83,.15);  color: #39d353; border: 1px solid rgba(57,211,83,.3); }
+
+  /* Headings */
+  h2 {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--heading);
+    margin: 56px 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    scroll-margin-top: 24px;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--keyword);
+    margin: 32px 0 12px;
+    scroll-margin-top: 24px;
+  }
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--yellow);
+    margin: 24px 0 8px;
+  }
+
+  /* Paragraphs */
+  p { margin-bottom: 14px; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; margin: 16px 0 24px; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    background: var(--surface2);
+    color: var(--heading);
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+
+  /* Code blocks */
+  .code-block {
+    position: relative;
+    margin: 16px 0 24px;
+  }
+  .code-block .lang-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 8px 0 8px 0;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+    z-index: 1;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--heading); }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 42px 18px 18px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.65;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  code { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  p code, li code, td code {
+    background: rgba(110,118,129,.15);
+    border: 1px solid rgba(110,118,129,.25);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    color: var(--orange);
+  }
+
+  /* Syntax highlighting classes */
+  .kw  { color: var(--keyword); }
+  .str { color: #a5d6ff; }
+  .cmt { color: var(--text-muted); font-style: italic; }
+  .num { color: var(--cyan); }
+  .cls { color: var(--yellow); }
+  .prop{ color: var(--purple); }
+  .op  { color: var(--text-muted); }
+
+  /* Architecture diagram */
+  .arch-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0 24px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--cyan);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* Callout boxes */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0 24px;
+    border-left: 3px solid;
+    font-size: 14px;
+  }
+  .callout-info  { background: rgba(88,166,255,.08);  border-color: var(--heading); }
+  .callout-warn  { background: rgba(210,153,34,.08);  border-color: var(--yellow); }
+  .callout-tip   { background: rgba(63,185,80,.08);   border-color: var(--green); }
+  .callout-danger{ background: rgba(255,123,114,.08); border-color: var(--keyword); }
+  .callout strong { color: var(--heading); }
+  .callout-warn strong { color: var(--yellow); }
+  .callout-tip strong  { color: var(--green); }
+  .callout-danger strong { color: var(--keyword); }
+
+  /* Q&A */
+  .qa-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 24px 0;
+    overflow: hidden;
+  }
+  .qa-question {
+    background: rgba(88,166,255,.08);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    font-weight: 700;
+    color: var(--heading);
+    font-size: 15px;
+  }
+  .qa-question::before { content: 'Q: '; color: var(--keyword); }
+  .qa-answer { padding: 18px 20px; }
+
+  /* Lists */
+  ul, ol { padding-left: 24px; margin-bottom: 14px; }
+  li { margin-bottom: 5px; }
+  li::marker { color: var(--heading); }
+
+  /* Section divider */
+  hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  /* Decision matrix highlight */
+  .highlight-row { background: rgba(88,166,255,.07) !important; }
+
+  /* Scroll indicator */
+  #progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--heading);
+    z-index: 100;
+    transition: width .1s;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ── Sidebar ── -->
+<nav id="sidebar">
+  <div class="sidebar-title">AWS — Lead .NET Prep</div>
+  <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+  <div class="toc-section"><a href="#compute" class="toc-h2">1. Compute: ECS / EKS / Lambda</a></div>
+  <div class="toc-section"><a href="#storage" class="toc-h2">2. Storage & CDN</a></div>
+  <div class="toc-section"><a href="#iam" class="toc-h2">3. IAM</a></div>
+  <div class="toc-section"><a href="#secrets" class="toc-h2">4. Secrets Manager vs SSM</a></div>
+  <div class="toc-section"><a href="#sqs-sns" class="toc-h2">5. SQS vs SNS</a></div>
+  <div class="toc-section"><a href="#dynamodb" class="toc-h2">6. DynamoDB</a></div>
+  <div class="toc-section"><a href="#rds" class="toc-h2">7. RDS</a></div>
+  <div class="toc-section"><a href="#cloudwatch" class="toc-h2">8. CloudWatch</a></div>
+  <div class="toc-section"><a href="#autoscaling" class="toc-h2">9. Auto Scaling</a></div>
+  <div class="toc-section"><a href="#alb" class="toc-h2">10. ALB</a></div>
+  <div class="toc-section"><a href="#vpc" class="toc-h2">11. VPC & Networking</a></div>
+  <div class="toc-section"><a href="#route53" class="toc-h2">12. Route 53</a></div>
+  <div class="toc-section"><a href="#scenarios" class="toc-h2">13. Scenario Q&amp;A</a>
+    <a href="#qa-zero-downtime" class="toc-h3">Zero Downtime Deploy</a>
+    <a href="#qa-scale" class="toc-h3">Scale .NET API</a>
+    <a href="#qa-secrets" class="toc-h3">Secure Secrets</a>
+    <a href="#qa-autoscaling" class="toc-h3">Autoscaling Strategy</a>
+  </div>
+</nav>
+
+<!-- ── Main Content ── -->
+<main id="main">
+
+<div class="page-header">
+  <h1>Cloud (AWS) — Lead .NET Interview Prep</h1>
+  <p>Comprehensive guide to AWS services, architecture patterns, and C# SDK examples for senior engineering interviews.</p>
+  <div class="badge-row">
+    <span class="badge badge-ecs">ECS</span>
+    <span class="badge badge-eks">EKS</span>
+    <span class="badge badge-lambda">Lambda</span>
+    <span class="badge badge-s3">S3</span>
+    <span class="badge badge-cf">CloudFront</span>
+    <span class="badge badge-iam">IAM</span>
+    <span class="badge badge-sm">Secrets Manager</span>
+    <span class="badge badge-sqs">SQS</span>
+    <span class="badge badge-sns">SNS</span>
+    <span class="badge badge-dynamo">DynamoDB</span>
+    <span class="badge badge-rds">RDS</span>
+    <span class="badge badge-cw">CloudWatch</span>
+    <span class="badge badge-alb">ALB</span>
+    <span class="badge badge-vpc">VPC</span>
+    <span class="badge badge-r53">Route 53</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="compute">1. Compute: ECS vs EKS vs Fargate vs Lambda</h2>
+
+<h3>ECS — Elastic Container Service</h3>
+<p>AWS-native container orchestration. You define <code>Task Definitions</code> (container image, CPU, memory, env vars, IAM role) and run them as <code>Services</code> (long-running) or standalone <code>Tasks</code> (one-off jobs).</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th>EC2 Launch Type</th><th>Fargate Launch Type</th></tr></thead>
+  <tbody>
+    <tr><td>Server management</td><td>You manage EC2 instances</td><td>AWS manages all infra</td></tr>
+    <tr><td>Cost model</td><td>Pay for reserved EC2 capacity</td><td>Pay per vCPU/memory/second</td></tr>
+    <tr><td>Startup time</td><td>Fast (containers on running EC2)</td><td>Slightly slower (~10–30s)</td></tr>
+    <tr><td>Best for</td><td>High throughput, cost optimization at scale</td><td>Simplicity, variable workloads</td></tr>
+  </tbody>
+</table></div>
+
+<h3>EKS — Elastic Kubernetes Service</h3>
+<p>Managed Kubernetes control plane. AWS handles etcd, API server, and upgrades. You manage worker nodes (EC2 or Fargate profiles). Choose EKS when your team already knows Kubernetes, you need Kubernetes-native features (Helm, custom CRDs, Istio), or multi-cloud portability matters.</p>
+
+<h3>Lambda — Serverless Functions</h3>
+<p>Event-driven, no container management. Key limits: 15-minute max, 10 GB memory, 1,000 default concurrent executions per region. <span class="kw">Cold start</span> problem affects .NET — first invocation after idle can take 100ms–2s.</p>
+
+<div class="callout callout-tip">
+  <strong>Cold Start Mitigation for .NET Lambda:</strong> Use Provisioned Concurrency (keeps N instances warm), compile with Native AOT (drastic cold start reduction), minimize package size, and avoid slow static initializers.
+</div>
+
+<h3>Decision Matrix</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Scenario</th><th>Best Choice</th></tr></thead>
+  <tbody>
+    <tr class="highlight-row"><td>Containerized .NET API, team owns infra</td><td><span class="badge badge-ecs">ECS Fargate</span></td></tr>
+    <tr><td>Need Kubernetes ecosystem (Helm, Istio, CRDs)</td><td><span class="badge badge-eks">EKS</span></td></tr>
+    <tr><td>Max cost efficiency, heavy steady traffic</td><td>ECS on EC2</td></tr>
+    <tr><td>Event-driven, short-lived processing</td><td><span class="badge badge-lambda">Lambda</span></td></tr>
+    <tr><td>Batch jobs, infrequent heavy processing</td><td>ECS Fargate Tasks</td></tr>
+    <tr><td>Sub-100ms latency, no cold start tolerance</td><td>ECS Fargate (always-on)</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Real Scenario: .NET API on ECS Fargate</h3>
+<div class="code-block">
+  <span class="lang-label">JSON — ECS Task Definition</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>{
+  <span class="prop">"family"</span>: <span class="str">"orders-api"</span>,
+  <span class="prop">"networkMode"</span>: <span class="str">"awsvpc"</span>,
+  <span class="prop">"requiresCompatibilities"</span>: [<span class="str">"FARGATE"</span>],
+  <span class="prop">"cpu"</span>: <span class="str">"512"</span>,
+  <span class="prop">"memory"</span>: <span class="str">"1024"</span>,
+  <span class="prop">"executionRoleArn"</span>: <span class="str">"arn:aws:iam::123456789:role/ecsTaskExecutionRole"</span>,
+  <span class="prop">"taskRoleArn"</span>: <span class="str">"arn:aws:iam::123456789:role/orders-api-task-role"</span>,
+  <span class="prop">"containerDefinitions"</span>: [
+    {
+      <span class="prop">"name"</span>: <span class="str">"orders-api"</span>,
+      <span class="prop">"image"</span>: <span class="str">"123456789.dkr.ecr.us-east-1.amazonaws.com/orders-api:latest"</span>,
+      <span class="prop">"portMappings"</span>: [{ <span class="prop">"containerPort"</span>: <span class="num">8080</span> }],
+      <span class="prop">"environment"</span>: [
+        { <span class="prop">"name"</span>: <span class="str">"ASPNETCORE_ENVIRONMENT"</span>, <span class="prop">"value"</span>: <span class="str">"Production"</span> }
+      ],
+      <span class="prop">"secrets"</span>: [
+        {
+          <span class="prop">"name"</span>: <span class="str">"ConnectionStrings__OrdersDb"</span>,
+          <span class="prop">"valueFrom"</span>: <span class="str">"arn:aws:secretsmanager:us-east-1:123456789:secret:prod/orders/db-conn"</span>
+        }
+      ],
+      <span class="prop">"logConfiguration"</span>: {
+        <span class="prop">"logDriver"</span>: <span class="str">"awslogs"</span>,
+        <span class="prop">"options"</span>: {
+          <span class="prop">"awslogs-group"</span>: <span class="str">"/ecs/orders-api"</span>,
+          <span class="prop">"awslogs-region"</span>: <span class="str">"us-east-1"</span>,
+          <span class="prop">"awslogs-stream-prefix"</span>: <span class="str">"ecs"</span>
+        }
+      }
+    }
+  ]
+}</code></pre>
+</div>
+
+<div class="arch-box">Architecture: .NET API on ECS Fargate
+
+   Internet
+      |
+   [Route 53]
+      |
+   [ALB]  ← public subnet
+      |
+ [ECS Service]
+ [Fargate Tasks - .NET API]  ← private subnet
+      |               |
+   [RDS]        [Secrets Manager]
+ ← private subnet    ← via VPC Endpoint</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="storage">2. Storage & CDN: S3 + CloudFront</h2>
+
+<h3>S3 Storage Classes</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Class</th><th>Use Case</th><th>Min Duration</th><th>Retrieval</th></tr></thead>
+  <tbody>
+    <tr><td>Standard</td><td>Hot data, frequent access</td><td>None</td><td>Immediate</td></tr>
+    <tr><td>Intelligent-Tiering</td><td>Unknown/variable access</td><td>None</td><td>Immediate</td></tr>
+    <tr><td>Standard-IA</td><td>Infrequent, still fast</td><td>30 days</td><td>Immediate</td></tr>
+    <tr><td>One Zone-IA</td><td>IA data, loss-tolerant</td><td>30 days</td><td>Immediate</td></tr>
+    <tr><td>Glacier Instant</td><td>Archive, ms retrieval</td><td>90 days</td><td>Milliseconds</td></tr>
+    <tr><td>Glacier Flexible</td><td>Archive</td><td>90 days</td><td>Minutes–hours</td></tr>
+    <tr><td>Glacier Deep Archive</td><td>Long-term archive</td><td>180 days</td><td>12–48 hours</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Lifecycle Policy Example</h3>
+<div class="code-block">
+  <span class="lang-label">JSON</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>{
+  <span class="prop">"Rules"</span>: [
+    {
+      <span class="prop">"ID"</span>: <span class="str">"archive-old-invoices"</span>,
+      <span class="prop">"Status"</span>: <span class="str">"Enabled"</span>,
+      <span class="prop">"Filter"</span>: { <span class="prop">"Prefix"</span>: <span class="str">"invoices/"</span> },
+      <span class="prop">"Transitions"</span>: [
+        { <span class="prop">"Days"</span>: <span class="num">30</span>, <span class="prop">"StorageClass"</span>: <span class="str">"STANDARD_IA"</span> },
+        { <span class="prop">"Days"</span>: <span class="num">90</span>, <span class="prop">"StorageClass"</span>: <span class="str">"GLACIER"</span> }
+      ],
+      <span class="prop">"Expiration"</span>: { <span class="prop">"Days"</span>: <span class="num">2555</span> }
+    }
+  ]
+}</code></pre>
+</div>
+
+<h3>Presigned URLs — C# Example</h3>
+<div class="code-block">
+  <span class="lang-label">C# — NuGet: AWSSDK.S3</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="kw">public class</span> <span class="cls">S3Service</span>
+{
+    <span class="kw">private readonly</span> <span class="cls">IAmazonS3</span> _s3Client;
+
+    <span class="kw">public</span> <span class="cls">S3Service</span>(<span class="cls">IAmazonS3</span> s3Client) => _s3Client = s3Client;
+
+    <span class="kw">public string</span> GeneratePresignedDownloadUrl(<span class="kw">string</span> bucket, <span class="kw">string</span> key, <span class="kw">int</span> expiryMinutes = <span class="num">15</span>)
+    {
+        <span class="kw">var</span> request = <span class="kw">new</span> <span class="cls">GetPreSignedUrlRequest</span>
+        {
+            BucketName = bucket,
+            Key = key,
+            Verb = <span class="cls">HttpVerb</span>.GET,
+            Expires = <span class="cls">DateTime</span>.UtcNow.AddMinutes(expiryMinutes)
+        };
+        <span class="kw">return</span> _s3Client.GetPreSignedURL(request);
+    }
+
+    <span class="kw">public string</span> GeneratePresignedUploadUrl(<span class="kw">string</span> bucket, <span class="kw">string</span> key, <span class="kw">int</span> expiryMinutes = <span class="num">10</span>)
+    {
+        <span class="kw">var</span> request = <span class="kw">new</span> <span class="cls">GetPreSignedUrlRequest</span>
+        {
+            BucketName = bucket,
+            Key = key,
+            Verb = <span class="cls">HttpVerb</span>.PUT,
+            Expires = <span class="cls">DateTime</span>.UtcNow.AddMinutes(expiryMinutes),
+            ContentType = <span class="str">"application/octet-stream"</span>
+        };
+        <span class="kw">return</span> _s3Client.GetPreSignedURL(request);
+    }
+}
+</code></pre>
+</div>
+
+<h3>CloudFront Architecture</h3>
+<div class="arch-box">CloudFront Distribution — Cache Behavior Rules
+
+CloudFront Distribution
+├── /api/*          → Origin: ALB         (no cache, forward all headers)
+├── /assets/*       → Origin: S3 bucket   (cache 1 year, compress gzip/br)
+├── /               → Origin: S3 bucket   (cache 5 minutes)
+└── Default (*)     → Origin: ALB
+
+Private File Download Flow:
+1. User → /api/files/{id}/download  (.NET API checks auth)
+2. API generates presigned S3 URL   (15 min expiry)
+3. API returns 302 redirect to presigned URL
+4. User downloads directly from S3  (no API bandwidth cost)</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="iam">3. IAM — Identity and Access Management</h2>
+
+<h3>Core Entities</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Entity</th><th>Description</th><th>Use For</th></tr></thead>
+  <tbody>
+    <tr><td><strong>User</strong></td><td>Human or service with long-term credentials</td><td>Human access, legacy service accounts</td></tr>
+    <tr><td><strong>Group</strong></td><td>Collection of users — attach policies to group</td><td>Batch-grant permissions to a team</td></tr>
+    <tr><td><strong>Role</strong></td><td>Assumed by services/users temporarily</td><td>EC2, ECS tasks, Lambda, cross-account</td></tr>
+    <tr><td><strong>Policy</strong></td><td>JSON: Allow/Deny on Actions and Resources</td><td>Define permissions for any entity</td></tr>
+  </tbody>
+</table></div>
+
+<h3>ECS Task Roles — Two Required Roles</h3>
+<div class="callout callout-info">
+  <strong>Execution Role</strong> — used by the ECS agent to pull the Docker image from ECR, write logs to CloudWatch, and inject secrets at container startup.<br><br>
+  <strong>Task Role</strong> — used by your application code at runtime to call AWS services (S3, SQS, DynamoDB, Secrets Manager). This is what your C# code uses.
+</div>
+
+<div class="code-block">
+  <span class="lang-label">JSON — Task Role Policy</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>{
+  <span class="prop">"Version"</span>: <span class="str">"2012-10-17"</span>,
+  <span class="prop">"Statement"</span>: [
+    {
+      <span class="prop">"Effect"</span>: <span class="str">"Allow"</span>,
+      <span class="prop">"Action"</span>: [<span class="str">"s3:GetObject"</span>, <span class="str">"s3:PutObject"</span>],
+      <span class="prop">"Resource"</span>: <span class="str">"arn:aws:s3:::orders-documents/*"</span>
+    },
+    {
+      <span class="prop">"Effect"</span>: <span class="str">"Allow"</span>,
+      <span class="prop">"Action"</span>: [<span class="str">"secretsmanager:GetSecretValue"</span>],
+      <span class="prop">"Resource"</span>: <span class="str">"arn:aws:secretsmanager:us-east-1:123456789:secret:prod/orders/*"</span>
+    },
+    {
+      <span class="prop">"Effect"</span>: <span class="str">"Allow"</span>,
+      <span class="prop">"Action"</span>: [<span class="str">"sqs:SendMessage"</span>, <span class="str">"sqs:ReceiveMessage"</span>, <span class="str">"sqs:DeleteMessage"</span>],
+      <span class="prop">"Resource"</span>: <span class="str">"arn:aws:sqs:us-east-1:123456789:orders-queue"</span>
+    }
+  ]
+}</code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="secrets">4. Secrets Manager vs Parameter Store</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th>Secrets Manager</th><th>Parameter Store (SSM)</th></tr></thead>
+  <tbody>
+    <tr><td>Cost</td><td>~$0.40/secret/month</td><td>Free (standard tier)</td></tr>
+    <tr><td>Auto-rotation</td><td>Yes — built-in Lambda rotation</td><td>No</td></tr>
+    <tr><td>Max size</td><td>65 KB</td><td>4 KB standard, 8 KB advanced</td></tr>
+    <tr><td>Versioning</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>Best for</td><td>DB passwords, API keys, certificates</td><td>App config, feature flags, non-secret config</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout callout-tip">
+  <strong>Rule of thumb:</strong> If it rotates → Secrets Manager. If it's configuration (even sensitive) with no rotation → Parameter Store SecureString.
+</div>
+
+<h3>C# — Reading from Secrets Manager at Startup</h3>
+<div class="code-block">
+  <span class="lang-label">C# — NuGet: AWSSDK.SecretsManager</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="cmt">// Extension method to inject secrets into IConfiguration</span>
+<span class="kw">public static class</span> <span class="cls">SecretsManagerExtensions</span>
+{
+    <span class="kw">public static</span> <span class="cls">IConfigurationBuilder</span> AddSecretsManager(
+        <span class="kw">this</span> <span class="cls">IConfigurationBuilder</span> builder, <span class="kw">string</span> secretArn)
+    {
+        <span class="kw">var</span> client = <span class="kw">new</span> <span class="cls">AmazonSecretsManagerClient</span>();
+        <span class="kw">var</span> request = <span class="kw">new</span> <span class="cls">GetSecretValueRequest</span> { SecretId = secretArn };
+        <span class="kw">var</span> response = client.GetSecretValueAsync(request).GetAwaiter().GetResult();
+
+        <span class="cmt">// Secret JSON: {"username":"admin","password":"p@ssw0rd","host":"db.internal"}</span>
+        <span class="kw">var</span> secret = <span class="cls">JsonSerializer</span>.Deserialize&lt;<span class="cls">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;&gt;(response.SecretString)!;
+
+        <span class="kw">var</span> configData = <span class="kw">new</span> <span class="cls">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">string?</span>&gt;
+        {
+            [<span class="str">"ConnectionStrings:OrdersDb"</span>] =
+                <span class="str">$"Host={secret["host"]};Database=orders;Username={secret["username"]};Password={secret["password"]}"</span>
+        };
+
+        builder.AddInMemoryCollection(configData);
+        <span class="kw">return</span> builder;
+    }
+}
+
+<span class="cmt">// Program.cs</span>
+<span class="kw">var</span> builder = <span class="cls">WebApplication</span>.CreateBuilder(args);
+builder.Configuration.AddSecretsManager(
+    secretArn: <span class="cls">Environment</span>.GetEnvironmentVariable(<span class="str">"DB_SECRET_ARN"</span>)!
+);
+</code></pre>
+</div>
+
+<h3>C# — Reading at Runtime with Caching</h3>
+<div class="code-block">
+  <span class="lang-label">C#</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="kw">public class</span> <span class="cls">DatabaseConnectionFactory</span>
+{
+    <span class="kw">private readonly</span> <span class="cls">IAmazonSecretsManager</span> _secrets;
+    <span class="kw">private readonly</span> <span class="cls">IMemoryCache</span> _cache;
+
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="kw">string</span>&gt; GetConnectionStringAsync()
+    {
+        <span class="kw">return await</span> _cache.GetOrCreateAsync(<span class="str">"db-conn"</span>, <span class="kw">async</span> entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = <span class="cls">TimeSpan</span>.FromMinutes(<span class="num">10</span>);
+            <span class="kw">var</span> response = <span class="kw">await</span> _secrets.GetSecretValueAsync(<span class="kw">new</span> <span class="cls">GetSecretValueRequest</span>
+            {
+                SecretId = <span class="str">"prod/orders/db"</span>,
+                VersionStage = <span class="str">"AWSCURRENT"</span>
+            });
+            <span class="kw">var</span> s = <span class="cls">JsonSerializer</span>.Deserialize&lt;<span class="cls">DbSecret</span>&gt;(response.SecretString)!;
+            <span class="kw">return</span> <span class="str">$"Host={s.Host};Database={s.DbName};Username={s.Username};Password={s.Password}"</span>;
+        });
+    }
+}
+</code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="sqs-sns">5. SQS vs SNS</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th><span class="badge badge-sqs">SQS</span></th><th><span class="badge badge-sns">SNS</span></th></tr></thead>
+  <tbody>
+    <tr><td>Model</td><td>Pull (consumer polls)</td><td>Push (subscriber receives)</td></tr>
+    <tr><td>Delivery</td><td>At-least-once</td><td>At-least-once per subscriber</td></tr>
+    <tr><td>Persistence</td><td>Messages queue until consumed</td><td>No persistence (fire-and-forget)</td></tr>
+    <tr><td>Subscribers</td><td>One consumer group</td><td>Fan-out to many (SQS, Lambda, HTTP, email)</td></tr>
+    <tr><td>Ordering</td><td>FIFO queues available</td><td>No ordering guarantee</td></tr>
+    <tr><td>Use case</td><td>Task queue, work distribution</td><td>Event broadcasting, fan-out</td></tr>
+  </tbody>
+</table></div>
+
+<h3>SQS: Standard vs FIFO</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th>Standard</th><th>FIFO</th></tr></thead>
+  <tbody>
+    <tr><td>Ordering</td><td>Best-effort</td><td>Strict FIFO</td></tr>
+    <tr><td>Duplicates</td><td>Possible</td><td>5-min dedup window</td></tr>
+    <tr><td>Throughput</td><td>Unlimited</td><td>300 TPS (3,000 with batching)</td></tr>
+    <tr><td>Use case</td><td>Max throughput, order not critical</td><td>Financial transactions, ordered events</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Fan-Out Pattern</h3>
+<div class="arch-box">Order Placed → SNS Fan-Out
+
+[Order Service]
+       |
+[SNS: order-placed-topic]
+       |
+  ┌────┼────────────┐
+  ↓    ↓            ↓
+[SQS: [SQS:       [SQS:
+inventory] billing] notifications]
+  |       |          |
+[Inv.  [Billing  [Email/SMS
+ Svc]    Svc]     Svc]</div>
+
+<h3>C# — SQS Consumer (BackgroundService)</h3>
+<div class="code-block">
+  <span class="lang-label">C# — NuGet: AWSSDK.SQS</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="kw">public class</span> <span class="cls">InventoryQueueConsumer</span> : <span class="cls">BackgroundService</span>
+{
+    <span class="kw">private readonly</span> <span class="cls">IAmazonSQS</span> _sqs;
+    <span class="kw">private readonly string</span> _queueUrl;
+    <span class="kw">private readonly</span> <span class="cls">ILogger</span>&lt;<span class="cls">InventoryQueueConsumer</span>&gt; _logger;
+
+    <span class="kw">protected override async</span> <span class="cls">Task</span> ExecuteAsync(<span class="cls">CancellationToken</span> stoppingToken)
+    {
+        <span class="kw">while</span> (!stoppingToken.IsCancellationRequested)
+        {
+            <span class="kw">var</span> response = <span class="kw">await</span> _sqs.ReceiveMessageAsync(<span class="kw">new</span> <span class="cls">ReceiveMessageRequest</span>
+            {
+                QueueUrl = _queueUrl,
+                MaxNumberOfMessages = <span class="num">10</span>,
+                WaitTimeSeconds = <span class="num">20</span>,     <span class="cmt">// Long polling — reduces empty responses</span>
+                VisibilityTimeout = <span class="num">60</span>
+            }, stoppingToken);
+
+            <span class="kw">foreach</span> (<span class="kw">var</span> message <span class="kw">in</span> response.Messages)
+            {
+                <span class="kw">try</span>
+                {
+                    <span class="cmt">// SNS wraps message in envelope</span>
+                    <span class="kw">var</span> envelope = <span class="cls">JsonSerializer</span>.Deserialize&lt;<span class="cls">SnsEnvelope</span>&gt;(message.Body)!;
+                    <span class="kw">var</span> order = <span class="cls">JsonSerializer</span>.Deserialize&lt;<span class="cls">OrderPlacedEvent</span>&gt;(envelope.Message)!;
+
+                    <span class="kw">await</span> ProcessInventoryAsync(order);
+
+                    <span class="cmt">// Delete ONLY after successful processing</span>
+                    <span class="kw">await</span> _sqs.DeleteMessageAsync(_queueUrl, message.ReceiptHandle, stoppingToken);
+                }
+                <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+                {
+                    _logger.LogError(ex, <span class="str">"Failed to process {MessageId}"</span>, message.MessageId);
+                    <span class="cmt">// Do NOT delete — visibility timeout expires, message reappears</span>
+                    <span class="cmt">// After maxReceiveCount failures → moves to DLQ automatically</span>
+                }
+            }
+        }
+    }
+}
+</code></pre>
+</div>
+
+<div class="callout callout-warn">
+  <strong>DLQ Strategy:</strong> Set <code>maxReceiveCount: 3</code> on your SQS queue. After 3 failures, the message automatically moves to the DLQ. Create a CloudWatch Alarm on <code>ApproximateNumberOfMessagesVisible &gt; 0</code> on the DLQ → SNS → PagerDuty. Use a Lambda replayer to re-enqueue DLQ messages after fixing the bug.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="dynamodb">6. DynamoDB</h2>
+
+<h3>GSI vs LSI</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th>GSI (Global Secondary Index)</th><th>LSI (Local Secondary Index)</th></tr></thead>
+  <tbody>
+    <tr><td>Partition Key</td><td>Can be ANY attribute</td><td>Must match table PK</td></tr>
+    <tr><td>Sort Key</td><td>Optional</td><td>Required (different from table SK)</td></tr>
+    <tr><td>When defined</td><td>Anytime (add/delete later)</td><td>Only at table creation</td></tr>
+    <tr><td>Consistency</td><td>Eventually consistent only</td><td>Strongly consistent available</td></tr>
+    <tr><td>Limit</td><td>20 per table</td><td>5 per table</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Single-Table Design — Order System</h3>
+<div class="arch-box">Single-Table Design: Order System
+
+PK                 | SK                 | Type     | Attributes
+-------------------|--------------------|----------|------------------
+CUSTOMER#cust-001  | METADATA           | Customer | name, email
+CUSTOMER#cust-001  | ORDER#2024-001     | Order    | total, status
+CUSTOMER#cust-001  | ORDER#2024-002     | Order    | total, status
+ORDER#2024-001     | METADATA           | Order    | customerId, total
+ORDER#2024-001     | ITEM#item-a        | LineItem | productId, qty, price
+ORDER#2024-001     | ITEM#item-b        | LineItem | productId, qty, price
+PRODUCT#prod-001   | METADATA           | Product  | name, price, stock
+
+Access Patterns (all efficient — no scans!):
+  Get customer:              PK=CUSTOMER#cust-001, SK=METADATA
+  Get all customer orders:   PK=CUSTOMER#cust-001, SK begins_with ORDER#
+  Get order + all items:     PK=ORDER#2024-001 (query all SK)
+  Get product:               PK=PRODUCT#prod-001, SK=METADATA</div>
+
+<h3>C# — DynamoDB Low-Level API</h3>
+<div class="code-block">
+  <span class="lang-label">C# — NuGet: AWSSDK.DynamoDBv2</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">OrderDetail</span>&gt; GetOrderDetailAsync(<span class="kw">string</span> orderId)
+{
+    <span class="kw">var</span> response = <span class="kw">await</span> _dynamoDb.QueryAsync(<span class="kw">new</span> <span class="cls">QueryRequest</span>
+    {
+        TableName = <span class="str">"OrdersTable"</span>,
+        KeyConditionExpression = <span class="str">"PK = :pk"</span>,
+        ExpressionAttributeValues = <span class="kw">new</span> <span class="cls">Dictionary</span>&lt;<span class="kw">string</span>, <span class="cls">AttributeValue</span>&gt;
+        {
+            [<span class="str">":pk"</span>] = <span class="kw">new</span> <span class="cls">AttributeValue</span> { S = <span class="str">$"ORDER#{orderId}"</span> }
+        }
+    });
+
+    <span class="kw">var</span> detail = <span class="kw">new</span> <span class="cls">OrderDetail</span>();
+    <span class="kw">foreach</span> (<span class="kw">var</span> item <span class="kw">in</span> response.Items)
+    {
+        <span class="kw">var</span> sk = item[<span class="str">"SK"</span>].S;
+        <span class="kw">if</span> (sk == <span class="str">"METADATA"</span>)
+            detail.Metadata = MapToOrder(item);
+        <span class="kw">else if</span> (sk.StartsWith(<span class="str">"ITEM#"</span>))
+            detail.Items.Add(MapToOrderItem(item));
+    }
+    <span class="kw">return</span> detail;
+}
+</code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="rds">7. RDS</h2>
+
+<h3>Multi-AZ vs Read Replicas</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th>Multi-AZ</th><th>Read Replicas</th></tr></thead>
+  <tbody>
+    <tr><td>Purpose</td><td>High availability / failover</td><td>Read scalability</td></tr>
+    <tr><td>Replication</td><td>Synchronous</td><td>Asynchronous</td></tr>
+    <tr><td>Standby accessible?</td><td>No (failover only)</td><td>Yes (read traffic)</td></tr>
+    <tr><td>Failover time</td><td>~1–2 minutes (automatic)</td><td>Manual promotion</td></tr>
+    <tr><td>Cross-region?</td><td>No</td><td>Yes</td></tr>
+    <tr><td>Cost</td><td>2× instance cost</td><td>Additional instance per replica</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout callout-info">
+  <strong>RDS Proxy</strong> — Connection pooler between your app and RDS. Critical for Lambda/serverless where functions open and close connections aggressively. Proxy maintains a warm connection pool (10–20 connections) serving 100s of Lambda invocations. Also makes failover faster and transparent.
+</div>
+
+<h3>C# — EF Core with PostgreSQL + Retry Policy</h3>
+<div class="code-block">
+  <span class="lang-label">C# — NuGet: Npgsql.EntityFrameworkCore.PostgreSQL</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>builder.Services.AddDbContext&lt;<span class="cls">OrdersDbContext</span>&gt;(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString(<span class="str">"OrdersDb"</span>),
+        npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: <span class="num">3</span>,
+                maxRetryDelay: <span class="cls">TimeSpan</span>.FromSeconds(<span class="num">5</span>),
+                errorCodesToAdd: <span class="kw">null</span>
+            );
+            npgsqlOptions.CommandTimeout(<span class="num">30</span>);
+        }
+    )
+);
+
+<span class="cmt">// Health check</span>
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString(<span class="str">"OrdersDb"</span>)!,
+        name: <span class="str">"orders-db"</span>,
+        tags: <span class="kw">new</span>[] { <span class="str">"db"</span>, <span class="str">"postgresql"</span> }
+    );
+</code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="cloudwatch">8. CloudWatch</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Component</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Metrics</td><td>Time-series data (CPU, request count, latency, custom)</td></tr>
+    <tr><td>Logs</td><td>Log streams aggregated into log groups</td></tr>
+    <tr><td>Alarms</td><td>Trigger on metric threshold → SNS, Auto Scaling, etc.</td></tr>
+    <tr><td>Dashboards</td><td>Visual metric displays</td></tr>
+    <tr><td>Log Insights</td><td>SQL-like query language for logs</td></tr>
+    <tr><td>Container Insights</td><td>Enhanced metrics for ECS/EKS workloads</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Log Insights Queries</h3>
+<div class="code-block">
+  <span class="lang-label">CloudWatch Insights Query Language</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="cmt">-- Count 5xx errors by endpoint (last 1 hour)</span>
+fields @timestamp, requestPath, statusCode
+| filter statusCode >= <span class="num">500</span>
+| stats count(*) as errorCount by requestPath
+| sort errorCount desc
+
+<span class="cmt">-- P99 latency per endpoint</span>
+fields @timestamp, path, durationMs
+| stats pct(durationMs, <span class="num">99</span>) as p99, avg(durationMs) as avgMs by path
+| sort p99 desc
+
+<span class="cmt">-- Find all errors from a specific ECS task</span>
+fields @timestamp, @message
+| filter @logStream like <span class="str">"orders-api"</span>
+| filter @message like <span class="str">"ERROR"</span>
+| sort @timestamp desc
+| limit <span class="num">50</span>
+</code></pre>
+</div>
+
+<h3>Custom Metrics from .NET</h3>
+<div class="code-block">
+  <span class="lang-label">C# — NuGet: AWSSDK.CloudWatch</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="kw">public async</span> <span class="cls">Task</span> RecordOrderProcessedAsync(<span class="kw">string</span> region, <span class="kw">double</span> processingTimeMs)
+{
+    <span class="kw">await</span> _cloudWatch.PutMetricDataAsync(<span class="kw">new</span> <span class="cls">PutMetricDataRequest</span>
+    {
+        Namespace = <span class="str">"OrdersApi"</span>,
+        MetricData = <span class="kw">new</span> <span class="cls">List</span>&lt;<span class="cls">MetricDatum</span>&gt;
+        {
+            <span class="kw">new</span> <span class="cls">MetricDatum</span>
+            {
+                MetricName = <span class="str">"OrdersProcessed"</span>,
+                Value = <span class="num">1</span>,
+                Unit = <span class="cls">StandardUnit</span>.Count,
+                Timestamp = <span class="cls">DateTime</span>.UtcNow,
+                Dimensions = <span class="kw">new</span> <span class="cls">List</span>&lt;<span class="cls">Dimension</span>&gt;
+                {
+                    <span class="kw">new</span>() { Name = <span class="str">"Environment"</span>, Value = <span class="str">"Production"</span> },
+                    <span class="kw">new</span>() { Name = <span class="str">"Region"</span>, Value = region }
+                }
+            },
+            <span class="kw">new</span> <span class="cls">MetricDatum</span>
+            {
+                MetricName = <span class="str">"OrderProcessingTime"</span>,
+                Value = processingTimeMs,
+                Unit = <span class="cls">StandardUnit</span>.Milliseconds,
+                Timestamp = <span class="cls">DateTime</span>.UtcNow
+            }
+        }
+    });
+}
+</code></pre>
+</div>
+
+<div class="arch-box">5xx Alarm → PagerDuty
+
+CloudWatch Alarm:
+  Metric:    AWS/ApplicationELB → HTTPCode_Target_5XX_Count
+  Threshold: > 10 errors per minute
+  Actions:
+    → SNS Topic: prod-alerts
+        ├── PagerDuty (HTTPS subscriber)
+        ├── Slack (Lambda subscriber)
+        └── Email (direct subscriber)</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="autoscaling">9. Auto Scaling</h2>
+
+<h3>ECS Service Auto Scaling Policies</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Policy Type</th><th>Trigger</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td>Target Tracking</td><td>Keep metric at target (e.g., CPU = 70%)</td><td>Most common — self-adjusting</td></tr>
+    <tr><td>Step Scaling</td><td>Step changes per alarm threshold</td><td>Precise control over scale steps</td></tr>
+    <tr><td>Scheduled</td><td>Fixed time / cron expression</td><td>Known traffic patterns (business hours)</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Scale on SQS Queue Depth</h3>
+<div class="code-block">
+  <span class="lang-label">JSON — ECS Auto Scaling Policy</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>{
+  <span class="prop">"PolicyType"</span>: <span class="str">"TargetTrackingScaling"</span>,
+  <span class="prop">"TargetTrackingScalingPolicyConfiguration"</span>: {
+    <span class="prop">"CustomizedMetricSpecification"</span>: {
+      <span class="prop">"MetricName"</span>: <span class="str">"ApproximateNumberOfMessagesVisible"</span>,
+      <span class="prop">"Namespace"</span>: <span class="str">"AWS/SQS"</span>,
+      <span class="prop">"Dimensions"</span>: [{ <span class="prop">"Name"</span>: <span class="str">"QueueName"</span>, <span class="prop">"Value"</span>: <span class="str">"orders-processing-queue"</span> }],
+      <span class="prop">"Statistic"</span>: <span class="str">"Average"</span>
+    },
+    <span class="prop">"TargetValue"</span>: <span class="num">100.0</span>,
+    <span class="prop">"ScaleInCooldown"</span>: <span class="num">120</span>,
+    <span class="prop">"ScaleOutCooldown"</span>: <span class="num">30</span>
+  }
+}</code></pre>
+</div>
+
+<div class="arch-box">Queue-Based Scaling: 1 task per 100 messages
+
+Queue depth:   0  → 1 task  (minimum)
+Queue depth:  50  → 1 task  (ceil(50/100)=1)
+Queue depth: 150  → 2 tasks
+Queue depth: 1000 → 10 tasks
+Queue depth: 5001 → 50 tasks (capped at max)
+
+Scale-out cooldown: 30s  (respond fast when busy)
+Scale-in  cooldown: 120s (drain carefully)</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="alb">10. ALB — Application Load Balancer</h2>
+
+<h3>Path-Based Routing</h3>
+<div class="arch-box">ALB Listener (HTTPS:443)
+├── Rule: path-pattern /api/v1/*  → Target Group: api-v1-tg
+├── Rule: path-pattern /api/v2/*  → Target Group: api-v2-tg
+├── Rule: path-pattern /health    → Fixed response: 200 OK
+└── Default:                      → Target Group: api-v2-tg</div>
+
+<h3>Blue/Green with Weighted Target Groups</h3>
+<div class="arch-box">Deployment Progress (Canary → Full Shift):
+
+Day 0:  blue 100%  |  green   0%
+Day 1:  blue  90%  |  green  10%   ← watch error rates
+Day 2:  blue  50%  |  green  50%   ← ramp up
+Day 3:  blue   0%  |  green 100%   ← fully shifted
+Day 4:  decommission blue</div>
+
+<div class="code-block">
+  <span class="lang-label">JSON — ALB Weighted Forward Action</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>{
+  <span class="prop">"Type"</span>: <span class="str">"forward"</span>,
+  <span class="prop">"ForwardConfig"</span>: {
+    <span class="prop">"TargetGroups"</span>: [
+      { <span class="prop">"TargetGroupArn"</span>: <span class="str">"arn:...api-blue-tg"</span>, <span class="prop">"Weight"</span>: <span class="num">10</span> },
+      { <span class="prop">"TargetGroupArn"</span>: <span class="str">"arn:...api-green-tg"</span>, <span class="prop">"Weight"</span>: <span class="num">90</span> }
+    ],
+    <span class="prop">"StickinessDuration"</span>: <span class="num">0</span>
+  }
+}</code></pre>
+</div>
+
+<h3>ECS Rolling Update Config</h3>
+<div class="code-block">
+  <span class="lang-label">JSON — ECS Deployment Configuration</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code>{
+  <span class="prop">"deploymentConfiguration"</span>: {
+    <span class="prop">"minimumHealthyPercent"</span>: <span class="num">100</span>,
+    <span class="prop">"maximumPercent"</span>: <span class="num">200</span>
+  }
+}
+<span class="cmt">// ECS starts new tasks (200% capacity) → waits for health check</span>
+<span class="cmt">// → drains old tasks → always at full capacity during deployment</span></code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="vpc">11. VPC & Networking</h2>
+
+<h3>Security Groups vs NACLs</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th>Security Groups</th><th>NACLs</th></tr></thead>
+  <tbody>
+    <tr><td>Level</td><td>Instance / ENI</td><td>Subnet</td></tr>
+    <tr><td>Stateful</td><td>Yes (return traffic auto-allowed)</td><td>No (must allow both directions)</td></tr>
+    <tr><td>Rules</td><td>Allow only</td><td>Allow AND Deny</td></tr>
+    <tr><td>Evaluation</td><td>All rules evaluated together</td><td>Rules evaluated in order by number</td></tr>
+    <tr><td>Default</td><td>Deny all inbound</td><td>Allow all (default NACL)</td></tr>
+  </tbody>
+</table></div>
+
+<h3>VPC Peering vs Transit Gateway</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Feature</th><th>VPC Peering</th><th>Transit Gateway</th></tr></thead>
+  <tbody>
+    <tr><td>Scale</td><td>Point-to-point (complex mesh at scale)</td><td>Hub-and-spoke (1,000s of VPCs)</td></tr>
+    <tr><td>Transitive routing</td><td>No</td><td>Yes</td></tr>
+    <tr><td>Cost</td><td>Data transfer only</td><td>Per attachment + data transfer</td></tr>
+    <tr><td>Use case</td><td>2–5 VPCs</td><td>Large org, many VPCs/accounts</td></tr>
+  </tbody>
+</table></div>
+
+<h3>3-Tier Architecture in VPC</h3>
+<div class="arch-box">3-Tier Architecture (Multi-AZ)
+
+                   Internet
+                      |
+             [Internet Gateway]
+                      |
+      ┌───────────────────────────────┐
+      │     Public Subnet (AZ-a/b)    │
+      │  [ALB]    [NAT Gateway]       │
+      └───────────────┬───────────────┘
+                      |
+      ┌───────────────▼───────────────┐
+      │    Private Subnet (AZ-a/b)    │
+      │  [ECS Fargate Tasks]          │
+      └───────────────┬───────────────┘
+                      |
+      ┌───────────────▼───────────────┐
+      │    Isolated Subnet (AZ-a/b)   │
+      │  [RDS Multi-AZ]               │
+      │  [ElastiCache Redis]          │
+      └───────────────────────────────┘
+
+Security Groups:
+  ALB SG:    Inbound 443 from 0.0.0.0/0
+  ECS SG:    Inbound 8080 from ALB SG only
+  RDS SG:    Inbound 5432 from ECS SG only
+  Cache SG:  Inbound 6379 from ECS SG only</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="route53">12. Route 53</h2>
+
+<h3>Record Types</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Type</th><th>Purpose</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td><code>A</code></td><td>Domain → IPv4 address</td><td>Standard host record</td></tr>
+    <tr><td><code>AAAA</code></td><td>Domain → IPv6 address</td><td></td></tr>
+    <tr><td><code>CNAME</code></td><td>Domain → another domain</td><td>Cannot use at zone apex</td></tr>
+    <tr><td><code>ALIAS</code></td><td>Like CNAME, works at apex</td><td>Free for AWS resources; use for ALB, CloudFront, S3</td></tr>
+    <tr><td><code>MX</code></td><td>Mail exchange</td><td>Email routing</td></tr>
+    <tr><td><code>TXT</code></td><td>Text records</td><td>SPF, DKIM, domain verification</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Routing Policies</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Policy</th><th>Description</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td>Simple</td><td>Returns single value (or random from multiple)</td><td>Basic single-region setup</td></tr>
+    <tr><td>Weighted</td><td>Split traffic by percentage</td><td>A/B testing, blue/green</td></tr>
+    <tr><td>Latency</td><td>Route to lowest latency region</td><td>Multi-region performance</td></tr>
+    <tr><td>Failover</td><td>Primary/secondary with health check</td><td>Disaster recovery</td></tr>
+    <tr><td>Geolocation</td><td>Route based on user's country/continent</td><td>Data residency, localization</td></tr>
+    <tr><td>Multivalue</td><td>Return multiple IPs with health checking</td><td>Simple load balancing</td></tr>
+  </tbody>
+</table></div>
+
+<div class="arch-box">Multi-Region Failover
+
+Route 53 Health Check → api.example.com
+                              |
+                    [PRIMARY: us-east-1 ALB]
+                         (health check every 30s)
+                              |
+              If 3 consecutive health checks fail:
+                              |
+                    [SECONDARY: us-west-2 ALB]
+                    (automatic DNS failover ~60s TTL)</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="scenarios">13. Scenario Questions & Answers</h2>
+
+<div class="qa-block" id="qa-zero-downtime">
+  <div class="qa-question">How do you deploy a .NET API with zero downtime?</div>
+  <div class="qa-answer">
+
+<h4>Strategy 1 — ECS Rolling Update</h4>
+<div class="arch-box">1. Register new task definition (new Docker image tag)
+2. ECS starts NEW tasks (maximumPercent: 200 = double capacity)
+3. New tasks pass ALB health check (/health returns 200)
+4. ECS drains OLD tasks (stops sending new requests, waits for in-flight)
+5. Old tasks terminated once drained
+→ Zero downtime: capacity never drops below 100% during deploy</div>
+
+<h4>Strategy 2 — Blue/Green Deployment</h4>
+<div class="arch-box">1. Deploy "green" ECS service (new code) alongside "blue" (current)
+2. Register green tasks in new target group
+3. ALB rule: 10% green, 90% blue  ← watch error rates / latency
+4. Gradually shift: 10% → 50% → 100%
+5. Problem detected? Shift 100% back to blue in seconds
+6. Confidence period passes → decommission blue</div>
+
+<h4>Database Migration — Expand/Contract Pattern</h4>
+<div class="code-block">
+  <span class="lang-label">SQL — Backward Compatible Migration</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="cmt">-- Phase 1: Add new column (nullable = backward compatible)</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ADD COLUMN</span> customer_email_new <span class="cls">VARCHAR</span>(<span class="num">255</span>) <span class="kw">NULL</span>;
+
+<span class="cmt">-- Deploy code that writes to BOTH old + new, reads from old</span>
+
+<span class="cmt">-- Phase 2: Backfill new column</span>
+<span class="kw">UPDATE</span> orders <span class="kw">SET</span> customer_email_new = customer_email
+<span class="kw">WHERE</span> customer_email_new <span class="kw">IS NULL</span>;
+
+<span class="cmt">-- Deploy code that reads from new, writes to both</span>
+
+<span class="cmt">-- Phase 3: Future release — drop old column</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">DROP COLUMN</span> customer_email;
+</code></pre>
+</div>
+
+  </div>
+</div>
+
+<div class="qa-block" id="qa-scale">
+  <div class="qa-question">How do you scale your .NET API for high traffic?</div>
+  <div class="qa-answer">
+
+<div class="arch-box">Layered Scaling Strategy
+
+Layer 1: CDN (CloudFront)
+  → Cache static assets, reduce origin load by ~70%
+  → Eliminate requests that don't need backend
+
+Layer 2: Load Balancing (ALB)
+  → Distribute across multiple AZs
+  → Health check removes unhealthy instances automatically
+
+Layer 3: Compute (ECS Auto Scaling)
+  → Target CPU at 70% (target tracking policy)
+  → Scale out: 60s cooldown  |  Scale in: 300s cooldown
+  → Min: 2 tasks (HA across AZs)  |  Max: 50 tasks
+
+Layer 4: Caching (ElastiCache Redis)
+  → Cache: reference data, user sessions, expensive query results
+  → Reduces DB load by 60–80%
+
+Layer 5: Database Read Replicas
+  → Route all SELECT queries to read replicas
+  → RDS Proxy for connection pooling (critical for burst traffic)
+
+Layer 6: Async Offload (SQS)
+  → Non-critical work off the request path
+  → Order confirmation email → SQS → worker (reduces API response time)</div>
+
+  </div>
+</div>
+
+<div class="qa-block" id="qa-secrets">
+  <div class="qa-question">How do you secure secrets in AWS?</div>
+  <div class="qa-answer">
+
+<div class="callout callout-danger">
+  <strong>Never do this:</strong> Hardcode secrets in appsettings.json, Dockerfile ENV instructions, or environment variables passed in plain text.
+</div>
+
+<div class="arch-box">Defense in Depth
+
+Layer 1: Code — No secrets in source
+  → .gitignore secrets files
+  → git-secrets pre-commit hook blocks accidental commits
+  → AWS CodeGuru Reviewer scans for hardcoded credentials
+
+Layer 2: Secrets Manager
+  → Store DB passwords, API keys, TLS certs
+  → Auto-rotation every 30–90 days (Lambda function)
+  → Old version available 24h during rotation window
+
+Layer 3: IAM Least Privilege (no access keys)
+  → ECS Task Role has ONLY GetSecretValue on its own secrets
+  → No hardcoded access keys — ever
+  → Use STS AssumeRole for cross-account access
+
+Layer 4: KMS Encryption
+  → Secrets Manager uses KMS CMK (not AWS-managed key)
+  → Separate KMS keys per environment
+  → Key policy: only specific roles can use decrypt
+
+Layer 5: Network
+  → VPC Endpoint for Secrets Manager (traffic stays in AWS)
+  → Security Group restricts which tasks reach the endpoint
+  → No NAT Gateway traffic for secret retrieval
+
+Layer 6: Audit
+  → CloudTrail logs every GetSecretValue call
+  → CloudWatch Alarm on unexpected access patterns
+  → AWS Config rule: no access keys older than 90 days</div>
+
+  </div>
+</div>
+
+<div class="qa-block" id="qa-autoscaling">
+  <div class="qa-question">Walk me through your autoscaling strategy for workers processing an SQS queue.</div>
+  <div class="qa-answer">
+
+<div class="arch-box">Queue-Based Worker Autoscaling
+
+Metric:  ApproximateNumberOfMessagesVisible (SQS queue depth)
+Target:  100 messages per worker task
+Formula: desired_tasks = ceil(queue_depth / 100)
+
+Examples:
+  queue_depth:   0  → 1 task  (minimum)
+  queue_depth: 500  → 5 tasks
+  queue_depth: 4800 → 48 tasks
+  queue_depth: 9999 → 50 tasks (capped at maximum)
+
+Scale-out cooldown: 30s  (respond fast — messages are piling up)
+Scale-in  cooldown: 120s (drain carefully — don't kill mid-process)
+
+Full Architecture:
+[SQS Queue] ← orders placed by API
+     |
+     | (CloudWatch metric: ApproximateNumberOfMessagesVisible)
+     ↓
+[Application Auto Scaling]
+     ↓
+[ECS Service: order-workers]  min:1, max:50
+     ↓
+[.NET BackgroundService] — processes 10 msgs/batch, 20s long-poll
+     ↓
+[RDS / DynamoDB / downstream services]</div>
+
+<h4>Graceful Shutdown (critical for scale-in)</h4>
+<div class="code-block">
+  <span class="lang-label">C#</span>
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code><span class="kw">protected override async</span> <span class="cls">Task</span> ExecuteAsync(<span class="cls">CancellationToken</span> stoppingToken)
+{
+    <span class="kw">while</span> (!stoppingToken.IsCancellationRequested)
+    {
+        <span class="kw">await</span> ProcessBatchAsync(stoppingToken);
+    }
+    <span class="cmt">// stoppingToken cancelled → ECS sends SIGTERM (scale-in or deploy)</span>
+    <span class="cmt">// Loop exits cleanly after finishing current batch</span>
+    <span class="cmt">// ECS waits stopTimeout seconds before sending SIGKILL</span>
+}
+<span class="cmt">// In Program.cs: builder.Services.Configure&lt;HostOptions&gt;(o =></span>
+<span class="cmt">//   o.ShutdownTimeout = TimeSpan.FromSeconds(30));</span>
+</code></pre>
+</div>
+
+  </div>
+</div>
+
+<!-- Quick Reference -->
+<h2 id="cheat-sheet">Quick Reference Cheat Sheet</h2>
+<div class="arch-box">AWS Service Selection
+
+COMPUTE:
+  Run containers (simple):  ECS Fargate
+  Run containers (k8s):     EKS
+  Event-driven functions:   Lambda
+  Long-running batch:       ECS Fargate Tasks
+
+STORAGE:
+  Object storage:           S3
+  Block storage (EC2):      EBS
+  File storage (shared):    EFS
+  CDN:                      CloudFront
+
+MESSAGING:
+  Task queue:               SQS
+  Pub/Sub fan-out:          SNS
+  Real-time streaming:      Kinesis
+
+DATABASES:
+  Key-value / document:     DynamoDB
+  Relational:               RDS (PostgreSQL / MySQL / SQL Server)
+  Cache:                    ElastiCache (Redis / Memcached)
+  Search:                   OpenSearch
+
+NETWORKING:
+  DNS:                      Route 53
+  HTTP load balancer:       ALB
+  TCP load balancer:        NLB
+  Private network:          VPC + Security Groups
+
+SECURITY:
+  Secrets:                  Secrets Manager
+  Config / non-secret:      Parameter Store (SSM)
+  Certificates:             ACM (AWS Certificate Manager)
+  Audit log:                CloudTrail
+
+OBSERVABILITY:
+  Metrics + Logs + Alarms:  CloudWatch
+  Distributed tracing:      X-Ray
+  Dashboards:               CloudWatch Dashboards / Grafana
+
+IAM RULE OF THUMB:
+  Service-to-service:       IAM Role (no access keys ever)
+  Human dev access:         IAM User → Group → Policy
+  Cross-account:            Role with trust policy + STS AssumeRole
+  CI/CD pipeline:           OIDC provider → Role (no static credentials)</div>
+
+</main>
+
+<script>
+// ── Copy buttons ──
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── Active TOC link ──
+const sections = document.querySelectorAll('h2[id], h3[id]');
+const tocLinks = document.querySelectorAll('#sidebar a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      tocLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`#sidebar a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -75% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// ── Reading progress bar ──
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  progress.style.width = (window.scrollY / total * 100) + '%';
+});
+</script>
+</body>
+</html>

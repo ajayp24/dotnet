@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C# Advanced — Lead .NET Interview Prep</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.7;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+#sidebar{width:260px;min-width:260px;background:#161b22;border-right:1px solid #30363d;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;padding:24px 0;z-index:100}
+#sidebar::-webkit-scrollbar{width:4px}
+#sidebar::-webkit-scrollbar-track{background:transparent}
+#sidebar::-webkit-scrollbar-thumb{background:#30363d;border-radius:2px}
+.sidebar-header{padding:0 20px 20px;border-bottom:1px solid #30363d;margin-bottom:16px}
+.sidebar-header h2{font-size:13px;font-weight:700;color:#58a6ff;letter-spacing:.08em;text-transform:uppercase}
+.sidebar-header p{font-size:11px;color:#8b949e;margin-top:4px}
+.toc-list{list-style:none;padding:0 8px}
+.toc-list li a{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px;text-decoration:none;color:#8b949e;font-size:13px;font-weight:500;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc-list li a:hover,.toc-list li a.active{background:#1f2937;color:#e6edf3}
+.toc-list li a.active{color:#58a6ff;background:#1a2332}
+.toc-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:#21262d;border-radius:4px;font-size:11px;font-weight:700;color:#58a6ff;flex-shrink:0}
+
+/* ── MAIN ── */
+#main{margin-left:260px;flex:1;padding:40px 48px;max-width:calc(860px + 260px + 96px)}
+.content{max-width:860px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#1a2332 0%,#161b22 60%,#1a2d1a 100%);border:1px solid #30363d;border-radius:12px;padding:40px;margin-bottom:48px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(88,166,255,.08) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:28px;font-weight:800;color:#58a6ff;letter-spacing:-.02em;margin-bottom:8px}
+.hero .subtitle{color:#8b949e;font-size:15px;margin-bottom:20px}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.04em}
+.badge-blue{background:#1a2332;color:#58a6ff;border:1px solid #1f3a5f}
+.badge-green{background:#1a2d1a;color:#3fb950;border:1px solid #1a4020}
+.badge-orange{background:#2d1f0a;color:#d29922;border:1px solid #3d2a0a}
+
+/* ── SECTIONS ── */
+.section{margin-bottom:64px;scroll-margin-top:24px}
+h2{font-size:22px;font-weight:700;color:#58a6ff;padding-bottom:12px;border-bottom:1px solid #21262d;margin-bottom:24px;display:flex;align-items:center;gap:10px}
+h2 .sec-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#1a2332;border-radius:8px;font-size:14px;font-weight:800;color:#58a6ff;border:1px solid #1f3a5f;flex-shrink:0}
+h3{font-size:16px;font-weight:700;color:#79c0ff;margin:28px 0 12px}
+p{margin-bottom:14px;color:#c9d1d9}
+
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid #30363d;margin:20px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead{background:#161b22}
+th{padding:10px 14px;text-align:left;color:#79c0ff;font-weight:600;border-bottom:1px solid #30363d;white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #21262d;color:#c9d1d9;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1c2128}
+td:first-child{color:#e6edf3;font-weight:500}
+td code,th code{background:#21262d;padding:1px 5px;border-radius:4px;font-size:12px}
+
+/* ── CODE BLOCKS ── */
+.code-wrap{position:relative;margin:16px 0;border-radius:8px;border:1px solid #30363d;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;background:#21262d;padding:8px 14px;border-bottom:1px solid #30363d}
+.code-lang{font-size:11px;font-weight:600;color:#8b949e;letter-spacing:.06em;text-transform:uppercase}
+.copy-btn{background:transparent;border:1px solid #30363d;color:#8b949e;padding:3px 10px;border-radius:5px;font-size:11px;cursor:pointer;transition:all .15s;font-family:inherit}
+.copy-btn:hover{background:#30363d;color:#e6edf3;border-color:#484f58}
+.copy-btn.copied{color:#3fb950;border-color:#3fb950}
+pre{background:#1c2128;padding:18px 20px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.65}
+pre::-webkit-scrollbar{height:5px}
+pre::-webkit-scrollbar-track{background:transparent}
+pre::-webkit-scrollbar-thumb{background:#30363d;border-radius:2px}
+code{font-family:'Cascadia Code','Fira Code','JetBrains Mono',Consolas,'Courier New',monospace}
+/* Syntax highlight */
+.kw{color:#ff7b72}       /* keywords */
+.kw2{color:#f78166}      /* keyword variant */
+.str{color:#a5d6ff}      /* strings */
+.cm{color:#8b949e;font-style:italic} /* comments */
+.num{color:#79c0ff}      /* numbers */
+.cls{color:#ffa657}      /* class names */
+.mth{color:#d2a8ff}      /* methods */
+.dec{color:#79c0ff}      /* decorators/attributes */
+.prop{color:#e6edf3}     /* properties */
+.op{color:#ff7b72}       /* operators */
+.punc{color:#c9d1d9}     /* punctuation */
+
+/* ── CARDS ── */
+.card{border-radius:8px;padding:16px 20px;margin:20px 0;border-left:3px solid}
+.card-qa{background:#1a2332;border-color:#58a6ff}
+.card-warn{background:#2d1a1a;border-color:#ff7b72}
+.card-tip{background:#1a2d1a;border-color:#3fb950}
+.card-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.card-qa .card-label{color:#58a6ff}
+.card-warn .card-label{color:#ff7b72}
+.card-tip .card-label{color:#3fb950}
+.card p{margin-bottom:8px;color:#c9d1d9;font-size:14px}
+.card p:last-child{margin-bottom:0}
+.card strong{color:#e6edf3}
+.card ul,.card ol{margin:8px 0 0 18px}
+.card li{font-size:14px;color:#c9d1d9;margin-bottom:4px}
+
+/* ── COMPARISON GRID ── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.compare-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px}
+.compare-box h4{font-size:13px;font-weight:700;margin-bottom:10px;letter-spacing:.04em}
+.compare-box.good h4{color:#3fb950}
+.compare-box.bad h4{color:#ff7b72}
+.compare-box ul{list-style:none;padding:0}
+.compare-box li{font-size:13px;color:#c9d1d9;padding:3px 0;display:flex;gap:6px}
+.compare-box li::before{content:'→';color:#8b949e;flex-shrink:0}
+
+/* ── DEFINITION LIST ── */
+.def-list{margin:16px 0}
+.def-item{display:grid;grid-template-columns:180px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid #21262d;align-items:start}
+.def-item:last-child{border-bottom:none}
+.def-term{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:12.5px;color:#ffa657;background:#21262d;padding:2px 8px;border-radius:4px;align-self:start;margin-top:2px;white-space:nowrap}
+.def-desc{font-size:13.5px;color:#c9d1d9}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%);transition:transform .25s}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0;padding:24px 20px}
+  .compare-grid{grid-template-columns:1fr}
+  .menu-btn{display:flex}
+}
+.menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:200;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:8px;cursor:pointer;color:#e6edf3;align-items:center;justify-content:center}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+.overlay.open{display:block}
+</style>
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="overlay" id="overlay"></div>
+
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <h2>C# Advanced</h2>
+    <p>Lead .NET Interview Prep</p>
+  </div>
+  <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+  <ul class="toc-list">
+    <li><a href="#s1" class="nav-link"><span class="toc-num">1</span> Delegates</a></li>
+    <li><a href="#s2" class="nav-link"><span class="toc-num">2</span> Events</a></li>
+    <li><a href="#s3" class="nav-link"><span class="toc-num">3</span> Lambda Expressions</a></li>
+    <li><a href="#s4" class="nav-link"><span class="toc-num">4</span> Expression Trees</a></li>
+    <li><a href="#s5" class="nav-link"><span class="toc-num">5</span> LINQ Execution</a></li>
+    <li><a href="#s6" class="nav-link"><span class="toc-num">6</span> Extension Methods</a></li>
+    <li><a href="#s7" class="nav-link"><span class="toc-num">7</span> Generics</a></li>
+    <li><a href="#s8" class="nav-link"><span class="toc-num">8</span> Reflection</a></li>
+    <li><a href="#s9" class="nav-link"><span class="toc-num">9</span> Dynamic</a></li>
+    <li><a href="#s10" class="nav-link"><span class="toc-num">&#9733;</span> Summary</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+<div class="content">
+
+<div class="hero">
+  <h1>C# Advanced Topics</h1>
+  <p class="subtitle">Comprehensive prep for Lead .NET Software Engineer interviews — real, runnable code with interview Q&amp;A, pitfalls, and expert tips.</p>
+  <div class="badge-row">
+    <span class="badge badge-blue">C# 12</span>
+    <span class="badge badge-blue">.NET 8</span>
+    <span class="badge badge-green">9 Core Topics</span>
+    <span class="badge badge-orange">Lead Level</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SECTION 1 ═══════════════════════════════ -->
+<section class="section" id="s1">
+<h2><span class="sec-num">1</span> Delegates</h2>
+
+<p>A <strong>delegate</strong> is a type-safe, object-oriented function pointer. It holds a reference to a method (or chain of methods) matching a specific signature, and is the foundation for events, callbacks, LINQ, and async patterns.</p>
+
+<h3>Custom Delegate Declaration</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// Custom delegate declaration</span>
+<span class="kw">public delegate</span> <span class="cls">int</span> <span class="cls">MathOperation</span>(<span class="cls">int</span> x, <span class="cls">int</span> y);
+
+<span class="kw">public class</span> <span class="cls">DelegateBasics</span>
+{
+    <span class="kw">public static</span> <span class="cls">int</span> <span class="mth">Add</span>(<span class="cls">int</span> x, <span class="cls">int</span> y) => x + y;
+    <span class="kw">public static</span> <span class="cls">int</span> <span class="mth">Multiply</span>(<span class="cls">int</span> x, <span class="cls">int</span> y) => x * y;
+
+    <span class="kw">public static void</span> <span class="mth">Run</span>()
+    {
+        <span class="cls">MathOperation</span> op = Add;
+        <span class="cls">Console</span>.<span class="mth">WriteLine</span>(op(<span class="num">3</span>, <span class="num">4</span>));   <span class="cm">// 7</span>
+
+        op = Multiply;
+        <span class="cls">Console</span>.<span class="mth">WriteLine</span>(op(<span class="num">3</span>, <span class="num">4</span>));   <span class="cm">// 12</span>
+    }
+}</code></pre>
+</div>
+
+<h3>Built-in Generic Delegates: Func, Action, Predicate</h3>
+<div class="def-list">
+  <div class="def-item"><span class="def-term">Func&lt;T, TResult&gt;</span><span class="def-desc">Returns a value. Last type parameter is the return type. Up to 16 input parameters.</span></div>
+  <div class="def-item"><span class="def-term">Action&lt;T&gt;</span><span class="def-desc">Returns void. Zero to 16 input parameters. For side-effect operations.</span></div>
+  <div class="def-item"><span class="def-term">Predicate&lt;T&gt;</span><span class="def-desc">Returns bool. Equivalent to <code>Func&lt;T, bool&gt;</code>. Used for filtering/matching.</span></div>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public static void</span> <span class="mth">BuiltInDelegates</span>()
+{
+    <span class="cm">// Func&lt;TInput, TOutput&gt; — returns a value</span>
+    <span class="cls">Func</span>&lt;<span class="cls">string</span>, <span class="cls">int</span>&gt; getLength = s => s.Length;
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(getLength(<span class="str">"hello"</span>));   <span class="cm">// 5</span>
+
+    <span class="cm">// Func with multiple inputs</span>
+    <span class="cls">Func</span>&lt;<span class="cls">int</span>, <span class="cls">int</span>, <span class="cls">int</span>&gt; add = (a, b) => a + b;
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(add(<span class="num">10</span>, <span class="num">20</span>));           <span class="cm">// 30</span>
+
+    <span class="cm">// Action&lt;T&gt; — returns void</span>
+    <span class="cls">Action</span>&lt;<span class="cls">string</span>&gt; log = msg => <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">$"[LOG] {msg}"</span>);
+    log(<span class="str">"Server started"</span>);
+
+    <span class="cm">// Predicate&lt;T&gt; — returns bool</span>
+    <span class="cls">Predicate</span>&lt;<span class="cls">int</span>&gt; isEven = n => n % <span class="num">2</span> == <span class="num">0</span>;
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(isEven(<span class="num">4</span>));  <span class="cm">// True</span>
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(isEven(<span class="num">7</span>));  <span class="cm">// False</span>
+}</code></pre>
+</div>
+
+<h3>Multicast Delegates</h3>
+<p>A multicast delegate holds references to <strong>multiple methods</strong>. Invocation calls each in order. The return value is from the <strong>last</strong> method in the chain.</p>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public delegate void</span> <span class="cls">Notify</span>(<span class="cls">string</span> message);
+
+<span class="kw">public static void</span> <span class="mth">MulticastDemo</span>()
+{
+    <span class="cls">Notify</span> notify = EmailNotify;
+    notify += SmsNotify;
+    notify += SlackNotify;
+
+    notify(<span class="str">"Order #1042 shipped!"</span>);
+    <span class="cm">// Email: Order #1042 shipped!</span>
+    <span class="cm">// SMS:   Order #1042 shipped!</span>
+    <span class="cm">// Slack: Order #1042 shipped!</span>
+
+    notify -= SmsNotify;   <span class="cm">// remove one handler</span>
+
+    <span class="cm">// Inspect the invocation list</span>
+    <span class="kw">foreach</span> (<span class="kw">var</span> handler <span class="kw">in</span> notify.<span class="mth">GetInvocationList</span>())
+        <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">$"Handler: {handler.Method.Name}"</span>);
+}</code></pre>
+</div>
+
+<h3>Real Example: Plugin Pipeline</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public class</span> <span class="cls">PluginPipeline</span>
+{
+    <span class="kw">public delegate</span> <span class="cls">string</span> <span class="cls">PipelineStep</span>(<span class="cls">string</span> input);
+    <span class="kw">private</span> <span class="cls">PipelineStep</span> _pipeline;
+
+    <span class="kw">public</span> <span class="cls">PluginPipeline</span> <span class="mth">AddStep</span>(<span class="cls">PipelineStep</span> step)
+    {
+        _pipeline += step;
+        <span class="kw">return this</span>;
+    }
+
+    <span class="kw">public</span> <span class="cls">string</span> <span class="mth">Execute</span>(<span class="cls">string</span> input)
+    {
+        <span class="cls">string</span> result = input;
+        <span class="kw">foreach</span> (<span class="kw">var</span> step <span class="kw">in</span> _pipeline.<span class="mth">GetInvocationList</span>())
+            result = ((<span class="cls">PipelineStep</span>)step)(result);
+        <span class="kw">return</span> result;
+    }
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">var</span> pipeline = <span class="kw">new</span> <span class="cls">PluginPipeline</span>()
+    .<span class="mth">AddStep</span>(s => s.<span class="mth">Trim</span>())
+    .<span class="mth">AddStep</span>(s => s.<span class="mth">ToUpper</span>())
+    .<span class="mth">AddStep</span>(s => <span class="str">$"[PROCESSED] {s}"</span>);
+
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(pipeline.<span class="mth">Execute</span>(<span class="str">"  hello world  "</span>));
+<span class="cm">// [PROCESSED] HELLO WORLD</span></code></pre>
+</div>
+
+<div class="card card-qa">
+  <div class="card-label">Interview Q&amp;A</div>
+  <p><strong>Q: When would you use a delegate instead of an interface for callbacks?</strong></p>
+  <p><strong>A:</strong> Use a <strong>delegate</strong> when the callback is a single method, you want multicast (notify multiple subscribers), or you're composing behavior at runtime. Use an <strong>interface</strong> when the callback involves multiple related methods, you need DI container support, or the implementer must carry state. Rule of thumb: one method → delegate. Object with behavior → interface.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 2 ═══════════════════════════════ -->
+<section class="section" id="s2">
+<h2><span class="sec-num">2</span> Events</h2>
+
+<p>Events are multicast delegate fields with <strong>restricted access</strong>. External code can only subscribe (<code>+=</code>) or unsubscribe (<code>-=</code>); only the declaring class can invoke them.</p>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public class</span> <span class="cls">OrderPlacedEventArgs</span> : <span class="cls">EventArgs</span>
+{
+    <span class="kw">public</span> <span class="cls">int</span>      OrderId   { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public</span> <span class="cls">decimal</span>  Amount    { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public</span> <span class="cls">DateTime</span> PlacedAt  { <span class="kw">get</span>; <span class="kw">init</span>; }
+}
+
+<span class="kw">public class</span> <span class="cls">OrderService</span>
+{
+    <span class="cm">// event keyword — external code cannot invoke or reassign</span>
+    <span class="kw">public event</span> <span class="cls">EventHandler</span>&lt;<span class="cls">OrderPlacedEventArgs</span>&gt;? OrderPlaced;
+
+    <span class="kw">public void</span> <span class="mth">PlaceOrder</span>(<span class="cls">int</span> orderId, <span class="cls">decimal</span> amount)
+    {
+        <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">$"Order {orderId} placed for ${amount}"</span>);
+
+        <span class="cm">// Thread-safe raise with null-conditional operator</span>
+        OrderPlaced?.<span class="mth">Invoke</span>(<span class="kw">this</span>, <span class="kw">new</span> <span class="cls">OrderPlacedEventArgs</span>
+        {
+            OrderId  = orderId,
+            Amount   = amount,
+            PlacedAt = <span class="cls">DateTime</span>.UtcNow
+        });
+    }
+}
+
+<span class="cm">// Subscriber</span>
+<span class="kw">public class</span> <span class="cls">EmailService</span>
+{
+    <span class="kw">public void</span> <span class="mth">OnOrderPlaced</span>(<span class="cls">object</span>? sender, <span class="cls">OrderPlacedEventArgs</span> e)
+        => <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">$"[Email] Confirmation for order {e.OrderId}"</span>);
+}
+
+<span class="cm">// Wire up:</span>
+<span class="kw">var</span> orders = <span class="kw">new</span> <span class="cls">OrderService</span>();
+<span class="kw">var</span> email  = <span class="kw">new</span> <span class="cls">EmailService</span>();
+orders.OrderPlaced += email.<span class="mth">OnOrderPlaced</span>;
+orders.<span class="mth">PlaceOrder</span>(<span class="num">1042</span>, <span class="num">299.99m</span>);</code></pre>
+</div>
+
+<h3>Why events over public delegates?</h3>
+<div class="compare-grid">
+  <div class="compare-box bad">
+    <h4>BAD — Public Delegate Field</h4>
+    <ul>
+      <li>External code can assign null (wiping all subscribers)</li>
+      <li>External code can invoke directly</li>
+      <li>No encapsulation of who controls firing</li>
+    </ul>
+  </div>
+  <div class="compare-box good">
+    <h4>GOOD — event Keyword</h4>
+    <ul>
+      <li>External code: only += and -= allowed</li>
+      <li>Only the declaring class can invoke</li>
+      <li>Clear contract: publisher controls timing</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card card-warn">
+  <div class="card-label">Pitfall — Memory Leak</div>
+  <p>If a short-lived subscriber subscribes to a long-lived publisher's event and never unsubscribes, the publisher holds a reference preventing garbage collection. This is one of the most common C# memory leaks.</p>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// GOOD: implement IDisposable to unsubscribe</span>
+<span class="kw">public class</span> <span class="cls">ProperSubscriber</span> : <span class="cls">IDisposable</span>
+{
+    <span class="kw">private readonly</span> <span class="cls">Publisher</span> _publisher;
+    <span class="kw">private bool</span> _disposed;
+
+    <span class="kw">public</span> <span class="cls">ProperSubscriber</span>(<span class="cls">Publisher</span> publisher)
+    {
+        _publisher = publisher;
+        _publisher.Tick += OnTick;   <span class="cm">// subscribe</span>
+    }
+
+    <span class="kw">private void</span> <span class="mth">OnTick</span>(<span class="cls">object</span>? sender, <span class="cls">EventArgs</span> e)
+        => <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">"Tick"</span>);
+
+    <span class="kw">public void</span> <span class="mth">Dispose</span>()
+    {
+        <span class="kw">if</span> (!_disposed)
+        {
+            _publisher.Tick -= OnTick;  <span class="cm">// unsubscribe!</span>
+            _disposed = <span class="kw">true</span>;
+        }
+    }
+}</code></pre>
+</div>
+
+<div class="card card-tip">
+  <div class="card-label">Tip</div>
+  <p>Use <code>WeakReference</code> or <code>WeakEventManager</code> (WPF) when you cannot control the subscriber's lifetime. In modern code, prefer <code>IDisposable</code> + <code>using</code> to ensure cleanup.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 3 ═══════════════════════════════ -->
+<section class="section" id="s3">
+<h2><span class="sec-num">3</span> Lambda Expressions</h2>
+
+<p>A lambda is an <strong>anonymous function</strong> that can capture variables from its enclosing scope — this is called a <strong>closure</strong>.</p>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// Expression lambda (implicit return)</span>
+<span class="cls">Func</span>&lt;<span class="cls">int</span>, <span class="cls">int</span>&gt; square = x => x * x;
+
+<span class="cm">// Statement lambda (block body)</span>
+<span class="cls">Func</span>&lt;<span class="cls">int</span>, <span class="cls">int</span>, <span class="cls">int</span>&gt; max = (a, b) =>
+{
+    <span class="kw">if</span> (a > b) <span class="kw">return</span> a;
+    <span class="kw">return</span> b;
+};
+
+<span class="cm">// Closure: capturing local variable</span>
+<span class="cls">int</span> multiplier = <span class="num">3</span>;
+<span class="cls">Func</span>&lt;<span class="cls">int</span>, <span class="cls">int</span>&gt; times = n => n * multiplier;  <span class="cm">// captures 'multiplier'</span>
+
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(times(<span class="num">4</span>));  <span class="cm">// 12</span>
+multiplier = <span class="num">10</span>;               <span class="cm">// change the captured variable</span>
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(times(<span class="num">4</span>));  <span class="cm">// 40 — reflects the mutation!</span></code></pre>
+</div>
+
+<h3>LINQ Queries with Lambdas</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">var</span> inStockElectronics = products
+    .<span class="mth">Where</span>(p => p.InStock && p.Category == <span class="str">"Electronics"</span>)
+    .<span class="mth">OrderByDescending</span>(p => p.Price)
+    .<span class="mth">Select</span>(p => <span class="kw">new</span> { p.Name, p.Price })
+    .<span class="mth">ToList</span>();
+
+<span class="cm">// Aggregate</span>
+<span class="cls">decimal</span> total = products
+    .<span class="mth">Where</span>(p => p.InStock)
+    .<span class="mth">Sum</span>(p => p.Price);
+
+<span class="cm">// GroupBy</span>
+<span class="kw">var</span> byCategory = products
+    .<span class="mth">GroupBy</span>(p => p.Category)
+    .<span class="mth">Select</span>(g => <span class="kw">new</span>
+    {
+        Category     = g.Key,
+        Count        = g.<span class="mth">Count</span>(),
+        AveragePrice = g.<span class="mth">Average</span>(p => p.Price)
+    });</code></pre>
+</div>
+
+<h3>Pitfall: Closure Capturing Loop Variable</h3>
+<div class="card card-warn">
+  <div class="card-label">Pitfall</div>
+  <p>In a <code>for</code> loop, all lambdas share the <strong>same captured variable</strong>. By the time the lambdas execute, the loop has completed and <code>i</code> holds its final value.</p>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// BUG: all lambdas capture the SAME 'i' variable</span>
+<span class="kw">var</span> actions = <span class="kw">new</span> <span class="cls">List</span>&lt;<span class="cls">Action</span>&gt;();
+<span class="kw">for</span> (<span class="cls">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++)
+    actions.<span class="mth">Add</span>(() => <span class="cls">Console</span>.<span class="mth">WriteLine</span>(i));
+
+actions.<span class="mth">ForEach</span>(a => a());  <span class="cm">// Prints: 5 5 5 5 5</span>
+
+<span class="cm">// FIX: capture a local copy per iteration</span>
+<span class="kw">var</span> fixed_actions = <span class="kw">new</span> <span class="cls">List</span>&lt;<span class="cls">Action</span>&gt;();
+<span class="kw">for</span> (<span class="cls">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++)
+{
+    <span class="cls">int</span> captured = i;   <span class="cm">// new variable each iteration</span>
+    fixed_actions.<span class="mth">Add</span>(() => <span class="cls">Console</span>.<span class="mth">WriteLine</span>(captured));
+}
+fixed_actions.<span class="mth">ForEach</span>(a => a());  <span class="cm">// Prints: 0 1 2 3 4</span>
+
+<span class="cm">// NOTE: foreach (C# 5+) already creates a fresh variable per iteration — safe!</span></code></pre>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 4 ═══════════════════════════════ -->
+<section class="section" id="s4">
+<h2><span class="sec-num">4</span> Expression Trees</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th></th><th><code>Func&lt;T&gt;</code></th><th><code>Expression&lt;Func&lt;T&gt;&gt;</code></th></tr></thead>
+  <tbody>
+    <tr><td>Type</td><td>Compiled delegate (IL)</td><td>Data structure (AST)</td></tr>
+    <tr><td>Can invoke directly</td><td>Yes</td><td>No — must <code>.Compile()</code> first</td></tr>
+    <tr><td>Can inspect/traverse</td><td>No</td><td>Yes</td></tr>
+    <tr><td>Used by</td><td>In-memory operations</td><td>EF Core, dynamic query builders</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">using</span> System.Linq.Expressions;
+
+<span class="cm">// Func — compiled, can run but cannot inspect</span>
+<span class="cls">Func</span>&lt;<span class="cls">int</span>, <span class="cls">bool</span>&gt; func = x => x > <span class="num">0</span>;
+func(<span class="num">5</span>);  <span class="cm">// True</span>
+
+<span class="cm">// Expression — data structure representing the lambda</span>
+<span class="cls">Expression</span>&lt;<span class="cls">Func</span>&lt;<span class="cls">int</span>, <span class="cls">bool</span>&gt;&gt; expr = x => x > <span class="num">0</span>;
+
+<span class="cm">// Inspect the AST</span>
+<span class="kw">var</span> binary = (<span class="cls">BinaryExpression</span>)expr.Body;
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(binary.Left);    <span class="cm">// x</span>
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(binary.Right);   <span class="cm">// 0</span>
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(binary.NodeType); <span class="cm">// GreaterThan</span>
+
+<span class="cm">// Compile to delegate and invoke</span>
+<span class="cls">Func</span>&lt;<span class="cls">int</span>, <span class="cls">bool</span>&gt; compiled = expr.<span class="mth">Compile</span>();
+compiled(<span class="num">5</span>);   <span class="cm">// True</span>
+compiled(-<span class="num">3</span>);  <span class="cm">// False</span></code></pre>
+</div>
+
+<h3>How EF Core Uses Expression Trees</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// EF Core: expression tree is TRANSLATED to SQL — never runs in C#</span>
+<span class="kw">var</span> users = <span class="kw">await</span> dbContext.Users
+    .<span class="mth">Where</span>(u => u.IsActive && u.Age > <span class="num">18</span>)  <span class="cm">// Expression&lt;Func&lt;User, bool&gt;&gt;</span>
+    .<span class="mth">ToListAsync</span>();
+<span class="cm">// Generated SQL: SELECT * FROM Users WHERE IsActive = 1 AND Age &gt; 18</span>
+
+<span class="cm">// In-memory list: Func runs in C# (no SQL)</span>
+<span class="kw">var</span> filtered = inMemoryList
+    .<span class="mth">Where</span>(u => u.IsActive && u.Age > <span class="num">18</span>)  <span class="cm">// Func&lt;User, bool&gt;</span>
+    .<span class="mth">ToList</span>();</code></pre>
+</div>
+
+<h3>Real Example: Dynamic Query Filter Builder</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">using</span> System.Linq.Expressions;
+
+<span class="kw">public static class</span> <span class="cls">DynamicQueryBuilder</span>
+{
+    <span class="cm">// Builds: entity =&gt; entity.PropertyName == value</span>
+    <span class="kw">public static</span> <span class="cls">Expression</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt; <span class="mth">BuildEqualityFilter</span>&lt;T&gt;(
+        <span class="cls">string</span> propertyName, <span class="cls">object</span> value)
+    {
+        <span class="kw">var</span> parameter = <span class="cls">Expression</span>.<span class="mth">Parameter</span>(<span class="kw">typeof</span>(T), <span class="str">"entity"</span>);
+        <span class="kw">var</span> property  = <span class="cls">Expression</span>.<span class="mth">Property</span>(parameter, propertyName);
+        <span class="kw">var</span> constant  = <span class="cls">Expression</span>.<span class="mth">Constant</span>(
+            <span class="cls">Convert</span>.<span class="mth">ChangeType</span>(value, property.Type));
+        <span class="kw">var</span> equality  = <span class="cls">Expression</span>.<span class="mth">Equal</span>(property, constant);
+
+        <span class="kw">return</span> <span class="cls">Expression</span>.<span class="mth">Lambda</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt;(equality, parameter);
+    }
+
+    <span class="cm">// Combine two filters with AND</span>
+    <span class="kw">public static</span> <span class="cls">Expression</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt; <span class="mth">And</span>&lt;T&gt;(
+        <span class="cls">Expression</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt; left,
+        <span class="cls">Expression</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt; right)
+    {
+        <span class="kw">var</span> param     = left.Parameters[<span class="num">0</span>];
+        <span class="kw">var</span> rightBody = <span class="kw">new</span> <span class="cls">ParameterReplacer</span>(right.Parameters[<span class="num">0</span>], param)
+            .<span class="mth">Visit</span>(right.Body);
+        <span class="kw">var</span> combined  = <span class="cls">Expression</span>.<span class="mth">AndAlso</span>(left.Body, rightBody);
+        <span class="kw">return</span> <span class="cls">Expression</span>.<span class="mth">Lambda</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt;(combined, param);
+    }
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">var</span> deptFilter   = <span class="cls">DynamicQueryBuilder</span>.<span class="mth">BuildEqualityFilter</span>&lt;<span class="cls">Employee</span>&gt;(<span class="str">"Department"</span>, <span class="str">"Engineering"</span>);
+<span class="kw">var</span> activeFilter = <span class="cls">DynamicQueryBuilder</span>.<span class="mth">BuildEqualityFilter</span>&lt;<span class="cls">Employee</span>&gt;(<span class="str">"IsActive"</span>, <span class="kw">true</span>);
+<span class="kw">var</span> combined     = <span class="cls">DynamicQueryBuilder</span>.<span class="mth">And</span>(deptFilter, activeFilter);
+
+<span class="kw">var</span> result = employees.<span class="mth">AsQueryable</span>().<span class="mth">Where</span>(combined).<span class="mth">ToList</span>();</code></pre>
+</div>
+
+<div class="card card-tip">
+  <div class="card-label">Tip</div>
+  <p>Expression trees are the key to writing generic repository query builders that work with EF Core. You cannot use <code>out</code>/<code>ref</code> parameters or <code>await</code> inside an expression tree — these are compile-time errors.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 5 ═══════════════════════════════ -->
+<section class="section" id="s5">
+<h2><span class="sec-num">5</span> LINQ — Deferred vs Immediate Execution</h2>
+
+<div class="compare-grid">
+  <div class="compare-box" style="border-color:#58a6ff">
+    <h4 style="color:#58a6ff">Deferred Operators</h4>
+    <ul>
+      <li>Where, Select, SelectMany</li>
+      <li>OrderBy, ThenBy, OrderByDescending</li>
+      <li>GroupBy, Join, GroupJoin</li>
+      <li>Take, Skip, TakeWhile, SkipWhile</li>
+      <li>Distinct, Union, Intersect, Except</li>
+    </ul>
+  </div>
+  <div class="compare-box" style="border-color:#3fb950">
+    <h4 style="color:#3fb950">Immediate Operators</h4>
+    <ul>
+      <li>ToList(), ToArray(), ToDictionary()</li>
+      <li>Count(), LongCount()</li>
+      <li>First(), FirstOrDefault()</li>
+      <li>Single(), SingleOrDefault()</li>
+      <li>Sum(), Min(), Max(), Average()</li>
+      <li>Any(), All(), Contains()</li>
+    </ul>
+  </div>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">private static</span> <span class="cls">IEnumerable</span>&lt;<span class="cls">int</span>&gt; <span class="mth">GetNumbers</span>()
+{
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">"  [DB Query Executed]"</span>);
+    <span class="kw">for</span> (<span class="cls">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++)
+        <span class="kw">yield return</span> i;
+}
+
+<span class="kw">public static void</span> <span class="mth">DeferredDemo</span>()
+{
+    <span class="cm">// DEFERRED: no execution here — just builds a pipeline</span>
+    <span class="cls">IEnumerable</span>&lt;<span class="cls">int</span>&gt; query = <span class="mth">GetNumbers</span>().<span class="mth">Where</span>(n => n % <span class="num">2</span> == <span class="num">0</span>);
+
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">"Query defined. No execution yet."</span>);
+
+    <span class="cm">// Executes NOW (first enumeration)</span>
+    <span class="kw">foreach</span> (<span class="cls">int</span> n <span class="kw">in</span> query) <span class="cls">Console</span>.<span class="mth">WriteLine</span>(n);
+
+    <span class="cm">// Executes AGAIN (second enumeration — query re-runs!)</span>
+    <span class="kw">foreach</span> (<span class="cls">int</span> n <span class="kw">in</span> query) <span class="cls">Console</span>.<span class="mth">WriteLine</span>(n);
+
+    <span class="cm">// FIX: materialize once</span>
+    <span class="cls">List</span>&lt;<span class="cls">int</span>&gt; list = <span class="mth">GetNumbers</span>().<span class="mth">Where</span>(n => n % <span class="num">2</span> == <span class="num">0</span>).<span class="mth">ToList</span>();
+    <span class="cm">// Executes ONCE; subsequent iterations use the in-memory list</span>
+}</code></pre>
+</div>
+
+<h3>Real Example: Multiple Enumerations Problem</h3>
+<div class="card card-warn">
+  <div class="card-label">Pitfall — Silent Performance Bug</div>
+  <p>Enumerating an <code>IEnumerable&lt;T&gt;</code> multiple times re-runs the underlying query each time. When that query is a database call or expensive computation, this is a serious performance issue that often goes unnoticed.</p>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// BAD: IEnumerable returned — each call re-hits the data source</span>
+<span class="cls">IEnumerable</span>&lt;<span class="cls">string</span>&gt; users = <span class="mth">FetchFromDatabase</span>();
+
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(users.<span class="mth">Count</span>());   <span class="cm">// [DB Query Executed]</span>
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(users.<span class="mth">First</span>());   <span class="cm">// [DB Query Executed]</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> u <span class="kw">in</span> users) { }          <span class="cm">// [DB Query Executed]</span>
+
+<span class="cm">// GOOD: materialize once</span>
+<span class="cls">List</span>&lt;<span class="cls">string</span>&gt; userList = <span class="mth">FetchFromDatabase</span>().<span class="mth">ToList</span>(); <span class="cm">// Executes once</span>
+
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(userList.Count);   <span class="cm">// in-memory, no re-query</span>
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(userList[<span class="num">0</span>]);      <span class="cm">// in-memory</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> u <span class="kw">in</span> userList) { }      <span class="cm">// in-memory</span></code></pre>
+</div>
+
+<h3>IQueryable vs IEnumerable</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// IQueryable — server-side; generates SQL</span>
+<span class="cls">IQueryable</span>&lt;<span class="cls">Order</span>&gt; dbQuery = dbContext.Orders
+    .<span class="mth">Where</span>(o => o.Amount > <span class="num">100</span>)        <span class="cm">// → SQL WHERE</span>
+    .<span class="mth">OrderBy</span>(o => o.CreatedDate);      <span class="cm">// → SQL ORDER BY</span>
+<span class="cm">// ONE query executed when materialized</span>
+
+<span class="cm">// IEnumerable — client-side; runs in C# after loading all rows!</span>
+<span class="cls">IEnumerable</span>&lt;<span class="cls">Order</span>&gt; memQuery = dbContext.Orders
+    .<span class="mth">AsEnumerable</span>()                    <span class="cm">// ← loads EVERYTHING into memory first!</span>
+    .<span class="mth">Where</span>(o => o.Amount > <span class="num">100</span>);      <span class="cm">// filter runs in C#</span></code></pre>
+</div>
+
+<div class="card card-qa">
+  <div class="card-label">Interview Q&amp;A</div>
+  <p><strong>Q: When does a LINQ query actually execute?</strong></p>
+  <p><strong>A:</strong> A LINQ query executes when: (1) you call an <strong>immediate operator</strong> such as <code>ToList()</code>, <code>Count()</code>, <code>First()</code>, <code>Sum()</code>, etc.; (2) you <strong>enumerate</strong> the result with <code>foreach</code>; or (3) you call <code>GetEnumerator()</code> / <code>MoveNext()</code> manually. Until then, the query is just a delegate chain (or expression tree for IQueryable) stored as a data structure — no data is accessed.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 6 ═══════════════════════════════ -->
+<section class="section" id="s6">
+<h2><span class="sec-num">6</span> Extension Methods</h2>
+
+<p>Extension methods allow you to add methods to existing types without modifying them or subclassing. They must be in a <strong>static class</strong>, be <strong>static methods</strong>, and use <code>this</code> on the first parameter.</p>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public static class</span> <span class="cls">StringExtensions</span>
+{
+    <span class="kw">public static bool</span> <span class="mth">IsNullOrEmpty</span>(<span class="kw">this string</span>? value)
+        => <span class="cls">string</span>.<span class="mth">IsNullOrEmpty</span>(value);
+
+    <span class="kw">public static string</span> <span class="mth">ToTitleCase</span>(<span class="kw">this string</span> value)
+    {
+        <span class="kw">if</span> (<span class="cls">string</span>.<span class="mth">IsNullOrWhiteSpace</span>(value)) <span class="kw">return</span> value;
+        <span class="kw">return</span> <span class="cls">string</span>.<span class="mth">Join</span>(<span class="str">' '</span>, value.<span class="mth">Split</span>(<span class="str">' '</span>)
+            .<span class="mth">Select</span>(w => w.Length > <span class="num">0</span>
+                ? <span class="cls">char</span>.<span class="mth">ToUpper</span>(w[<span class="num">0</span>]) + w.<span class="mth">Substring</span>(<span class="num">1</span>).<span class="mth">ToLower</span>()
+                : w));
+    }
+
+    <span class="kw">public static string</span> <span class="mth">Truncate</span>(<span class="kw">this string</span> value, <span class="cls">int</span> maxLength, <span class="cls">string</span> suffix = <span class="str">"..."</span>)
+        => value.Length &lt;= maxLength
+            ? value
+            : value.<span class="mth">Substring</span>(<span class="num">0</span>, maxLength - suffix.Length) + suffix;
+}
+
+<span class="cm">// Usage — looks like instance method calls:</span>
+<span class="str">"john doe"</span>.<span class="mth">ToTitleCase</span>();      <span class="cm">// "John Doe"</span>
+<span class="str">"hello world"</span>.<span class="mth">Truncate</span>(<span class="num">8</span>);    <span class="cm">// "hello..."</span>
+((string?)<span class="kw">null</span>).<span class="mth">IsNullOrEmpty</span>(); <span class="cm">// true — extension method handles null!</span></code></pre>
+</div>
+
+<h3>IEnumerable Extensions</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public static class</span> <span class="cls">EnumerableExtensions</span>
+{
+    <span class="cm">// Split items into fixed-size batches</span>
+    <span class="kw">public static</span> <span class="cls">IEnumerable</span>&lt;<span class="cls">IEnumerable</span>&lt;T&gt;&gt; <span class="mth">Batch</span>&lt;T&gt;(
+        <span class="kw">this</span> <span class="cls">IEnumerable</span>&lt;T&gt; source, <span class="cls">int</span> batchSize)
+    {
+        <span class="kw">var</span> batch = <span class="kw">new</span> <span class="cls">List</span>&lt;T&gt;(batchSize);
+        <span class="kw">foreach</span> (<span class="kw">var</span> item <span class="kw">in</span> source)
+        {
+            batch.<span class="mth">Add</span>(item);
+            <span class="kw">if</span> (batch.Count == batchSize)
+            {
+                <span class="kw">yield return</span> batch;
+                batch = <span class="kw">new</span> <span class="cls">List</span>&lt;T&gt;(batchSize);
+            }
+        }
+        <span class="kw">if</span> (batch.Count > <span class="num">0</span>) <span class="kw">yield return</span> batch;
+    }
+
+    <span class="cm">// Null-safe check</span>
+    <span class="kw">public static bool</span> <span class="mth">HasItems</span>&lt;T&gt;(<span class="kw">this</span> <span class="cls">IEnumerable</span>&lt;T&gt;? source)
+        => source?.<span class="mth">Any</span>() == <span class="kw">true</span>;
+}</code></pre>
+</div>
+
+<h3>Limitations</h3>
+<div class="card card-warn">
+  <div class="card-label">Pitfall — What Extension Methods Cannot Do</div>
+  <p><strong>Cannot override instance methods:</strong> if the type already has a matching method, the instance method always wins — your extension is never called.</p>
+  <p><strong>Cannot access private members:</strong> they are resolved as static calls; no special access to internals.</p>
+  <p><strong>Compile-time resolution:</strong> extension methods do not participate in virtual dispatch or runtime polymorphism.</p>
+  <p><strong>Null receiver allowed:</strong> unlike instance methods, extension methods can be called on null — the <code>this</code> parameter receives null without throwing <code>NullReferenceException</code>.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 7 ═══════════════════════════════ -->
+<section class="section" id="s7">
+<h2><span class="sec-num">7</span> Generics</h2>
+
+<h3>Constraints</h3>
+<div class="def-list">
+  <div class="def-item"><span class="def-term">where T : struct</span><span class="def-desc">T must be a value type (int, struct, enum, etc.)</span></div>
+  <div class="def-item"><span class="def-term">where T : class</span><span class="def-desc">T must be a reference type (class, interface, delegate, array)</span></div>
+  <div class="def-item"><span class="def-term">where T : notnull</span><span class="def-desc">T must not be nullable (value or non-nullable reference type)</span></div>
+  <div class="def-item"><span class="def-term">where T : new()</span><span class="def-desc">T must have a public parameterless constructor</span></div>
+  <div class="def-item"><span class="def-term">where T : BaseClass</span><span class="def-desc">T must inherit from BaseClass</span></div>
+  <div class="def-item"><span class="def-term">where T : IInterface</span><span class="def-desc">T must implement IInterface</span></div>
+  <div class="def-item"><span class="def-term">where T : IComparable&lt;T&gt;</span><span class="def-desc">T must be comparable to itself</span></div>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// Generic method with constraints</span>
+<span class="kw">public static</span> T <span class="mth">Max</span>&lt;T&gt;(T a, T b) <span class="kw">where</span> T : <span class="cls">IComparable</span>&lt;T&gt;
+    => a.<span class="mth">CompareTo</span>(b) >= <span class="num">0</span> ? a : b;
+
+<span class="cm">// Requires new() and class</span>
+<span class="kw">public static</span> T <span class="mth">CreateDefault</span>&lt;T&gt;() <span class="kw">where</span> T : <span class="kw">class</span>, <span class="kw">new</span>()
+    => <span class="kw">new</span> T();
+
+<span class="cm">// Multiple type parameters</span>
+<span class="kw">public static</span> <span class="cls">Dictionary</span>&lt;TKey, TValue&gt; <span class="mth">Zip</span>&lt;TKey, TValue&gt;(
+    <span class="cls">IEnumerable</span>&lt;TKey&gt; keys,
+    <span class="cls">IEnumerable</span>&lt;TValue&gt; values)
+    <span class="kw">where</span> TKey : <span class="kw">notnull</span>
+{
+    <span class="kw">return</span> keys.<span class="mth">Zip</span>(values, (k, v) => <span class="kw">new</span> { k, v })
+               .<span class="mth">ToDictionary</span>(x => x.k, x => x.v);
+}</code></pre>
+</div>
+
+<h3>Generic Repository Pattern</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public interface</span> <span class="cls">IRepository</span>&lt;T, TId&gt; <span class="kw">where</span> T : <span class="kw">class</span>
+{
+    <span class="cls">Task</span>&lt;T?&gt;              <span class="mth">GetByIdAsync</span>(TId id);
+    <span class="cls">Task</span>&lt;<span class="cls">IEnumerable</span>&lt;T&gt;&gt;  <span class="mth">GetAllAsync</span>();
+    <span class="cls">Task</span>&lt;<span class="cls">IEnumerable</span>&lt;T&gt;&gt;  <span class="mth">FindAsync</span>(<span class="cls">Expression</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt; predicate);
+    <span class="cls">Task</span>&lt;T&gt;               <span class="mth">AddAsync</span>(T entity);
+    <span class="cls">Task</span>                  <span class="mth">UpdateAsync</span>(T entity);
+    <span class="cls">Task</span>                  <span class="mth">DeleteAsync</span>(TId id);
+}
+
+<span class="kw">public abstract class</span> <span class="cls">RepositoryBase</span>&lt;T, TId&gt; : <span class="cls">IRepository</span>&lt;T, TId&gt;
+    <span class="kw">where</span> T : <span class="kw">class</span>
+{
+    <span class="kw">protected readonly</span> <span class="cls">DbContext</span> Context;
+    <span class="kw">protected readonly</span> <span class="cls">DbSet</span>&lt;T&gt; DbSet;
+
+    <span class="kw">protected</span> <span class="cls">RepositoryBase</span>(<span class="cls">DbContext</span> context)
+    {
+        Context = context;
+        DbSet   = context.<span class="mth">Set</span>&lt;T&gt;();
+    }
+
+    <span class="kw">public virtual async</span> <span class="cls">Task</span>&lt;T?&gt; <span class="mth">GetByIdAsync</span>(TId id)
+        => <span class="kw">await</span> DbSet.<span class="mth">FindAsync</span>(id);
+
+    <span class="kw">public virtual async</span> <span class="cls">Task</span>&lt;<span class="cls">IEnumerable</span>&lt;T&gt;&gt; <span class="mth">FindAsync</span>(
+        <span class="cls">Expression</span>&lt;<span class="cls">Func</span>&lt;T, <span class="cls">bool</span>&gt;&gt; predicate)
+        => <span class="kw">await</span> DbSet.<span class="mth">Where</span>(predicate).<span class="mth">ToListAsync</span>();
+
+    <span class="cm">// ... other default implementations</span>
+}</code></pre>
+</div>
+
+<h3>Covariance (out) and Contravariance (in)</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// COVARIANCE (out T) — can use a more derived type (read-only producers)</span>
+<span class="cm">// IEnumerable&lt;out T&gt; is covariant</span>
+<span class="cls">IEnumerable</span>&lt;<span class="cls">string</span>&gt; strings = <span class="kw">new</span> <span class="cls">List</span>&lt;<span class="cls">string</span>&gt; { <span class="str">"hello"</span> };
+<span class="cls">IEnumerable</span>&lt;<span class="cls">object</span>&gt; objects = strings;  <span class="cm">// works! string IS-A object</span>
+
+<span class="cm">// CONTRAVARIANCE (in T) — can use a less derived type (write-only consumers)</span>
+<span class="cm">// Action&lt;in T&gt; is contravariant</span>
+<span class="cls">Action</span>&lt;<span class="cls">object</span>&gt; objectAction = o => <span class="cls">Console</span>.<span class="mth">WriteLine</span>(o);
+<span class="cls">Action</span>&lt;<span class="cls">string</span>&gt; stringAction = objectAction;  <span class="cm">// works!</span>
+stringAction(<span class="str">"hello"</span>);  <span class="cm">// string passed, used as object internally</span>
+
+<span class="cm">// Custom covariant interface (can only return T)</span>
+<span class="kw">public interface</span> <span class="cls">IProducer</span>&lt;<span class="kw">out</span> T&gt; { T <span class="mth">Produce</span>(); }
+
+<span class="cm">// Custom contravariant interface (can only accept T)</span>
+<span class="kw">public interface</span> <span class="cls">IConsumer</span>&lt;<span class="kw">in</span> T&gt; { <span class="kw">void</span> <span class="mth">Consume</span>(T item); }</code></pre>
+</div>
+
+<div class="card card-qa">
+  <div class="card-label">Interview Q&amp;A</div>
+  <p><strong>Q: Why use generics instead of <code>object</code>?</strong></p>
+  <p><strong>A:</strong> Three reasons: (1) <strong>Type safety</strong> — compile-time checks catch errors; with <code>object</code> you get <code>InvalidCastException</code> at runtime. (2) <strong>Performance</strong> — generics avoid boxing/unboxing for value types; <code>List&lt;int&gt;</code> stores actual ints on the heap contiguously, while <code>List&lt;object&gt;</code> boxes every int to a separately allocated object. (3) <strong>Readability</strong> — <code>List&lt;Order&gt;</code> communicates intent clearly and eliminates casting everywhere.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 8 ═══════════════════════════════ -->
+<section class="section" id="s8">
+<h2><span class="sec-num">8</span> Reflection</h2>
+
+<p>Reflection allows you to inspect and interact with types, methods, properties, and attributes at <strong>runtime</strong> — without knowing them at compile time.</p>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">using</span> System.Reflection;
+
+<span class="cls">Type</span> type = <span class="kw">typeof</span>(<span class="cls">Person</span>);
+
+<span class="cm">// Properties</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> prop <span class="kw">in</span> type.<span class="mth">GetProperties</span>(
+    <span class="cls">BindingFlags</span>.Public | <span class="cls">BindingFlags</span>.Instance))
+{
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">$"{prop.PropertyType.Name} {prop.Name}"</span>);
+}
+
+<span class="cm">// Invoke method dynamically</span>
+<span class="kw">var</span> person    = <span class="kw">new</span> <span class="cls">Person</span>(<span class="str">"Alice"</span>, <span class="num">30</span>);
+<span class="kw">var</span> greetMeth = type.<span class="mth">GetMethod</span>(<span class="str">"Greet"</span>);
+<span class="kw">var</span> result    = greetMeth?.<span class="mth">Invoke</span>(person, <span class="kw">new object</span>[] { <span class="str">"Hello"</span> });
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(result);  <span class="cm">// Hello, I'm Alice, age 30</span>
+
+<span class="cm">// Get/Set property</span>
+<span class="kw">var</span> nameProp = type.<span class="mth">GetProperty</span>(<span class="str">"Name"</span>);
+nameProp?.<span class="mth">SetValue</span>(person, <span class="str">"Bob"</span>);
+
+<span class="cm">// Access private field</span>
+<span class="kw">var</span> secret = type.<span class="mth">GetField</span>(<span class="str">"_secret"</span>,
+    <span class="cls">BindingFlags</span>.NonPublic | <span class="cls">BindingFlags</span>.Instance);
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(secret?.<span class="mth">GetValue</span>(person));</code></pre>
+</div>
+
+<h3>Real Example: Attribute-Based Validator</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">public static class</span> <span class="cls">ModelValidator</span>
+{
+    <span class="kw">public static</span> <span class="cls">IReadOnlyList</span>&lt;<span class="cls">string</span>&gt; <span class="mth">Validate</span>(<span class="cls">object</span> model)
+    {
+        <span class="kw">var</span> errors = <span class="kw">new</span> <span class="cls">List</span>&lt;<span class="cls">string</span>&gt;();
+        <span class="kw">var</span> type   = model.<span class="mth">GetType</span>();
+
+        <span class="kw">foreach</span> (<span class="kw">var</span> prop <span class="kw">in</span> type.<span class="mth">GetProperties</span>())
+        {
+            <span class="kw">var</span> value   = prop.<span class="mth">GetValue</span>(model);
+            <span class="kw">var</span> context = <span class="kw">new</span> <span class="cls">ValidationContext</span>(model) { MemberName = prop.Name };
+
+            <span class="kw">foreach</span> (<span class="kw">var</span> attr <span class="kw">in</span> prop.<span class="mth">GetCustomAttributes</span>&lt;<span class="cls">ValidationAttribute</span>&gt;())
+            {
+                <span class="kw">var</span> result = attr.<span class="mth">GetValidationResult</span>(value, context);
+                <span class="kw">if</span> (result != <span class="cls">ValidationResult</span>.Success && result <span class="kw">is not null</span>)
+                    errors.<span class="mth">Add</span>(result.ErrorMessage ?? <span class="str">"Validation failed"</span>);
+            }
+        }
+        <span class="kw">return</span> errors;
+    }
+}
+
+<span class="cm">// Model decorated with validation attributes</span>
+<span class="kw">public class</span> <span class="cls">ProductCreateRequest</span>
+{
+    [<span class="dec">Required</span>(ErrorMessage = <span class="str">"Name is required"</span>)]
+    [<span class="dec">StringLength</span>(<span class="num">100</span>, MinimumLength = <span class="num">2</span>)]
+    <span class="kw">public string</span> Name { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+
+    [<span class="dec">Range</span>(<span class="num">0.01</span>, <span class="num">99999.99</span>)]
+    <span class="kw">public decimal</span> Price { <span class="kw">get</span>; <span class="kw">set</span>; }
+}</code></pre>
+</div>
+
+<h3>Performance and Alternatives</h3>
+<div class="card card-warn">
+  <div class="card-label">Pitfall — Reflection is Slow</div>
+  <p>Direct call: ~1 ns. Compiled expression delegate: ~2 ns. <code>MethodInfo.Invoke</code>: ~100–500 ns. Never use raw reflection on a hot path.</p>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// Strategy 1: cache MethodInfo (marginal improvement)</span>
+<span class="kw">private static readonly</span> <span class="cls">MethodInfo</span>? _method =
+    <span class="kw">typeof</span>(<span class="cls">string</span>).<span class="mth">GetMethod</span>(<span class="str">"ToUpper"</span>, <span class="cls">Type</span>.EmptyTypes);
+
+<span class="cm">// Strategy 2: compile to delegate ONCE — near-direct-call speed (~2ns)</span>
+<span class="kw">private static readonly</span> <span class="cls">Func</span>&lt;<span class="cls">string</span>, <span class="cls">string</span>&gt; _toUpper;
+
+<span class="kw">static</span> <span class="cls">MyClass</span>()
+{
+    <span class="kw">var</span> param  = <span class="cls">Expression</span>.<span class="mth">Parameter</span>(<span class="kw">typeof</span>(<span class="cls">string</span>), <span class="str">"s"</span>);
+    <span class="kw">var</span> method = <span class="kw">typeof</span>(<span class="cls">string</span>).<span class="mth">GetMethod</span>(<span class="str">"ToUpper"</span>, <span class="cls">Type</span>.EmptyTypes)!;
+    <span class="kw">var</span> call   = <span class="cls">Expression</span>.<span class="mth">Call</span>(param, method);
+    _toUpper   = <span class="cls">Expression</span>.<span class="mth">Lambda</span>&lt;<span class="cls">Func</span>&lt;<span class="cls">string</span>, <span class="cls">string</span>&gt;&gt;(call, param).<span class="mth">Compile</span>();
+}
+
+<span class="cm">// Strategy 3: Source generators (compile-time, zero runtime cost)</span>
+<span class="cm">// Use [JsonSerializable], Mapperly, or custom Roslyn generators</span></code></pre>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 9 ═══════════════════════════════ -->
+<section class="section" id="s9">
+<h2><span class="sec-num">9</span> Dynamic</h2>
+
+<h3>dynamic vs var vs object</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Keyword</th><th>Type Resolution</th><th>IntelliSense</th><th>Null Safety</th><th>Performance</th></tr></thead>
+  <tbody>
+    <tr><td><code>var</code></td><td>Compile-time inference</td><td>Full</td><td>Yes</td><td>Same as explicit type</td></tr>
+    <tr><td><code>object</code></td><td>Compile-time (cast needed)</td><td>Only object members</td><td>With cast</td><td>Boxing for value types</td></tr>
+    <tr><td><code>dynamic</code></td><td>Runtime (DLR)</td><td>None</td><td>No — runtime errors</td><td>~15–20x overhead</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="cm">// var — compile-time type inference (still strongly typed)</span>
+<span class="kw">var</span> name = <span class="str">"Alice"</span>;           <span class="cm">// type is string</span>
+<span class="cm">// name.FakeMethod();          // compile error</span>
+
+<span class="cm">// object — any type assignable, but must cast to use members</span>
+<span class="cls">object</span> obj = <span class="str">"Alice"</span>;
+<span class="cm">// obj.ToUpper();              // compile error</span>
+((<span class="cls">string</span>)obj).<span class="mth">ToUpper</span>();     <span class="cm">// cast required</span>
+
+<span class="cm">// dynamic — DLR resolves members at RUNTIME</span>
+<span class="kw">dynamic</span> dyn = <span class="str">"Alice"</span>;
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(dyn.<span class="mth">ToUpper</span>());  <span class="cm">// OK — runtime dispatch</span>
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(dyn.Length);       <span class="cm">// OK</span>
+
+dyn = <span class="num">42</span>;   <span class="cm">// can reassign to completely different type</span>
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(dyn + <span class="num">8</span>);   <span class="cm">// 50</span></code></pre>
+</div>
+
+<h3>ExpandoObject — Runtime Property Bags</h3>
+<div class="code-wrap">
+  <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn">Copy</button></div>
+  <pre><code><span class="kw">using</span> System.Dynamic;
+
+<span class="kw">dynamic</span> person = <span class="kw">new</span> <span class="cls">ExpandoObject</span>();
+person.Name  = <span class="str">"Alice"</span>;
+person.Age   = <span class="num">30</span>;
+person.Greet = (<span class="cls">Func</span>&lt;<span class="cls">string</span>&gt;)(() => <span class="str">$"Hi, I'm {person.Name}"</span>);
+
+<span class="cls">Console</span>.<span class="mth">WriteLine</span>(person.Greet());  <span class="cm">// Hi, I'm Alice</span>
+
+<span class="cm">// Iterate as dictionary</span>
+<span class="kw">var</span> dict = (<span class="cls">IDictionary</span>&lt;<span class="cls">string</span>, <span class="cls">object</span>?&gt;)person;
+<span class="kw">foreach</span> (<span class="kw">var</span> kvp <span class="kw">in</span> dict)
+    <span class="cls">Console</span>.<span class="mth">WriteLine</span>(<span class="str">$"{kvp.Key}: {kvp.Value}"</span>);</code></pre>
+</div>
+
+<div class="card card-warn">
+  <div class="card-label">Pitfall</div>
+  <p><code>dynamic</code> trades compile-time safety for flexibility. Typos become <code>RuntimeBinderException</code> errors discovered only at runtime. There is no refactoring support and no IntelliSense for dynamic members.</p>
+</div>
+
+<div class="card card-qa">
+  <div class="card-label">Interview Q&amp;A</div>
+  <p><strong>Q: When would you actually use <code>dynamic</code> in production?</strong></p>
+  <p><strong>A:</strong> Rarely — only when you have no static type information: (1) <strong>COM interop</strong> — Office automation, legacy COM objects. <code>dynamic</code> is the canonical C# solution here. (2) <strong>Dynamic language interop</strong> — scripting hosts calling into IronPython/IronRuby. (3) <strong>Schema-less data</strong> — truly unknown property shapes (though <code>Dictionary&lt;string, object&gt;</code> or <code>JsonNode</code> is safer and faster). Avoid <code>dynamic</code> everywhere else — use interfaces, generics, or expression trees to maintain type safety.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ SECTION 10 ═══════════════════════════════ -->
+<section class="section" id="s10">
+<h2><span class="sec-num">&#9733;</span> Summary Table</h2>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>Key Point</th>
+      <th>Common Interview Trap</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Delegates</td>
+      <td>Type-safe function pointer; multicast via +=</td>
+      <td>Return value of multicast = <strong>last</strong> invoked method</td>
+    </tr>
+    <tr>
+      <td>Func / Action / Predicate</td>
+      <td>Built-in generic delegates; <code>Predicate&lt;T&gt;</code> == <code>Func&lt;T, bool&gt;</code></td>
+      <td><code>Predicate&lt;T&gt;</code> has no multi-arg overload</td>
+    </tr>
+    <tr>
+      <td>Events</td>
+      <td><code>event</code> restricts external invocation; encapsulates delegate</td>
+      <td>Forgetting to unsubscribe → memory leak</td>
+    </tr>
+    <tr>
+      <td>Lambda / Closures</td>
+      <td>Anonymous function; closes over local variables</td>
+      <td>Loop variable capture — all lambdas share same <code>i</code></td>
+    </tr>
+    <tr>
+      <td>Expression Trees</td>
+      <td><code>Expression&lt;Func&lt;T&gt;&gt;</code> is AST; EF Core translates to SQL</td>
+      <td>Cannot use <code>out</code>/<code>ref</code> or <code>await</code> inside expression tree</td>
+    </tr>
+    <tr>
+      <td>LINQ Deferred</td>
+      <td><code>Where</code>, <code>Select</code>, <code>OrderBy</code> — runs only on enumeration</td>
+      <td>Enumerating <code>IEnumerable</code> twice hits DB/compute twice</td>
+    </tr>
+    <tr>
+      <td>LINQ Immediate</td>
+      <td><code>ToList()</code>, <code>Count()</code>, <code>First()</code> — execute now</td>
+      <td><code>First()</code> throws if empty; prefer <code>FirstOrDefault()</code></td>
+    </tr>
+    <tr>
+      <td>IQueryable vs IEnumerable</td>
+      <td><code>IQueryable</code> = server-side SQL; <code>IEnumerable</code> = client C#</td>
+      <td><code>AsEnumerable()</code> too early loads all rows into memory</td>
+    </tr>
+    <tr>
+      <td>Extension Methods</td>
+      <td>Static class; <code>this</code> param; compile-time resolution</td>
+      <td>Cannot override instance methods; no private access</td>
+    </tr>
+    <tr>
+      <td>Generics</td>
+      <td>Type safety + no boxing; constraints via <code>where</code></td>
+      <td><code>out</code> = covariance (producer); <code>in</code> = contravariance (consumer)</td>
+    </tr>
+    <tr>
+      <td>Reflection</td>
+      <td>Runtime type inspection; ~100–500 ns per call</td>
+      <td>Cache <code>MethodInfo</code> or compile to delegate for hot paths</td>
+    </tr>
+    <tr>
+      <td>dynamic</td>
+      <td>DLR resolves at runtime; no IntelliSense, no compile checks</td>
+      <td>Use only for COM interop, dynamic languages, schema-less data</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p style="color:#8b949e;font-size:13px;margin-top:32px;padding-top:20px;border-top:1px solid #21262d">
+  Last updated: 2026-08-15 &nbsp;|&nbsp; C# 12 / .NET 8 &nbsp;|&nbsp; Lead .NET Software Engineer Interview Prep
+</p>
+</section>
+
+</div>
+</main>
+
+<script>
+// ── COPY BUTTONS ──
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(() => {
+      btn.textContent = 'Error';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+    });
+  });
+});
+
+// ── ACTIVE TOC LINK ──
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+
+sections.forEach(s => observer.observe(s));
+
+// ── MOBILE SIDEBAR ──
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  overlay.classList.add('open');
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+}
+
+menuBtn.addEventListener('click', openSidebar);
+overlay.addEventListener('click', closeSidebar);
+navLinks.forEach(l => l.addEventListener('click', () => {
+  if (window.innerWidth <= 900) closeSidebar();
+}));
+</script>
+</body>
+</html>

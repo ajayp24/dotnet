@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entity Framework Core — Lead .NET Interview Prep</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --heading: #58a6ff;
+    --keyword: #ff7b72;
+    --string: #a5d6ff;
+    --comment: #8b949e;
+    --number: #79c0ff;
+    --type: #ffa657;
+    --method: #d2a8ff;
+    --green: #3fb950;
+    --yellow: #e3b341;
+    --orange: #f0883e;
+    --red: #f85149;
+    --sidebar-width: 270px;
+    --content-max: 860px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ---- SIDEBAR ---- */
+  #sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  #sidebar-header {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  #sidebar-header h2 {
+    color: var(--heading);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+  }
+
+  #sidebar-header p {
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  #toc {
+    padding: 10px 0 24px;
+    list-style: none;
+  }
+
+  #toc li { }
+
+  #toc a {
+    display: block;
+    padding: 5px 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+    line-height: 1.4;
+  }
+
+  #toc a:hover,
+  #toc a.active {
+    color: var(--heading);
+    border-left-color: var(--heading);
+    background: rgba(88,166,255,.07);
+  }
+
+  #toc .toc-section {
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: 14px 16px 4px;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  /* ---- MAIN ---- */
+  #main {
+    flex: 1;
+    min-width: 0;
+    padding: 48px 40px 80px;
+  }
+
+  .content-wrap {
+    max-width: var(--content-max);
+    margin: 0 auto;
+  }
+
+  /* ---- HEADER ---- */
+  .page-header {
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header .badge {
+    display: inline-block;
+    background: rgba(88,166,255,.15);
+    color: var(--heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(88,166,255,.3);
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+    color: var(--heading);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 620px;
+  }
+
+  /* ---- SECTIONS ---- */
+  .section {
+    margin-bottom: 64px;
+    scroll-margin-top: 24px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    color: var(--heading);
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title .num {
+    background: var(--heading);
+    color: var(--bg);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    color: var(--text);
+    font-weight: 600;
+    margin: 28px 0 12px;
+  }
+
+  h4 {
+    font-size: .9rem;
+    color: var(--type);
+    font-weight: 600;
+    margin: 20px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  p { margin-bottom: 12px; color: var(--text); }
+
+  a { color: var(--heading); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  strong { color: #e6edf3; font-weight: 600; }
+  em { color: var(--type); font-style: normal; font-weight: 500; }
+
+  ul, ol {
+    padding-left: 22px;
+    margin-bottom: 14px;
+  }
+  li { margin-bottom: 4px; color: var(--text); }
+
+  /* ---- CARDS ---- */
+  .card {
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 18px 0;
+    border-left: 4px solid;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+  }
+
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 8px;
+  }
+
+  .card-body { font-size: 14px; line-height: 1.65; }
+  .card-body p { margin-bottom: 8px; }
+  .card-body p:last-child { margin-bottom: 0; }
+  .card-body ul { margin-bottom: 0; }
+
+  /* Interview Q */
+  .card-interview {
+    border-left-color: var(--heading);
+  }
+  .card-interview .card-title { color: var(--heading); }
+
+  /* Pitfall */
+  .card-pitfall {
+    border-left-color: var(--red);
+  }
+  .card-pitfall .card-title { color: var(--red); }
+
+  /* Tip */
+  .card-tip {
+    border-left-color: var(--green);
+  }
+  .card-tip .card-title { color: var(--green); }
+
+  /* Warning */
+  .card-warning {
+    border-left-color: var(--yellow);
+  }
+  .card-warning .card-title { color: var(--yellow); }
+
+  /* ---- CODE BLOCKS ---- */
+  .code-block {
+    position: relative;
+    margin: 14px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .code-header {
+    background: var(--surface2);
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 2px 9px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+    font-family: inherit;
+  }
+
+  .copy-btn:hover { color: var(--text); border-color: var(--text-muted); }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+  pre {
+    background: var(--surface);
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 0;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Inline code */
+  p code, li code, td code, .card-body code {
+    background: var(--surface2);
+    color: var(--keyword);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    border: 1px solid var(--border);
+  }
+
+  /* Syntax tokens */
+  .kw  { color: var(--keyword); }
+  .st  { color: var(--string); }
+  .cm  { color: var(--comment); font-style: italic; }
+  .nm  { color: var(--number); }
+  .tp  { color: var(--type); }
+  .mt  { color: var(--method); }
+  .vr  { color: var(--text); }
+  .sq  { color: #79c0ff; } /* SQL keyword */
+  .sc  { color: #a5d6ff; } /* SQL column/alias */
+
+  /* ---- TABLES ---- */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 14px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 10px 14px;
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover { background: rgba(255,255,255,.02); }
+
+  .tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .tag-yes { background: rgba(63,185,80,.15); color: var(--green); }
+  .tag-no  { background: rgba(248,81,73,.12); color: var(--red); }
+  .tag-hi  { background: rgba(255,123,114,.12); color: var(--keyword); }
+  .tag-med { background: rgba(240,136,62,.12); color: var(--orange); }
+  .tag-low { background: rgba(88,166,255,.12); color: var(--heading); }
+
+  /* ---- DIVIDER ---- */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* ---- SCROLLBAR ---- */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 900px) {
+    #sidebar { display: none; }
+    #main { padding: 24px 18px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <h2>EF Core Prep</h2>
+    <p>Lead .NET Interview Guide</p>
+  </div>
+  <ul id="toc">
+    <li style="padding:.75rem .75rem .25rem;"><a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a></li>
+    <li class="toc-section">Core Concepts</li>
+    <li><a href="#s1">1. Change Tracker</a></li>
+    <li><a href="#s2">2. Loading Strategies</a></li>
+    <li><a href="#s3">3. AsNoTracking</a></li>
+    <li><a href="#s4">4. First / Single / Find</a></li>
+    <li class="toc-section">Operations</li>
+    <li><a href="#s5">5. Transactions</a></li>
+    <li><a href="#s6">6. Bulk Operations</a></li>
+    <li class="toc-section">Performance</li>
+    <li><a href="#s7">7. Query Optimization</a></li>
+    <li><a href="#s8">8. Compiled Queries</a></li>
+    <li><a href="#s9">9. Concurrency</a></li>
+    <li class="toc-section">Maintenance</li>
+    <li><a href="#s10">10. Migrations</a></li>
+    <li><a href="#s11">11. Performance Patterns</a></li>
+  </ul>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+<div class="content-wrap">
+
+  <header class="page-header">
+    <div class="badge">Interview Prep</div>
+    <h1>Entity Framework Core</h1>
+    <p>Comprehensive guide for Lead .NET Engineer interviews — internals, patterns, performance optimization, and real C# code examples with generated SQL.</p>
+  </header>
+
+  <!-- ============================
+       SECTION 1: CHANGE TRACKER
+  ============================= -->
+  <section class="section" id="s1">
+    <h2 class="section-title"><span class="num">1</span>Change Tracker</h2>
+
+    <p>EF Core maintains an internal <strong>Change Tracker</strong> — a dictionary-like structure that records every entity instance retrieved through a <code>DbContext</code>, along with a snapshot of its original values and its current <strong>entity state</strong>.</p>
+
+    <h3>Entity States</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>State</th><th>Description</th><th>SaveChanges Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>Added</code></td><td>New entity, not in DB yet</td><td>INSERT</td></tr>
+          <tr><td><code>Modified</code></td><td>One or more properties changed</td><td>UPDATE (changed cols only)</td></tr>
+          <tr><td><code>Deleted</code></td><td>Marked for removal</td><td>DELETE</td></tr>
+          <tr><td><code>Unchanged</code></td><td>Retrieved from DB, nothing modified</td><td>None</td></tr>
+          <tr><td><code>Detached</code></td><td>Not tracked by this context</td><td>None</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">var</span> <span class="vr">order</span> = <span class="kw">new</span> <span class="tp">Order</span> { <span class="vr">Id</span> = <span class="nm">1</span>, <span class="vr">Status</span> = <span class="st">"Pending"</span> };
+
+<span class="cm">// Attach to context → State: Unchanged</span>
+<span class="vr">context</span>.<span class="mt">Attach</span>(<span class="vr">order</span>);
+
+<span class="cm">// Modify property → State becomes Modified</span>
+<span class="vr">order</span>.<span class="vr">Status</span> = <span class="st">"Shipped"</span>;
+<span class="vr">Console</span>.<span class="mt">WriteLine</span>(<span class="vr">context</span>.<span class="mt">Entry</span>(<span class="vr">order</span>).<span class="vr">State</span>); <span class="cm">// Modified</span>
+
+<span class="cm">// Inspect what changed</span>
+<span class="kw">var</span> <span class="vr">entry</span> = <span class="vr">context</span>.<span class="mt">Entry</span>(<span class="vr">order</span>);
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="vr">prop</span> <span class="kw">in</span> <span class="vr">entry</span>.<span class="vr">Properties</span>)
+{
+    <span class="kw">if</span> (<span class="vr">prop</span>.<span class="vr">IsModified</span>)
+        <span class="vr">Console</span>.<span class="mt">WriteLine</span>(<span class="st">$"</span>{<span class="vr">prop</span>.<span class="vr">Metadata</span>.<span class="vr">Name</span>}<span class="st">: </span>{<span class="vr">prop</span>.<span class="vr">OriginalValue</span>}<span class="st"> → </span>{<span class="vr">prop</span>.<span class="vr">CurrentValue</span>}<span class="st">"</span>);
+        <span class="cm">// Output: Status: Pending → Shipped</span>
+}</code></pre>
+    </div>
+
+    <h3>SaveChanges() Internals</h3>
+    <p>When <code>SaveChanges()</code> is called, EF Core: (1) calls <code>DetectChanges()</code>, (2) walks all tracked entities comparing current vs original values, (3) generates minimal SQL for only changed columns, (4) executes all SQL in a single implicit transaction, (5) updates snapshots, (6) returns rows affected.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">var</span> <span class="vr">order</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>.<span class="mt">FindAsync</span>(<span class="nm">1</span>);
+<span class="vr">order</span>.<span class="vr">Status</span> = <span class="st">"Shipped"</span>;
+<span class="cm">// Only Status changed → minimal UPDATE generated:</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>();</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">SQL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="sq">UPDATE</span> <span class="sc">Orders</span> <span class="sq">SET</span> <span class="sc">Status</span> = <span class="st">'Shipped'</span>
+<span class="sq">WHERE</span> <span class="sc">Id</span> = <span class="nm">1</span>
+<span class="cm">-- NOT: UPDATE Orders SET Status=..., CreatedAt=..., CustomerId=... (all columns)</span></code></pre>
+    </div>
+
+    <h3>DetectChanges() and Performance</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// Disable auto-detect during bulk add — huge performance gain</span>
+<span class="vr">context</span>.<span class="vr">ChangeTracker</span>.<span class="vr">AutoDetectChangesEnabled</span> = <span class="kw">false</span>;
+<span class="kw">try</span>
+{
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="vr">item</span> <span class="kw">in</span> <span class="vr">largeList</span>)
+        <span class="vr">context</span>.<span class="vr">Products</span>.<span class="mt">Add</span>(<span class="vr">item</span>);
+
+    <span class="vr">context</span>.<span class="vr">ChangeTracker</span>.<span class="mt">DetectChanges</span>(); <span class="cm">// Once, manually</span>
+    <span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>();
+}
+<span class="kw">finally</span>
+{
+    <span class="vr">context</span>.<span class="vr">ChangeTracker</span>.<span class="vr">AutoDetectChangesEnabled</span> = <span class="kw">true</span>;
+}
+
+<span class="cm">// Attach stub entity — update without SELECT round-trip</span>
+<span class="kw">var</span> <span class="vr">stub</span> = <span class="kw">new</span> <span class="tp">Order</span> { <span class="vr">Id</span> = <span class="vr">orderId</span> };
+<span class="vr">context</span>.<span class="mt">Attach</span>(<span class="vr">stub</span>);       <span class="cm">// Unchanged</span>
+<span class="vr">stub</span>.<span class="vr">Status</span> = <span class="st">"Shipped"</span>;  <span class="cm">// Modified (Status only)</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>();
+<span class="cm">// SQL: UPDATE Orders SET Status='Shipped' WHERE Id=@id — no SELECT!</span></code></pre>
+    </div>
+
+    <div class="card card-interview">
+      <div class="card-title">Interview Q — "How does EF Core know what changed?"</div>
+      <div class="card-body">
+        <p>EF Core's Change Tracker stores a <strong>snapshot</strong> of each entity's property values when it is first tracked. When <code>DetectChanges()</code> runs (automatically before <code>SaveChanges</code>), it walks all tracked entities comparing current property values against their stored snapshots. Any property that differs is flagged as modified. EF generates SQL only for modified columns — not a full-column UPDATE. An alternative is <strong>notification-based tracking</strong> (via <code>INotifyPropertyChanged</code>), which avoids the snapshot scan cost by triggering change events immediately, useful for very high-throughput scenarios.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 2: LOADING
+  ============================= -->
+  <section class="section" id="s2">
+    <h2 class="section-title"><span class="num">2</span>Lazy vs Eager vs Explicit Loading</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Strategy</th><th>How</th><th>When SQL Runs</th><th>N+1 Risk</th></tr></thead>
+        <tbody>
+          <tr><td>Lazy Loading</td><td>Virtual navigation properties</td><td>On first access (deferred)</td><td><span class="tag tag-hi">HIGH</span></td></tr>
+          <tr><td>Eager Loading</td><td><code>.Include()</code></td><td>With the main query (JOIN)</td><td><span class="tag tag-no">None</span></td></tr>
+          <tr><td>Explicit Loading</td><td><code>.Entry().LoadAsync()</code></td><td>Manually triggered</td><td><span class="tag tag-low">Controlled</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Lazy Loading — N+1 Problem</h3>
+    <p>Requires <code>UseLazyLoadingProxies()</code> and <code>virtual</code> navigation properties. Deceptively simple to write, catastrophic at scale.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">public class</span> <span class="tp">Order</span>
+{
+    <span class="kw">public int</span> <span class="vr">Id</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public virtual</span> <span class="tp">ICollection</span>&lt;<span class="tp">OrderItem</span>&gt; <span class="vr">Items</span> { <span class="kw">get</span>; <span class="kw">set</span>; } <span class="cm">// virtual = lazy</span>
+}
+
+<span class="cm">// DANGER: N+1 Problem</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>.<span class="mt">ToListAsync</span>();
+<span class="cm">// SQL: SELECT * FROM Orders   ← 1 query</span>
+
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="vr">order</span> <span class="kw">in</span> <span class="vr">orders</span>)
+{
+    <span class="vr">Console</span>.<span class="mt">WriteLine</span>(<span class="vr">order</span>.<span class="vr">Items</span>.<span class="vr">Count</span>);
+    <span class="cm">// SQL: SELECT * FROM OrderItems WHERE OrderId = 1  ← fires per order!</span>
+    <span class="cm">// SQL: SELECT * FROM OrderItems WHERE OrderId = 2</span>
+    <span class="cm">// SQL: SELECT * FROM OrderItems WHERE OrderId = 3</span>
+    <span class="cm">// ... N additional queries for N orders = TERRIBLE at scale</span>
+}</code></pre>
+    </div>
+
+    <h3>Eager Loading — .Include() / .ThenInclude()</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// Single level — one JOIN query</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)
+    .<span class="mt">ToListAsync</span>();
+
+<span class="cm">// Deep graph — multiple ThenInclude</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Customer</span>)
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)
+        .<span class="mt">ThenInclude</span>(<span class="vr">i</span> => <span class="vr">i</span>.<span class="vr">Product</span>)
+            .<span class="mt">ThenInclude</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">Category</span>)
+    .<span class="mt">ToListAsync</span>();</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">SQL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="sq">SELECT</span> <span class="sc">o.*</span>, <span class="sc">c.*</span>, <span class="sc">oi.*</span>, <span class="sc">p.*</span>, <span class="sc">cat.*</span>
+<span class="sq">FROM</span>   <span class="sc">Orders o</span>
+<span class="sq">LEFT JOIN</span> <span class="sc">Customers c</span>   <span class="sq">ON</span> <span class="sc">c.Id</span> = <span class="sc">o.CustomerId</span>
+<span class="sq">LEFT JOIN</span> <span class="sc">OrderItems oi</span> <span class="sq">ON</span> <span class="sc">oi.OrderId</span> = <span class="sc">o.Id</span>
+<span class="sq">LEFT JOIN</span> <span class="sc">Products p</span>    <span class="sq">ON</span> <span class="sc">p.Id</span> = <span class="sc">oi.ProductId</span>
+<span class="sq">LEFT JOIN</span> <span class="sc">Categories cat</span> <span class="sq">ON</span> <span class="sc">cat.Id</span> = <span class="sc">p.CategoryId</span></code></pre>
+    </div>
+
+    <h3>Explicit Loading</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">var</span> <span class="vr">order</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>.<span class="mt">FindAsync</span>(<span class="vr">orderId</span>);
+
+<span class="cm">// Load collection explicitly</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="mt">Entry</span>(<span class="vr">order</span>)
+    .<span class="mt">Collection</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)
+    .<span class="mt">LoadAsync</span>();
+
+<span class="cm">// Load reference explicitly</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="mt">Entry</span>(<span class="vr">order</span>)
+    .<span class="mt">Reference</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Customer</span>)
+    .<span class="mt">LoadAsync</span>();
+
+<span class="cm">// Load with filter (EF Core 5+)</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="mt">Entry</span>(<span class="vr">order</span>)
+    .<span class="mt">Collection</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)
+    .<span class="mt">Query</span>()
+    .<span class="mt">Where</span>(<span class="vr">i</span> => <span class="vr">i</span>.<span class="vr">IsActive</span>)
+    .<span class="mt">LoadAsync</span>();
+<span class="cm">// SQL: SELECT * FROM OrderItems WHERE OrderId = @id AND IsActive = 1</span></code></pre>
+    </div>
+
+    <div class="card card-interview">
+      <div class="card-title">Interview Q — "What is the N+1 problem? How do you fix it?"</div>
+      <div class="card-body">
+        <p>The N+1 problem occurs when you execute 1 query to load N parent entities, then execute 1 additional query <em>per parent</em> to load related children — resulting in 1 + N database round-trips. It works correctly but scales catastrophically.</p>
+        <ul>
+          <li><strong>Fix 1:</strong> Eager loading with <code>.Include()</code> — consolidates to a single JOIN query</li>
+          <li><strong>Fix 2:</strong> Project with <code>Select</code> — load aggregates in SQL (e.g., <code>o.Items.Count</code>)</li>
+          <li><strong>Fix 3:</strong> <code>AsSplitQuery()</code> — separate queries without cartesian explosion</li>
+          <li><strong>Fix 4:</strong> Disable lazy loading proxies in production to prevent accidental N+1</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 3: AsNoTracking
+  ============================= -->
+  <section class="section" id="s3">
+    <h2 class="section-title"><span class="num">3</span>AsNoTracking()</h2>
+
+    <p>By default, every entity returned by a LINQ query is registered in the Change Tracker. <code>AsNoTracking()</code> skips this entirely — entities are returned as plain objects with no state-tracking overhead.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// Read-only report — ~20–40% faster, no snapshot storage</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">List</span>&lt;<span class="tp">ProductDto</span>&gt;&gt; <span class="mt">GetCatalogAsync</span>()
+{
+    <span class="kw">return await</span> <span class="vr">context</span>.<span class="vr">Products</span>
+        .<span class="mt">AsNoTracking</span>()
+        .<span class="mt">Include</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">Category</span>)
+        .<span class="mt">Select</span>(<span class="vr">p</span> => <span class="kw">new</span> <span class="tp">ProductDto</span>
+        {
+            <span class="vr">Id</span>           = <span class="vr">p</span>.<span class="vr">Id</span>,
+            <span class="vr">Name</span>         = <span class="vr">p</span>.<span class="vr">Name</span>,
+            <span class="vr">CategoryName</span> = <span class="vr">p</span>.<span class="vr">Category</span>.<span class="vr">Name</span>,
+            <span class="vr">Price</span>        = <span class="vr">p</span>.<span class="vr">Price</span>
+        })
+        .<span class="mt">ToListAsync</span>();
+}
+
+<span class="cm">// AsNoTrackingWithIdentityResolution — deduplicates objects by identity</span>
+<span class="cm">// without full tracking overhead (EF Core 5+)</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">AsNoTrackingWithIdentityResolution</span>()
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Customer</span>)
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// orders[0].Customer and orders[1].Customer are the SAME object reference</span>
+<span class="cm">// if they share the same CustomerId — prevents object duplication in JOINs</span></code></pre>
+    </div>
+
+    <h3>When to Use</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>Use AsNoTracking?</th></tr></thead>
+        <tbody>
+          <tr><td>Read-only API endpoints / reports</td><td><span class="tag tag-yes">YES</span></td></tr>
+          <tr><td>Display-only views</td><td><span class="tag tag-yes">YES</span></td></tr>
+          <tr><td>CQRS read side</td><td><span class="tag tag-yes">YES</span></td></tr>
+          <tr><td>Background read jobs</td><td><span class="tag tag-yes">YES</span></td></tr>
+          <tr><td>Need to update entity after loading</td><td><span class="tag tag-no">NO</span></td></tr>
+          <tr><td>Need to detect changes later</td><td><span class="tag tag-no">NO</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-interview">
+      <div class="card-title">Interview Q — "What does AsNoTracking() do and when should you use it?"</div>
+      <div class="card-body">
+        <p><code>AsNoTracking()</code> instructs EF Core not to register returned entities in the Change Tracker. This eliminates: the cost of creating property value snapshots, identity map lookups on each row, and entity state management. It is most beneficial for <strong>read-only operations</strong> — API list endpoints, reports, dashboards — where you never intend to call <code>SaveChanges</code> on the returned entities. The performance gain is typically <strong>20–40%</strong> on large result sets. However, if you need to later update or delete the entity through the same context, you need tracked entities or must explicitly re-attach them with <code>context.Attach()</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 4: First/Single/Find
+  ============================= -->
+  <section class="section" id="s4">
+    <h2 class="section-title"><span class="num">4</span>First() vs Single() vs Find()</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>0 Results</th><th>2+ Results</th><th>Searches Tracker First?</th></tr></thead>
+        <tbody>
+          <tr><td><code>First()</code></td><td>Throws</td><td>Returns first</td><td><span class="tag tag-no">No</span></td></tr>
+          <tr><td><code>FirstOrDefault()</code></td><td>null</td><td>Returns first</td><td><span class="tag tag-no">No</span></td></tr>
+          <tr><td><code>Single()</code></td><td>Throws</td><td>Throws</td><td><span class="tag tag-no">No</span></td></tr>
+          <tr><td><code>SingleOrDefault()</code></td><td>null</td><td>Throws</td><td><span class="tag tag-no">No</span></td></tr>
+          <tr><td><code>Find()</code></td><td>null</td><td>N/A (PK only)</td><td><span class="tag tag-yes">YES</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// First() — use when you need first result, entity MUST exist</span>
+<span class="kw">var</span> <span class="vr">latestOrder</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">OrderByDescending</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">CreatedAt</span>)
+    .<span class="mt">FirstAsync</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">CustomerId</span> == <span class="vr">customerId</span>);
+<span class="cm">// Throws InvalidOperationException if no orders for customer</span>
+
+<span class="cm">// FirstOrDefault() — entity may or may not exist</span>
+<span class="kw">var</span> <span class="vr">order</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">FirstOrDefaultAsync</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Id</span> == <span class="vr">orderId</span>);
+<span class="kw">if</span> (<span class="vr">order</span> <span class="kw">is null</span>) <span class="kw">return</span> <span class="mt">NotFound</span>();
+
+<span class="cm">// Single() — business rule guarantees exactly ONE result</span>
+<span class="kw">var</span> <span class="vr">sub</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Subscriptions</span>
+    .<span class="mt">SingleAsync</span>(<span class="vr">s</span> => <span class="vr">s</span>.<span class="vr">CustomerId</span> == <span class="vr">customerId</span> &amp;&amp; <span class="vr">s</span>.<span class="vr">IsActive</span>);
+<span class="cm">// Throws if 0 or 2+ active subscriptions — good invariant guard</span>
+
+<span class="cm">// Find() — PK lookup with Change Tracker cache</span>
+<span class="kw">var</span> <span class="vr">product</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Products</span>.<span class="mt">FindAsync</span>(<span class="vr">productId</span>);
+<span class="cm">// 1. Checks Change Tracker first (no SQL if already loaded)</span>
+<span class="cm">// 2. Falls back to: SELECT * FROM Products WHERE Id = @id</span>
+
+<span class="cm">// Find() cache demo</span>
+<span class="kw">var</span> <span class="vr">p1</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Products</span>.<span class="mt">FindAsync</span>(<span class="nm">42</span>); <span class="cm">// SQL fired</span>
+<span class="kw">var</span> <span class="vr">p2</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Products</span>.<span class="mt">FindAsync</span>(<span class="nm">42</span>); <span class="cm">// NO SQL — from tracker</span>
+<span class="vr">Console</span>.<span class="mt">WriteLine</span>(<span class="tp">ReferenceEquals</span>(<span class="vr">p1</span>, <span class="vr">p2</span>)); <span class="cm">// True</span></code></pre>
+    </div>
+
+    <div class="card card-pitfall">
+      <div class="card-title">Pitfall — Single() Performance</div>
+      <div class="card-body"><p><code>Single()</code> cannot optimize to <code>SELECT TOP 1</code> — it must load ALL matching rows from the DB to verify exactly one exists. Use it for small, indexed lookups. On large unfiltered tables, prefer a check with <code>CountAsync()</code> and then <code>First()</code>.</p></div>
+    </div>
+
+    <div class="card card-tip">
+      <div class="card-title">Tip — Composite Keys with Find()</div>
+      <div class="card-body"><p>For composite primary keys, pass values in the same order they are defined in the model: <code>context.OrderItems.FindAsync(orderId, productId)</code>.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 5: TRANSACTIONS
+  ============================= -->
+  <section class="section" id="s5">
+    <h2 class="section-title"><span class="num">5</span>Transactions</h2>
+
+    <p>Every <code>SaveChanges()</code> call is wrapped in an <strong>implicit transaction</strong>. Use explicit transactions when you need multiple <code>SaveChanges()</code> calls to be atomic, or when mixing EF with raw ADO.NET.</p>
+
+    <h3>Explicit Transaction — Money Transfer</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">TransferFundsAsync</span>(<span class="kw">int</span> <span class="vr">fromId</span>, <span class="kw">int</span> <span class="vr">toId</span>, <span class="kw">decimal</span> <span class="vr">amount</span>)
+{
+    <span class="kw">await using var</span> <span class="vr">tx</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Database</span>.<span class="mt">BeginTransactionAsync</span>();
+    <span class="kw">try</span>
+    {
+        <span class="kw">var</span> <span class="vr">from</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Accounts</span>.<span class="mt">FirstAsync</span>(<span class="vr">a</span> => <span class="vr">a</span>.<span class="vr">Id</span> == <span class="vr">fromId</span>);
+        <span class="kw">var</span> <span class="vr">to</span>   = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Accounts</span>.<span class="mt">FirstAsync</span>(<span class="vr">a</span> => <span class="vr">a</span>.<span class="vr">Id</span> == <span class="vr">toId</span>);
+
+        <span class="kw">if</span> (<span class="vr">from</span>.<span class="vr">Balance</span> &lt; <span class="vr">amount</span>)
+            <span class="kw">throw new</span> <span class="tp">InvalidOperationException</span>(<span class="st">"Insufficient funds"</span>);
+
+        <span class="vr">from</span>.<span class="vr">Balance</span> -= <span class="vr">amount</span>;
+        <span class="vr">to</span>.<span class="vr">Balance</span>   += <span class="vr">amount</span>;
+
+        <span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>(); <span class="cm">// First save — still in transaction</span>
+
+        <span class="vr">context</span>.<span class="vr">TransactionLogs</span>.<span class="mt">Add</span>(<span class="kw">new</span> <span class="tp">TransactionLog</span>
+        {
+            <span class="vr">FromAccountId</span> = <span class="vr">fromId</span>,
+            <span class="vr">ToAccountId</span>   = <span class="vr">toId</span>,
+            <span class="vr">Amount</span>        = <span class="vr">amount</span>,
+            <span class="vr">Timestamp</span>     = <span class="tp">DateTime</span>.<span class="vr">UtcNow</span>
+        });
+
+        <span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>(); <span class="cm">// Second save — still in same transaction</span>
+
+        <span class="kw">await</span> <span class="vr">tx</span>.<span class="mt">CommitAsync</span>(); <span class="cm">// Both succeed → commit</span>
+    }
+    <span class="kw">catch</span>
+    {
+        <span class="kw">await</span> <span class="vr">tx</span>.<span class="mt">RollbackAsync</span>(); <span class="cm">// Either fails → rollback both</span>
+        <span class="kw">throw</span>;
+    }
+}</code></pre>
+    </div>
+
+    <h3>Savepoints (EF Core 5+)</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">await using var</span> <span class="vr">tx</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Database</span>.<span class="mt">BeginTransactionAsync</span>();
+
+<span class="kw">await</span> <span class="vr">tx</span>.<span class="mt">CreateSavepointAsync</span>(<span class="st">"BeforeOrder"</span>);
+
+<span class="kw">try</span>
+{
+    <span class="vr">context</span>.<span class="vr">Orders</span>.<span class="mt">Add</span>(<span class="vr">newOrder</span>);
+    <span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>();
+}
+<span class="kw">catch</span>
+{
+    <span class="cm">// Rollback only to savepoint — not the full transaction</span>
+    <span class="kw">await</span> <span class="vr">tx</span>.<span class="mt">RollbackToSavepointAsync</span>(<span class="st">"BeforeOrder"</span>);
+}
+
+<span class="kw">await</span> <span class="vr">tx</span>.<span class="mt">CommitAsync</span>(); <span class="cm">// Commit whatever succeeded</span></code></pre>
+    </div>
+
+    <div class="card card-warning">
+      <div class="card-title">Warning — Distributed Transactions</div>
+      <div class="card-body"><p>Avoid <code>System.Transactions.TransactionScope</code> with EF Core. Distributed transactions require MSDTC, are not supported on Linux/macOS, and scale poorly. Use the <strong>Outbox Pattern</strong> or <strong>Saga Pattern</strong> for cross-service consistency instead.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 6: BULK OPS
+  ============================= -->
+  <section class="section" id="s6">
+    <h2 class="section-title"><span class="num">6</span>Bulk Insert / Bulk Operations</h2>
+
+    <h3>EF Core 7+ ExecuteUpdate() and ExecuteDelete()</h3>
+    <p>These bypass the Change Tracker entirely and generate direct SQL — no SELECT, no object materialization.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// ExecuteDelete — direct DELETE, no entities loaded</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Products</span>
+    .<span class="mt">Where</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">IsDiscontinued</span> &amp;&amp; <span class="vr">p</span>.<span class="vr">LastSaleDate</span> &lt; <span class="tp">DateTime</span>.<span class="vr">UtcNow</span>.<span class="mt">AddYears</span>(-<span class="nm">2</span>))
+    .<span class="mt">ExecuteDeleteAsync</span>();
+
+<span class="cm">// ExecuteUpdate — bulk set without loading entities</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Products</span>
+    .<span class="mt">Where</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">CategoryId</span> == <span class="vr">oldCategoryId</span>)
+    .<span class="mt">ExecuteUpdateAsync</span>(<span class="vr">s</span> => <span class="vr">s</span>
+        .<span class="mt">SetProperty</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">CategoryId</span>, <span class="vr">newCategoryId</span>)
+        .<span class="mt">SetProperty</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">UpdatedAt</span>, <span class="tp">DateTime</span>.<span class="vr">UtcNow</span>));</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">SQL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="sq">UPDATE</span> <span class="sc">Products</span>
+<span class="sq">SET</span>    <span class="sc">CategoryId</span> = @<span class="nm">new</span>, <span class="sc">UpdatedAt</span> = @<span class="nm">now</span>
+<span class="sq">WHERE</span>  <span class="sc">CategoryId</span> = @<span class="nm">old</span>
+<span class="cm">-- No SELECT. No entity loading. No Change Tracker overhead.</span></code></pre>
+    </div>
+
+    <h3>Efficient Bulk Import — 10,000 Records</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">ImportProductsAsync</span>(<span class="tp">IEnumerable</span>&lt;<span class="tp">ProductRow</span>&gt; <span class="vr">rows</span>)
+{
+    <span class="vr">context</span>.<span class="vr">ChangeTracker</span>.<span class="vr">AutoDetectChangesEnabled</span> = <span class="kw">false</span>;
+    <span class="kw">var</span> <span class="vr">batch</span> = <span class="kw">new</span> <span class="tp">List</span>&lt;<span class="tp">Product</span>&gt;(<span class="nm">500</span>);
+
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="vr">row</span> <span class="kw">in</span> <span class="vr">rows</span>)
+    {
+        <span class="vr">batch</span>.<span class="mt">Add</span>(<span class="kw">new</span> <span class="tp">Product</span> { <span class="vr">Name</span> = <span class="vr">row</span>.<span class="vr">Name</span>, <span class="vr">Price</span> = <span class="vr">row</span>.<span class="vr">Price</span> });
+
+        <span class="kw">if</span> (<span class="vr">batch</span>.<span class="vr">Count</span> == <span class="nm">500</span>)
+        {
+            <span class="vr">context</span>.<span class="vr">Products</span>.<span class="mt">AddRange</span>(<span class="vr">batch</span>);
+            <span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>();
+            <span class="vr">context</span>.<span class="vr">ChangeTracker</span>.<span class="mt">Clear</span>(); <span class="cm">// Detach all — prevent memory growth</span>
+            <span class="vr">batch</span>.<span class="mt">Clear</span>();
+        }
+    }
+
+    <span class="kw">if</span> (<span class="vr">batch</span>.<span class="mt">Any</span>()) { <span class="vr">context</span>.<span class="vr">Products</span>.<span class="mt">AddRange</span>(<span class="vr">batch</span>); <span class="kw">await</span> <span class="vr">context</span>.<span class="mt">SaveChangesAsync</span>(); }
+    <span class="vr">context</span>.<span class="vr">ChangeTracker</span>.<span class="vr">AutoDetectChangesEnabled</span> = <span class="kw">true</span>;
+}
+
+<span class="cm">// Ultimate option: EFCore.BulkExtensions (NuGet)</span>
+<span class="kw">await</span> <span class="vr">context</span>.<span class="mt">BulkInsertAsync</span>(<span class="vr">products</span>);
+<span class="cm">// Single BULK INSERT — ~10x faster than EF batching for large datasets</span></code></pre>
+    </div>
+
+    <h3>Raw SQL Methods</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// FromSqlRaw — returns tracked entities (use AsNoTracking for reads)</span>
+<span class="kw">var</span> <span class="vr">products</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Products</span>
+    .<span class="mt">FromSqlRaw</span>(<span class="st">"SELECT * FROM Products WHERE Price > {0}"</span>, <span class="vr">minPrice</span>)
+    .<span class="mt">AsNoTracking</span>()
+    .<span class="mt">ToListAsync</span>();
+
+<span class="cm">// ExecuteSqlRaw — non-query SQL (UPDATE/DELETE/stored procs)</span>
+<span class="kw">var</span> <span class="vr">rows</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Database</span>
+    .<span class="mt">ExecuteSqlRawAsync</span>(
+        <span class="st">"UPDATE Products SET Price = Price * 0.9 WHERE CategoryId = {0}"</span>,
+        <span class="vr">categoryId</span>);
+
+<span class="cm">// FromSqlInterpolated — safe via FormattableString (no SQL injection)</span>
+<span class="kw">var</span> <span class="vr">products</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Products</span>
+    .<span class="mt">FromSqlInterpolated</span>(<span class="st">$"SELECT * FROM Products WHERE CategoryId = </span>{<span class="vr">categoryId</span>}<span class="st">"</span>)
+    .<span class="mt">ToListAsync</span>();</code></pre>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 7: QUERY OPT
+  ============================= -->
+  <section class="section" id="s7">
+    <h2 class="section-title"><span class="num">7</span>Query Optimization</h2>
+
+    <h3>Projection vs Include — Always Project</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// BAD: Loads full entity graph — SELECT * on multiple tables</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Customer</span>).<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)
+    .<span class="mt">ToListAsync</span>();
+
+<span class="cm">// GOOD: Project only needed data — minimal network transfer</span>
+<span class="kw">var</span> <span class="vr">summaries</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Select</span>(<span class="vr">o</span> => <span class="kw">new</span> <span class="tp">OrderSummaryDto</span>
+    {
+        <span class="vr">OrderId</span>      = <span class="vr">o</span>.<span class="vr">Id</span>,
+        <span class="vr">CustomerName</span> = <span class="vr">o</span>.<span class="vr">Customer</span>.<span class="vr">Name</span>,
+        <span class="vr">TotalItems</span>   = <span class="vr">o</span>.<span class="vr">Items</span>.<span class="vr">Count</span>,
+        <span class="vr">TotalAmount</span>  = <span class="vr">o</span>.<span class="vr">Items</span>.<span class="mt">Sum</span>(<span class="vr">i</span> => <span class="vr">i</span>.<span class="vr">Price</span> * <span class="vr">i</span>.<span class="vr">Quantity</span>)
+    })
+    .<span class="mt">ToListAsync</span>();</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">SQL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="sq">SELECT</span> <span class="sc">o.Id</span>, <span class="sc">c.Name</span>, <span class="mt">COUNT</span>(<span class="sc">oi.Id</span>), <span class="mt">SUM</span>(<span class="sc">oi.Price</span> * <span class="sc">oi.Quantity</span>)
+<span class="sq">FROM</span>   <span class="sc">Orders o</span>
+<span class="sq">JOIN</span>   <span class="sc">Customers c</span>   <span class="sq">ON</span> <span class="sc">c.Id</span> = <span class="sc">o.CustomerId</span>
+<span class="sq">LEFT JOIN</span> <span class="sc">OrderItems oi</span> <span class="sq">ON</span> <span class="sc">oi.OrderId</span> = <span class="sc">o.Id</span>
+<span class="sq">GROUP BY</span> <span class="sc">o.Id</span>, <span class="sc">c.Name</span></code></pre>
+    </div>
+
+    <h3>Cartesian Explosion — The Problem</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// Includes two collections — generates cartesian product!</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)     <span class="cm">// 10 items/order</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Payments</span>) <span class="cm">// 3 payments/order</span>
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// 100 orders × 10 items × 3 payments = 3,000 rows transferred!</span></code></pre>
+    </div>
+
+    <h3>Fix: AsSplitQuery()</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Payments</span>)
+    .<span class="mt">AsSplitQuery</span>()       <span class="cm">// 3 separate queries — no cartesian explosion</span>
+    .<span class="mt">ToListAsync</span>();
+
+<span class="cm">// Set globally in OnConfiguring:</span>
+<span class="vr">optionsBuilder</span>.<span class="mt">UseSqlServer</span>(<span class="vr">connectionString</span>,
+    <span class="vr">o</span> => <span class="vr">o</span>.<span class="mt">UseQuerySplittingBehavior</span>(<span class="tp">QuerySplittingBehavior</span>.<span class="vr">SplitQuery</span>));
+
+<span class="cm">// Filtered Include (EF Core 5+) — load only active items</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>.<span class="mt">Where</span>(<span class="vr">i</span> => <span class="vr">i</span>.<span class="vr">IsActive</span>))
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// SQL: LEFT JOIN OrderItems oi ON oi.OrderId = o.Id AND oi.IsActive = 1</span></code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">SQL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">-- AsSplitQuery generates 3 separate queries:</span>
+<span class="sq">SELECT</span> * <span class="sq">FROM</span> <span class="sc">Orders</span>                            <span class="cm">-- Query 1</span>
+<span class="sq">SELECT</span> * <span class="sq">FROM</span> <span class="sc">OrderItems</span> <span class="sq">WHERE OrderId IN</span> (...)   <span class="cm">-- Query 2</span>
+<span class="sq">SELECT</span> * <span class="sq">FROM</span> <span class="sc">Payments</span>   <span class="sq">WHERE OrderId IN</span> (...)   <span class="cm">-- Query 3</span></code></pre>
+    </div>
+
+    <div class="card card-pitfall">
+      <div class="card-title">Pitfall — AsSplitQuery Trade-off</div>
+      <div class="card-body"><p><code>AsSplitQuery()</code> uses multiple DB round-trips. If parent result sets are small (e.g., 5 orders with 2 items each), the JOIN overhead is minimal and split queries add unnecessary round-trips. Use split queries when collection sizes are large (5+ children per parent).</p></div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 8: COMPILED QUERIES
+  ============================= -->
+  <section class="section" id="s8">
+    <h2 class="section-title"><span class="num">8</span>Compiled Queries</h2>
+
+    <p>Every EF Core LINQ query pays a one-time compilation cost to translate expression trees to SQL. EF caches query plans, but the cache lookup itself has overhead. For hot-path queries (&gt;100 calls/sec), <code>EF.CompileQuery()</code> eliminates this overhead entirely.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">public class</span> <span class="tp">UserRepository</span>
+{
+    <span class="cm">// Compiled once at startup — expression tree compilation happens ONCE</span>
+    <span class="kw">private static readonly</span> <span class="tp">Func</span>&lt;<span class="tp">AppDbContext</span>, <span class="kw">int</span>, <span class="tp">Task</span>&lt;<span class="tp">User</span>?&gt;&gt; <span class="vr">_getUserById</span> =
+        <span class="tp">EF</span>.<span class="mt">CompileAsyncQuery</span>((<span class="tp">AppDbContext</span> <span class="vr">ctx</span>, <span class="kw">int</span> <span class="vr">userId</span>) =>
+            <span class="vr">ctx</span>.<span class="vr">Users</span>
+               .<span class="mt">AsNoTracking</span>()
+               .<span class="mt">Include</span>(<span class="vr">u</span> => <span class="vr">u</span>.<span class="vr">Roles</span>)
+               .<span class="mt">FirstOrDefault</span>(<span class="vr">u</span> => <span class="vr">u</span>.<span class="vr">Id</span> == <span class="vr">userId</span>));
+
+    <span class="kw">private static readonly</span> <span class="tp">Func</span>&lt;<span class="tp">AppDbContext</span>, <span class="kw">string</span>, <span class="tp">IAsyncEnumerable</span>&lt;<span class="tp">Product</span>&gt;&gt; <span class="vr">_byCategory</span> =
+        <span class="tp">EF</span>.<span class="mt">CompileAsyncQuery</span>((<span class="tp">AppDbContext</span> <span class="vr">ctx</span>, <span class="kw">string</span> <span class="vr">cat</span>) =>
+            <span class="vr">ctx</span>.<span class="vr">Products</span>
+               .<span class="mt">AsNoTracking</span>()
+               .<span class="mt">Where</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">Category</span> == <span class="vr">cat</span> &amp;&amp; <span class="vr">p</span>.<span class="vr">IsActive</span>)
+               .<span class="mt">OrderBy</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">Name</span>));
+
+    <span class="kw">private readonly</span> <span class="tp">AppDbContext</span> <span class="vr">_context</span>;
+    <span class="kw">public</span> <span class="tp">UserRepository</span>(<span class="tp">AppDbContext</span> <span class="vr">context</span>) => <span class="vr">_context</span> = <span class="vr">context</span>;
+
+    <span class="cm">// No LINQ compilation overhead on each call</span>
+    <span class="kw">public</span> <span class="tp">Task</span>&lt;<span class="tp">User</span>?&gt; <span class="mt">GetByIdAsync</span>(<span class="kw">int</span> <span class="vr">id</span>) => <span class="mt">_getUserById</span>(<span class="vr">_context</span>, <span class="vr">id</span>);
+
+    <span class="kw">public</span> <span class="tp">IAsyncEnumerable</span>&lt;<span class="tp">Product</span>&gt; <span class="mt">GetByCategory</span>(<span class="kw">string</span> <span class="vr">cat</span>) =>
+        <span class="mt">_byCategory</span>(<span class="vr">_context</span>, <span class="vr">cat</span>);
+}</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>Worth Compiling?</th></tr></thead>
+        <tbody>
+          <tr><td>&gt; 100 calls/second on same query</td><td><span class="tag tag-yes">YES</span></td></tr>
+          <tr><td>Authentication / session lookup</td><td><span class="tag tag-yes">YES</span></td></tr>
+          <tr><td>Complex queries with many parameters</td><td><span class="tag tag-yes">YES</span></td></tr>
+          <tr><td>One-off or low-frequency queries</td><td><span class="tag tag-no">NO</span></td></tr>
+          <tr><td>Queries that change shape dynamically</td><td><span class="tag tag-no">NO</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-tip">
+      <div class="card-title">Tip — Overhead Reduction</div>
+      <div class="card-body"><p>Regular EF query overhead per call: ~0.5ms (LINQ parse + cache lookup). Compiled query overhead: ~0.05ms (delegate invoke). At 1,000 calls/sec that's 500ms vs 50ms per second in pure EF overhead — a 10× improvement on hot paths.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 9: CONCURRENCY
+  ============================= -->
+  <section class="section" id="s9">
+    <h2 class="section-title"><span class="num">9</span>Concurrency</h2>
+
+    <p>EF Core supports <strong>optimistic concurrency</strong> — no DB locks during reads. A concurrency token (typically a <code>RowVersion</code> column) is included in UPDATE/DELETE WHERE clauses. If the token changed since you read the record, EF throws <code>DbUpdateConcurrencyException</code>.</p>
+
+    <h3>RowVersion Setup</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">public class</span> <span class="tp">Product</span>
+{
+    <span class="kw">public int</span>     <span class="vr">Id</span>       { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span>  <span class="vr">Name</span>     { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="st">""</span>;
+    <span class="kw">public decimal</span> <span class="vr">Price</span>    { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    [<span class="tp">Timestamp</span>]             <span class="cm">// SQL Server rowversion — auto-increments on every UPDATE</span>
+    <span class="kw">public byte</span>[] <span class="vr">RowVersion</span> { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="tp">Array</span>.<span class="vr">Empty</span>&lt;<span class="kw">byte</span>&gt;();
+}
+
+<span class="cm">// Fluent API equivalent</span>
+<span class="vr">modelBuilder</span>.<span class="mt">Entity</span>&lt;<span class="tp">Product</span>&gt;()
+    .<span class="mt">Property</span>(<span class="vr">p</span> => <span class="vr">p</span>.<span class="vr">RowVersion</span>)
+    .<span class="mt">IsRowVersion</span>()
+    .<span class="mt">IsConcurrencyToken</span>();</code></pre>
+    </div>
+
+    <h3>Two Users, One Record — Who Wins?</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// User A loads: RowVersion = 0x0001</span>
+<span class="kw">var</span> <span class="vr">productA</span> = <span class="kw">await</span> <span class="vr">contextA</span>.<span class="vr">Products</span>.<span class="mt">FindAsync</span>(<span class="nm">1</span>);
+
+<span class="cm">// User B loads same: RowVersion = 0x0001</span>
+<span class="kw">var</span> <span class="vr">productB</span> = <span class="kw">await</span> <span class="vr">contextB</span>.<span class="vr">Products</span>.<span class="mt">FindAsync</span>(<span class="nm">1</span>);
+
+<span class="cm">// User A saves first</span>
+<span class="vr">productA</span>.<span class="vr">Price</span> = <span class="nm">99.99m</span>;
+<span class="kw">await</span> <span class="vr">contextA</span>.<span class="mt">SaveChangesAsync</span>();
+<span class="cm">// SQL: UPDATE Products SET Price=99.99 WHERE Id=1 AND RowVersion=0x0001</span>
+<span class="cm">// Succeeds → RowVersion increments to 0x0002</span>
+
+<span class="cm">// User B tries to save (stale RowVersion)</span>
+<span class="vr">productB</span>.<span class="vr">Price</span> = <span class="nm">89.99m</span>;
+<span class="kw">try</span>
+{
+    <span class="kw">await</span> <span class="vr">contextB</span>.<span class="mt">SaveChangesAsync</span>();
+    <span class="cm">// SQL: UPDATE Products SET Price=89.99 WHERE Id=1 AND RowVersion=0x0001</span>
+    <span class="cm">// Fails — 0 rows affected (RowVersion is now 0x0002)</span>
+    <span class="cm">// EF throws DbUpdateConcurrencyException</span>
+}
+<span class="kw">catch</span> (<span class="tp">DbUpdateConcurrencyException</span> <span class="vr">ex</span>)
+{
+    <span class="kw">var</span> <span class="vr">entry</span>    = <span class="vr">ex</span>.<span class="vr">Entries</span>.<span class="mt">Single</span>();
+    <span class="kw">var</span> <span class="vr">dbVals</span>   = <span class="kw">await</span> <span class="vr">entry</span>.<span class="mt">GetDatabaseValuesAsync</span>(); <span class="cm">// User A's values</span>
+    <span class="kw">var</span> <span class="vr">proposed</span> = <span class="vr">entry</span>.<span class="vr">CurrentValues</span>;                  <span class="cm">// User B's proposed</span>
+
+    <span class="cm">// Strategy: Client Wins — overwrite DB with User B's version</span>
+    <span class="vr">entry</span>.<span class="vr">OriginalValues</span>.<span class="mt">SetValues</span>(<span class="vr">dbVals</span>!);
+    <span class="kw">await</span> <span class="vr">contextB</span>.<span class="mt">SaveChangesAsync</span>();
+
+    <span class="cm">// Strategy: DB Wins — discard User B's changes</span>
+    <span class="cm">// entry.SetValues(dbVals!);</span>
+
+    <span class="cm">// Strategy: Merge — custom field-by-field conflict resolution</span>
+}</code></pre>
+    </div>
+
+    <div class="card card-interview">
+      <div class="card-title">Interview Q — "How do you handle concurrency in EF Core?"</div>
+      <div class="card-body">
+        <p>EF Core uses <strong>optimistic concurrency</strong> — no locks held during reads, conflict detected at save time. Add a <code>[Timestamp]</code> / <code>rowversion</code> column as the concurrency token. EF automatically includes it in UPDATE WHERE clauses. When 0 rows are affected (token mismatch), EF throws <code>DbUpdateConcurrencyException</code>. Resolution strategies: <strong>Last Writer Wins</strong> (overwrite), <strong>First Writer Wins</strong> (discard later change), or <strong>Merge</strong> (field-by-field comparison and user prompt). Choose based on business requirements — financial systems typically use First Writer Wins; collaborative editors might merge.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 10: MIGRATIONS
+  ============================= -->
+  <section class="section" id="s10">
+    <h2 class="section-title"><span class="num">10</span>Migrations</h2>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm"># Add migration</span>
+Add-Migration AddOrderStatusColumn
+
+<span class="cm"># Apply to dev database</span>
+Update-Database
+
+<span class="cm"># Generate SQL script for review before production</span>
+Script-Migration -From 0 -To AddOrderStatusColumn -Output migration.sql
+
+<span class="cm"># Roll back (dev only)</span>
+Update-Database PreviousMigrationName
+
+<span class="cm"># Remove last migration (if not yet applied)</span>
+Remove-Migration</code></pre>
+    </div>
+
+    <h3>Adding Non-Nullable Column to Existing Table</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">public partial class</span> <span class="tp">AddOrderStatusColumn</span> : <span class="tp">Migration</span>
+{
+    <span class="kw">protected override void</span> <span class="mt">Up</span>(<span class="tp">MigrationBuilder</span> <span class="vr">migrationBuilder</span>)
+    {
+        <span class="cm">// Step 1: Add with default — backfills existing rows</span>
+        <span class="vr">migrationBuilder</span>.<span class="mt">AddColumn</span>&lt;<span class="kw">string</span>&gt;(
+            <span class="vr">name</span>:         <span class="st">"Status"</span>,
+            <span class="vr">table</span>:        <span class="st">"Orders"</span>,
+            <span class="vr">type</span>:         <span class="st">"nvarchar(50)"</span>,
+            <span class="vr">nullable</span>:     <span class="kw">false</span>,
+            <span class="vr">defaultValue</span>: <span class="st">"Pending"</span>);
+
+        <span class="cm">// Step 2: Backfill historical rows with meaningful values</span>
+        <span class="vr">migrationBuilder</span>.<span class="mt">Sql</span>(
+            <span class="st">"UPDATE Orders SET Status='Completed' WHERE CompletedAt IS NOT NULL"</span>);
+        <span class="vr">migrationBuilder</span>.<span class="mt">Sql</span>(
+            <span class="st">"UPDATE Orders SET Status='Cancelled' WHERE CancelledAt IS NOT NULL"</span>);
+    }
+
+    <span class="kw">protected override void</span> <span class="mt">Down</span>(<span class="tp">MigrationBuilder</span> <span class="vr">migrationBuilder</span>)
+    {
+        <span class="vr">migrationBuilder</span>.<span class="mt">DropColumn</span>(<span class="vr">name</span>: <span class="st">"Status"</span>, <span class="vr">table</span>: <span class="st">"Orders"</span>);
+    }
+}</code></pre>
+    </div>
+
+    <h3>Seed Data</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">protected override void</span> <span class="mt">OnModelCreating</span>(<span class="tp">ModelBuilder</span> <span class="vr">modelBuilder</span>)
+{
+    <span class="vr">modelBuilder</span>.<span class="mt">Entity</span>&lt;<span class="tp">Category</span>&gt;().<span class="mt">HasData</span>(
+        <span class="kw">new</span> <span class="tp">Category</span> { <span class="vr">Id</span> = <span class="nm">1</span>, <span class="vr">Name</span> = <span class="st">"Electronics"</span>, <span class="vr">CreatedAt</span> = <span class="kw">new</span> <span class="tp">DateTime</span>(<span class="nm">2024</span>, <span class="nm">1</span>, <span class="nm">1</span>) },
+        <span class="kw">new</span> <span class="tp">Category</span> { <span class="vr">Id</span> = <span class="nm">2</span>, <span class="vr">Name</span> = <span class="st">"Books"</span>,       <span class="vr">CreatedAt</span> = <span class="kw">new</span> <span class="tp">DateTime</span>(<span class="nm">2024</span>, <span class="nm">1</span>, <span class="nm">1</span>) }
+    );
+    <span class="cm">// HasData requires explicit PK values — generates INSERT in migration</span>
+}
+
+<span class="cm">// Apply migrations programmatically (production startup)</span>
+<span class="kw">using var</span> <span class="vr">scope</span> = <span class="vr">host</span>.<span class="vr">Services</span>.<span class="mt">CreateScope</span>();
+<span class="kw">var</span> <span class="vr">db</span> = <span class="vr">scope</span>.<span class="vr">ServiceProvider</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">AppDbContext</span>&gt;();
+<span class="kw">await</span> <span class="vr">db</span>.<span class="vr">Database</span>.<span class="mt">MigrateAsync</span>(); <span class="cm">// Applies any pending migrations</span></code></pre>
+    </div>
+
+    <div class="card card-pitfall">
+      <div class="card-title">Pitfall — No Automatic Rollback for Failed Migrations</div>
+      <div class="card-body">
+        <ul>
+          <li>Always generate and review the SQL script (<code>Script-Migration</code>) before production deployment</li>
+          <li>Always implement <code>Down()</code> — every migration must be reversible</li>
+          <li>New columns should be nullable or have defaults to allow backward-compatible rolling deployments</li>
+          <li>Use Blue/Green deployment: migrate the DB first, then deploy new app code</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SECTION 11: PERFORMANCE
+  ============================= -->
+  <section class="section" id="s11">
+    <h2 class="section-title"><span class="num">11</span>Performance Patterns</h2>
+
+    <h3>DbContext Lifetime</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// Correct: Scoped — one DbContext per HTTP request</span>
+<span class="vr">services</span>.<span class="mt">AddDbContext</span>&lt;<span class="tp">AppDbContext</span>&gt;(<span class="vr">options</span> =>
+    <span class="vr">options</span>.<span class="mt">UseSqlServer</span>(<span class="vr">connectionString</span>));
+
+<span class="cm">// High-throughput: DbContextPool — reuse instances, reduce allocations</span>
+<span class="vr">services</span>.<span class="mt">AddDbContextPool</span>&lt;<span class="tp">AppDbContext</span>&gt;(<span class="vr">options</span> =>
+    <span class="vr">options</span>.<span class="mt">UseSqlServer</span>(<span class="vr">connectionString</span>),
+    <span class="vr">poolSize</span>: <span class="nm">128</span>);
+
+<span class="cm">// NEVER: Singleton — shared state across threads, catastrophic</span>
+<span class="cm">// services.AddSingleton&lt;AppDbContext&gt;(); // BUG!</span>
+
+<span class="cm">// NEVER: New context per item in a loop</span>
+<span class="cm">// for (var i = 0; i &lt; 10000; i++)</span>
+<span class="cm">// {</span>
+<span class="cm">//     using var ctx = new AppDbContext(options); // Opens connection per iteration!</span>
+<span class="cm">// }</span></code></pre>
+    </div>
+
+    <h3>Enable Logging to Diagnose Slow Queries</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="vr">services</span>.<span class="mt">AddDbContext</span>&lt;<span class="tp">AppDbContext</span>&gt;(<span class="vr">options</span> =>
+    <span class="vr">options</span>
+        .<span class="mt">UseSqlServer</span>(<span class="vr">connectionString</span>)
+        .<span class="mt">LogTo</span>(<span class="vr">Console</span>.<span class="vr">WriteLine</span>, <span class="tp">LogLevel</span>.<span class="vr">Information</span>)
+        .<span class="mt">EnableSensitiveDataLogging</span>()   <span class="cm">// Shows parameter values (dev only!)</span>
+        .<span class="mt">EnableDetailedErrors</span>());        <span class="cm">// Better exception messages</span>
+
+<span class="cm">// Slow query detection via logging tag</span>
+<span class="kw">var</span> <span class="vr">orders</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">TagWith</span>(<span class="st">"GetRecentOrders-v2"</span>)  <span class="cm">// Tag appears in SQL logs</span>
+    .<span class="mt">AsNoTracking</span>()
+    .<span class="mt">Where</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">CreatedAt</span> >= <span class="tp">DateTime</span>.<span class="vr">UtcNow</span>.<span class="mt">AddDays</span>(-<span class="nm">30</span>))
+    .<span class="mt">ToListAsync</span>();</code></pre>
+    </div>
+
+    <h3>Slow vs Fast Query — Side by Side</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">C#</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="cm">// ---- SLOW: Common anti-patterns ----</span>
+<span class="kw">var</span> <span class="vr">slow</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Customer</span>)  <span class="cm">// Loads 30 Customer columns — only need Name</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Items</span>)     <span class="cm">// Cartesian explosion with Payments</span>
+    .<span class="mt">Include</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">Payments</span>)  <span class="cm">// 3 × 10 × 100 = 3,000 rows</span>
+    .<span class="mt">ToListAsync</span>()               <span class="cm">// No tracking disabled</span>
+    .<span class="mt">ContinueWith</span>(<span class="vr">t</span> => <span class="vr">t</span>.<span class="vr">Result</span> <span class="cm">// Filtering IN MEMORY — should be SQL WHERE</span>
+        .<span class="mt">Where</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">CustomerId</span> == <span class="vr">customerId</span>)
+        .<span class="mt">ToList</span>());
+
+<span class="cm">// ---- FAST: All fixes applied ----</span>
+<span class="kw">var</span> <span class="vr">fast</span> = <span class="kw">await</span> <span class="vr">context</span>.<span class="vr">Orders</span>
+    .<span class="mt">AsNoTracking</span>()                         <span class="cm">// No tracking overhead</span>
+    .<span class="mt">Where</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">CustomerId</span> == <span class="vr">customerId</span>  <span class="cm">// Filter in SQL</span>
+        &amp;&amp; <span class="vr">o</span>.<span class="vr">CreatedAt</span> >= <span class="tp">DateTime</span>.<span class="vr">UtcNow</span>.<span class="mt">AddDays</span>(-<span class="nm">30</span>))
+    .<span class="mt">AsSplitQuery</span>()                         <span class="cm">// Prevent cartesian explosion</span>
+    .<span class="mt">Select</span>(<span class="vr">o</span> => <span class="kw">new</span> <span class="tp">OrderSummaryDto</span>       <span class="cm">// Project only needed columns</span>
+    {
+        <span class="vr">OrderId</span>     = <span class="vr">o</span>.<span class="vr">Id</span>,
+        <span class="vr">Status</span>      = <span class="vr">o</span>.<span class="vr">Status</span>,
+        <span class="vr">TotalAmount</span> = <span class="vr">o</span>.<span class="vr">Items</span>.<span class="mt">Sum</span>(<span class="vr">i</span> => <span class="vr">i</span>.<span class="vr">Price</span> * <span class="vr">i</span>.<span class="vr">Quantity</span>),
+        <span class="vr">CreatedAt</span>   = <span class="vr">o</span>.<span class="vr">CreatedAt</span>
+    })
+    .<span class="mt">OrderByDescending</span>(<span class="vr">o</span> => <span class="vr">o</span>.<span class="vr">CreatedAt</span>)
+    .<span class="mt">Take</span>(<span class="nm">50</span>)                               <span class="cm">// Paginate</span>
+    .<span class="mt">ToListAsync</span>();</code></pre>
+    </div>
+
+    <h3>Performance Pattern Reference</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pattern</th><th>Impact</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td><code>AsNoTracking()</code></td><td><span class="tag tag-hi">High</span></td><td>All read-only queries</td></tr>
+          <tr><td>Project with <code>Select</code></td><td><span class="tag tag-hi">High</span></td><td>Always — avoid SELECT *</td></tr>
+          <tr><td><code>AsSplitQuery()</code></td><td><span class="tag tag-hi">High</span></td><td>Multiple collection Includes</td></tr>
+          <tr><td><code>ExecuteUpdate/Delete</code></td><td><span class="tag tag-hi">Very High</span></td><td>Bulk DML operations</td></tr>
+          <tr><td><code>FindAsync()</code> over tracker</td><td><span class="tag tag-med">Medium</span></td><td>Repeated PK lookups</td></tr>
+          <tr><td>Compiled queries</td><td><span class="tag tag-med">Medium</span></td><td>&gt;100 calls/sec on same query</td></tr>
+          <tr><td>Filtered Includes</td><td><span class="tag tag-med">Medium</span></td><td>Large child collections</td></tr>
+          <tr><td>Disable <code>AutoDetectChanges</code></td><td><span class="tag tag-med">Medium</span></td><td>Bulk insert batches</td></tr>
+          <tr><td><code>AddDbContextPool</code></td><td><span class="tag tag-low">Low–Med</span></td><td>High-throughput APIs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr>
+  <p style="color:var(--text-muted);font-size:12px;text-align:center;">
+    Entity Framework Core Interview Prep &nbsp;·&nbsp; EF Core 7/8/9 &nbsp;·&nbsp; Last updated 2026-08-15
+  </p>
+
+</div>
+</main>
+
+<script>
+// Copy button
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Sidebar active highlight on scroll
+const sections = document.querySelectorAll('.section');
+const links = document.querySelectorAll('#toc a');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`#toc a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

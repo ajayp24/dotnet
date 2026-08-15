@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership &amp; Behavioral — Lead .NET Interview Prep</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:         #0d1117;
+    --surface:    #161b22;
+    --surface2:   #21262d;
+    --border:     #30363d;
+    --text:       #e6edf3;
+    --text-muted: #8b949e;
+    --blue:       #58a6ff;
+    --blue-dim:   #1a2332;
+    --green:      #3fb950;
+    --green-dim:  #1a2d1a;
+    --red:        #f85149;
+    --red-dim:    #2d1a1a;
+    --orange:     #d29922;
+    --purple:     #bc8cff;
+    --sidebar-w:  280px;
+    --max-w:      860px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 0;
+    flex-shrink: 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 16px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .sidebar nav a {
+    display: block;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+    line-height: 1.4;
+  }
+  .sidebar nav a:hover {
+    color: var(--blue);
+    border-left-color: var(--blue);
+    background: rgba(88,166,255,.06);
+  }
+  .sidebar nav .section-label {
+    padding: 14px 16px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #484f58;
+  }
+  .sidebar nav a span.num {
+    display: inline-block;
+    width: 22px;
+    font-variant-numeric: tabular-nums;
+    color: #484f58;
+    font-size: 12px;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    min-width: 0;
+    padding: 48px 32px 80px;
+  }
+
+  .content {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 10px;
+  }
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .page-header .subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 680px;
+  }
+
+  /* ── QUESTION CARDS ── */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+
+  .q-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .q-num {
+    background: var(--blue);
+    color: #0d1117;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 6px;
+    padding: 3px 8px;
+    min-width: 36px;
+    text-align: center;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .q-header h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .q-body {
+    padding: 24px;
+  }
+
+  /* ── SECTION BLOCKS ── */
+  .q-section {
+    margin-bottom: 22px;
+  }
+  .q-section:last-child { margin-bottom: 0; }
+
+  .section-heading {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    opacity: .5;
+  }
+
+  .badge-assess { color: var(--orange); }
+  .badge-star   { color: var(--purple); }
+  .badge-answer { color: var(--blue); }
+  .badge-dos    { color: var(--green); }
+  .badge-donts  { color: var(--red); }
+
+  /* ── STAR TABLE ── */
+  .star-grid {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 13.5px;
+  }
+  .star-grid .sg-label {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 9px 12px;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .03em;
+    display: flex;
+    align-items: center;
+  }
+  .star-grid .sg-label:last-of-type,
+  .star-grid .sg-value:last-child { border-bottom: none; }
+  .star-grid .sg-value {
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    padding: 9px 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .s-label { color: #79c0ff; }
+  .t-label { color: #ffa657; }
+  .a-label { color: var(--green); }
+  .r-label { color: var(--purple); }
+
+  /* ── SAMPLE ANSWER ── */
+  .sample-answer {
+    background: var(--blue-dim);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: #c9d1d9;
+  }
+  .sample-answer p { margin-bottom: 14px; }
+  .sample-answer p:last-child { margin-bottom: 0; }
+  .sample-answer .quote-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 10px;
+  }
+
+  /* ── DOS / DONTS ── */
+  .dos-donts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 680px) { .dos-donts { grid-template-columns: 1fr; } }
+
+  .dos-block, .donts-block {
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+  }
+  .dos-block {
+    background: var(--green-dim);
+    border: 1px solid rgba(63,185,80,.25);
+  }
+  .donts-block {
+    background: var(--red-dim);
+    border: 1px solid rgba(248,81,73,.25);
+  }
+  .dos-block .block-title {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 8px;
+  }
+  .donts-block .block-title {
+    color: var(--red);
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 8px;
+  }
+  .dos-block ul, .donts-block ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .dos-block li::before { content: "✓  "; color: var(--green); font-weight: 700; }
+  .donts-block li::before { content: "✗  "; color: var(--red); font-weight: 700; }
+
+  /* ── ASSESS BLOCK ── */
+  .assess-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+  .assess-block ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .assess-block li::before { content: "→  "; color: var(--orange); }
+
+  /* ── TECHNIQUE GRID ── */
+  .technique-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .technique-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+  }
+  .technique-item strong { color: var(--blue); }
+
+  /* ── ESCALATION PATH ── */
+  .escalation {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .esc-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .esc-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 28px;
+    flex-shrink: 0;
+  }
+  .esc-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--blue);
+    flex-shrink: 0;
+  }
+  .esc-line {
+    width: 2px;
+    flex: 1;
+    min-height: 16px;
+    background: var(--border);
+    margin: 3px 0;
+  }
+  .esc-content {
+    padding: 4px 0 18px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+
+  /* ── PRIORITY TABLE ── */
+  table.pri-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  table.pri-table th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  table.pri-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  table.pri-table tr:last-child td { border-bottom: none; }
+  table.pri-table tr:hover td { background: rgba(255,255,255,.02); }
+  .pri-1 { color: var(--red) !important; font-weight: 700; }
+  .pri-2 { color: var(--orange) !important; font-weight: 700; }
+  .pri-3 { color: var(--blue) !important; font-weight: 700; }
+  .pri-4 { color: var(--purple) !important; font-weight: 700; }
+  .pri-5 { color: var(--green) !important; font-weight: 700; }
+  .pri-6 { color: var(--text-muted) !important; }
+
+  /* ── FRAMEWORK BLOCK ── */
+  .framework-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 13.5px;
+  }
+  .framework-block .fw-title {
+    font-weight: 700;
+    color: var(--purple);
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .framework-block ol {
+    list-style: none;
+    counter-reset: fw;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .framework-block ol li {
+    counter-increment: fw;
+    padding-left: 28px;
+    position: relative;
+    color: var(--text-muted);
+  }
+  .framework-block ol li::before {
+    content: counter(fw);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    background: var(--blue);
+    color: #0d1117;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* ── RESOURCES TABLE ── */
+  table.res-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  table.res-table th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  table.res-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  table.res-table tr:last-child td { border-bottom: none; }
+
+  /* ── DEBT TIERS ── */
+  .debt-tier {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    border-left: 4px solid;
+  }
+  .debt-tier.t1 { background: rgba(248,81,73,.08); border-color: var(--red); }
+  .debt-tier.t2 { background: rgba(210,153,34,.08); border-color: var(--orange); }
+  .debt-tier.t3 { background: rgba(88,166,255,.06); border-color: var(--border); }
+  .debt-tier .tier-title { font-weight: 700; margin-bottom: 4px; }
+  .debt-tier.t1 .tier-title { color: var(--red); }
+  .debt-tier.t2 .tier-title { color: var(--orange); }
+  .debt-tier.t3 .tier-title { color: var(--text-muted); }
+  .debt-tier p { color: var(--text-muted); font-size: 13px; }
+
+  /* ── RED FLAGS TABLE ── */
+  table.rf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  table.rf-table th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  table.rf-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-muted);
+  }
+  table.rf-table tr:last-child td { border-bottom: none; }
+  table.rf-table .rf-bad { color: var(--red); font-weight: 600; }
+  table.rf-table .rf-good { color: var(--green); }
+
+  /* ── QUESTIONS TO ASK ── */
+  .ask-group { margin-bottom: 20px; }
+  .ask-group-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+  .ask-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .ask-item::before { content: "Q: "; color: var(--purple); font-style: normal; font-weight: 700; }
+
+  /* ── BONUS CARD ── */
+  .bonus-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .bonus-card .q-header { background: var(--surface2); }
+  .bonus-card .q-num { background: var(--purple); }
+
+  /* ── GOLDEN RULE ── */
+  .golden-rule {
+    background: linear-gradient(135deg, rgba(88,166,255,.08), rgba(188,140,255,.06));
+    border: 1px solid rgba(88,166,255,.3);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 15px;
+    color: var(--text);
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .golden-rule strong { color: var(--blue); font-style: normal; }
+
+  /* ── COMM STEPS ── */
+  .comm-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .comm-step {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    min-height: 44px;
+  }
+  .cs-num-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .cs-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #0d1117;
+    font-weight: 800;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .cs-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin-top: 4px;
+  }
+  .comm-step:last-child .cs-line { display: none; }
+  .cs-content {
+    padding: 8px 0 16px 10px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+  .cs-content strong { color: var(--text); }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* ── SCROLLBAR ── */
+  .main::-webkit-scrollbar { width: 6px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .main { padding: 24px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ───────── SIDEBAR ───────── -->
+<aside class="sidebar">
+  <div class="sidebar-title">Lead .NET Interview Prep</div>
+  <nav>
+    <a href="../index.html" style="display:flex;align-items:center;gap:.4rem;color:#58a6ff;text-decoration:none;font-size:.82rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;background:#21262d;border:1px solid #30363d;margin-bottom:1.25rem;transition:background .2s;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">&#8592; Back to Home</a>
+    <div class="section-label">Behavioral Questions</div>
+    <a href="#q1"><span class="num">01</span> Tell me about yourself</a>
+    <a href="#q2"><span class="num">02</span> Mentoring junior devs</a>
+    <a href="#q3"><span class="num">03</span> Handling conflicts</a>
+    <a href="#q4"><span class="num">04</span> Estimating work</a>
+    <a href="#q5"><span class="num">05</span> Production outage</a>
+    <a href="#q6"><span class="num">06</span> Code reviews</a>
+    <a href="#q7"><span class="num">07</span> Improving code quality</a>
+    <a href="#q8"><span class="num">08</span> Missed deadlines</a>
+    <a href="#q9"><span class="num">09</span> Biggest tech decision</a>
+    <a href="#q10"><span class="num">10</span> Staying current</a>
+    <a href="#q11"><span class="num">11</span> Tech debt vs features</a>
+    <a href="#q12"><span class="num">12</span> Disagreeing with manager</a>
+    <div class="section-label">Bonus</div>
+    <a href="#ask">Questions to ask them</a>
+    <a href="#redflags">Red flags to avoid</a>
+  </nav>
+</aside>
+
+<!-- ───────── MAIN ───────── -->
+<main class="main">
+<div class="content">
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="eyebrow">Interview Preparation</div>
+    <h1>Leadership &amp; Behavioral<br>Lead .NET Software Engineer</h1>
+    <p class="subtitle">12 high-impact behavioral questions with full STAR answers, assessment breakdowns, and what not to say. Every answer is specific, quantified, and written for a Lead/Senior engineering role.</p>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════ Q1 ═══ -->
+  <section class="q-card" id="q1">
+    <div class="q-header">
+      <span class="q-num">01</span>
+      <h2>"Tell me about yourself."</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Can you communicate a coherent narrative under pressure?</li>
+            <li>Do you have credibility as a technical leader, not just an individual contributor?</li>
+            <li>Do you know why you are here and what you want next?</li>
+            <li>Will you command the room as a lead?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Structure: Past → Present → Future</div>
+        <div class="star-grid">
+          <div class="sg-label s-label">Past (~30s)</div>
+          <div class="sg-value">Where you built your technical depth. Foundation, specialization, formative experience.</div>
+          <div class="sg-label t-label">Present (~60s)</div>
+          <div class="sg-value">Current role, tech stack, team scope, a specific quantified impact you own.</div>
+          <div class="sg-label r-label">Future (~30s)</div>
+          <div class="sg-value">Why this role, what leadership growth you are seeking, what you want to build.</div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer (2 Minutes)</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"I have been a software engineer for about eight years, with the last four focused almost entirely in the .NET ecosystem — primarily C# on ASP.NET Core, with Azure for infrastructure and SQL Server or Cosmos DB on the data side. I started my career on a mid-size insurance platform where I built my foundations in clean architecture and domain-driven design.</p>
+          <p>For the last three years I have been at a fintech company where I moved from senior engineer into an informal lead role. I own the design and delivery of our payments processing domain — a set of five microservices that handle roughly $2 million in daily transaction volume. I run sprint planning and retrospectives for a team of six developers, conduct all architecture reviews for the domain, and I am the technical point of contact for our integration partners. One outcome I am particularly proud of: I led the migration of our notification service from a legacy synchronous HTTP chain to an event-driven model using Azure Service Bus, which reduced checkout latency by 38% and eliminated a recurring cascade failure we were seeing every few weeks.</p>
+          <p>I am looking for a Lead role where I can formalize that scope — where mentorship, architecture ownership, and cross-team technical leadership are explicit parts of the job, not things I pick up informally. I am specifically drawn to this company because of the scale of the platform and the opportunity to shape engineering practices, not just ship features."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Hit These Beats</div>
+            <ul>
+              <li>Specific stack: ASP.NET Core 8, EF Core, Azure Service Bus</li>
+              <li>Quantified impact: latency %, transaction volume, team size</li>
+              <li>Leadership already happening — you are not asking for a promotion from zero</li>
+              <li>Clear forward intent that maps to the job description</li>
+              <li>Under 2.5 minutes — practice with a timer</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I have always loved coding since I was a kid…"</li>
+              <li>Chronological job history with no narrative thread</li>
+              <li>Stopping at Present with no Future — they wonder why you are here</li>
+              <li>"I am looking for a new challenge" (means nothing)</li>
+              <li>Listing technologies without explaining impact</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q2 ═══ -->
+  <section class="q-card" id="q2">
+    <div class="q-header">
+      <span class="q-num">02</span>
+      <h2>"How do you mentor junior developers?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Leadership style: top-down authority or empowering multiplier?</li>
+            <li>Patience and ability to communicate at different technical levels</li>
+            <li>Whether mentorship is structured or ad-hoc and reactive</li>
+            <li>Your ability to grow and retain junior talent</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Core Approaches</div>
+        <div class="technique-list">
+          <div class="technique-item"><strong>Code Reviews as Teaching</strong> — Ask questions instead of issuing corrections. "What happens if this list is empty?" Link to docs and patterns. Acknowledge good work explicitly.</div>
+          <div class="technique-item"><strong>Intentional Pair Programming</strong> — Use for complex problems, first-time patterns, or after a PR is rejected twice. Switch driver/navigator every 25 minutes. Debrief afterward.</div>
+          <div class="technique-item"><strong>Structured 1:1s</strong> — 50% their blockers, 50% your prepared topic (this week: async/await). Shared growth doc tracked quarterly.</div>
+          <div class="technique-item"><strong>Tech Debt as Growth Tickets</strong> — Assign refactoring tickets that teach a pattern without greenfield pressure. Debrief after delivery.</div>
+          <div class="technique-item"><strong>Safe-to-Fail Ownership</strong> — Give them end-to-end ownership of a small service. Available for questions, do not hover. Let code review, not production, catch mistakes.</div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"My approach to mentorship starts with understanding where the developer actually is, not where I think they should be. When a junior engineer joined my team last year, I spent the first two weeks doing informal pairing and careful code review observation to diagnose their specific gaps. They had strong language fundamentals but struggled with designing components — their methods tended to do too much, making code hard to test.</p>
+          <p>I set up weekly 1:1s where we dedicated 20 minutes each week to a specific topic. For the first two months we worked through SOLID principles using our own codebase as the example — I would find a real class in our code that violated the single responsibility principle and we would refactor it together. That kept the learning concrete and immediately relevant.</p>
+          <p>In code reviews I made a rule for myself: never reject without explaining why and pointing to a better pattern. I would ask questions like, 'This works, but what happens if the database call throws? How would a caller know the difference between a not-found and a server error?' That Socratic approach was much more effective than just writing 'use a Result type here.'</p>
+          <p>After about four months, I gave them sole ownership of a new internal reporting microservice. I was available for questions, reviewed the design doc, and did the final code review, but they made all the implementation decisions. They delivered it on time with solid test coverage — and the pattern they used was adopted by two subsequent services the team built. The most satisfying outcome for me is when a mentee's code becomes the reference implementation the rest of the team follows."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Diagnose before prescribing — not one-size-fits-all</li>
+              <li>Code review as dialogue, not judgment</li>
+              <li>1:1s with structured agenda, not just check-ins</li>
+              <li>Ownership given — not just tasks assigned</li>
+              <li>Concrete outcome: mentee's code became team reference</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I just answer questions when they come to me"</li>
+              <li>"I do not have time for formal mentorship"</li>
+              <li>Describing yourself as doing the work for them</li>
+              <li>Mentioning only technical skills — include confidence-building</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q3 ═══ -->
+  <section class="q-card" id="q3">
+    <div class="q-header">
+      <span class="q-num">03</span>
+      <h2>"How do you handle conflicts with a team member?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Emotional intelligence and self-regulation under tension</li>
+            <li>Whether you escalate too quickly or avoid conflict entirely</li>
+            <li>Whether you can separate the personal from the professional</li>
+            <li>Your ability to reach resolution that preserves team cohesion</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Escalation Path</div>
+        <div class="escalation">
+          <div class="esc-step">
+            <div class="esc-connector"><div class="esc-dot">1</div><div class="esc-line"></div></div>
+            <div class="esc-content"><strong>Address privately and directly.</strong> Always the first step. No public debates, no CC'ing managers.</div>
+          </div>
+          <div class="esc-step">
+            <div class="esc-connector"><div class="esc-dot">2</div><div class="esc-line"></div></div>
+            <div class="esc-content"><strong>Structured technical discussion with a neutral party</strong> — tech lead or architect — if still unresolved after 1–2 conversations.</div>
+          </div>
+          <div class="esc-step">
+            <div class="esc-connector"><div class="esc-dot">3</div><div class="esc-line"></div></div>
+            <div class="esc-content"><strong>Involve manager as facilitator, not arbiter</strong> — only if the issue is blocking delivery or the relationship has broken down.</div>
+          </div>
+          <div class="esc-step">
+            <div class="esc-connector"><div class="esc-dot">4</div></div>
+            <div class="esc-content"><strong>Formal HR/management path</strong> — for sustained interpersonal issues that have not responded to earlier steps.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer — Technical Disagreement on Architecture</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"One of the clearest examples I can point to happened about eighteen months ago. A senior engineer on my team — highly experienced and someone I respected — was convinced we should implement our new event sourcing store using a custom in-house framework he had built on a previous project. I believed we should use Marten, which is purpose-built for event sourcing on Postgres in .NET. We both felt strongly and the discussion in our Slack architecture channel was getting heated and pulling in other team members taking sides.</p>
+          <p>My first step was to take the conversation out of the public channel. I sent him a direct message and asked if we could have a video call that afternoon, just the two of us, to talk through our respective positions. I was deliberate about framing it as 'I want to understand your reasoning fully before we make a decision,' not 'let me explain why you are wrong.' In that call, I learned his core concern was that Marten's migration story was opaque to him and he was worried about being locked into someone else's upgrade schedule. That was a legitimate point I had not fully appreciated.</p>
+          <p>I proposed we spend two days doing a structured spike — he would document the risks of his custom approach, I would document the onboarding and migration story for Marten, and we would present both to the team. That process surfaced that the custom approach would take roughly six weeks to reach feature parity with Marten, and it surfaced his migration concern which we addressed by pinning the Marten version and owning our upgrade timing explicitly.</p>
+          <p>We chose Marten. He presented the decision to the team himself, which was important — I was not trying to win, I was trying to reach the best outcome with his buy-in. The service has been running for over a year with no major issues, and our relationship is genuinely stronger for navigating that disagreement respectfully."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Took it private first — no performing in public</li>
+              <li>Sought to understand before responding</li>
+              <li>Used a structured spike to depersonalize the decision</li>
+              <li>Preserved the other person's dignity and buy-in</li>
+              <li>The outcome was owned by both — not a "win"</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I have never really had a conflict with a teammate"</li>
+              <li>Blaming the other person throughout</li>
+              <li>Going to your manager immediately without trying directly</li>
+              <li>"I was right and they were wrong" framing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q4 ═══ -->
+  <section class="q-card" id="q4">
+    <div class="q-header">
+      <span class="q-num">04</span>
+      <h2>"How do you estimate work?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Do you have a repeatable process or do you wing it?</li>
+            <li>Do you communicate uncertainty and risk proactively?</li>
+            <li>Do you protect the team from unrealistic stakeholder commitments?</li>
+            <li>Do you learn from past estimation errors?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Three-Phase Process</div>
+        <div class="star-grid">
+          <div class="sg-label s-label">Phase 1</div>
+          <div class="sg-value"><strong style="color:var(--text)">Decompose</strong> — No story above 8 points. Identify integration points first (external APIs, DB changes, auth). Spike stories for unknowns before estimating implementation.</div>
+          <div class="sg-label t-label">Phase 2</div>
+          <div class="sg-value"><strong style="color:var(--text)">Calibrate</strong> — Sprint: Fibonacci story points anchored to a reference story. Roadmap: T-shirt sizing with explicit assumption set documented. Always flag confidence: High / Medium / Low.</div>
+          <div class="sg-label a-label">Phase 3</div>
+          <div class="sg-value"><strong style="color:var(--text)">Communicate</strong> — Checkpoint at midpoint of any significant work. When you know an estimate is wrong, communicate immediately with options — not problems.</div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"My estimation process has three phases: decomposition, calibration, and communication. When a new epic comes in, I refuse to estimate the whole thing at once. I break it down into stories small enough that the biggest unknown in any single story is identifiable and named.</p>
+          <p>For sprint planning I use story points with Fibonacci sizing. Our team's reference story is a well-understood CRUD endpoint with a database change and unit tests — everyone knows that is a 3. I also flag a confidence level on any story above a 5: High means we have done this before, Medium means there is one meaningful unknown, Low means a spike story needs to precede this one.</p>
+          <p>For roadmap estimates I use T-shirt sizing but I always document the assumptions in writing. If I say a feature is a Large, I write down 'this assumes the third-party API has a stable sandbox and the schema changes are additive.' If either assumption turns out to be false, I update the estimate immediately with a clear explanation of what changed.</p>
+          <p>The most important part is what happens when you are wrong. On a recent project I underestimated a data migration story by three days because I had not discovered that the legacy table had inconsistent null semantics across environments. The moment I saw that on day two, I messaged the product owner: 'This story is tracking at 8 days, not 5. We can extend by 3 days, defer the migration to the following sprint and ship with the old data model, or pull in one of the smaller stories in this sprint.' That conversation on day two is completely different from the same conversation on day five when the sprint is ending. We went from missing sprint commitments about 35% of the time to under 10% over two quarters after normalizing early communication."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Repeatable process — not gut feel</li>
+              <li>Explicit confidence levels communicated</li>
+              <li>Decompose before estimating, always</li>
+              <li>Early communication when estimates change</li>
+              <li>Quantified: sprint commitment rate improved 35% → &lt;10%</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I estimate in hours and add 30% buffer"</li>
+              <li>"I give a number that seems reasonable"</li>
+              <li>"If stakeholders push back I adjust the estimate"</li>
+              <li>Not mentioning how you handle estimate changes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q5 ═══ -->
+  <section class="q-card" id="q5">
+    <div class="q-header">
+      <span class="q-num">05</span>
+      <h2>"Describe a production outage you handled."</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Calm and methodical thinking under real pressure</li>
+            <li>Incident management maturity: detection → triage → resolution → communication</li>
+            <li>Blameless postmortem mindset — do you fix the system or punish people?</li>
+            <li>Whether you prevent recurrence, not just patch the immediate problem</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Incident Anatomy to Cover</div>
+        <div class="star-grid">
+          <div class="sg-label s-label">Detection</div>
+          <div class="sg-value">How did you find out? PagerDuty, Datadog alert, customer report? Shows observability maturity.</div>
+          <div class="sg-label t-label">Triage</div>
+          <div class="sg-value">How did you isolate the scope and root cause? Logs, traces, dashboards, deployment timeline.</div>
+          <div class="sg-label a-label">Action</div>
+          <div class="sg-value">What was the fix? Rollback, hotfix, config change? What were the trade-offs? Who did you communicate with and how often?</div>
+          <div class="sg-label r-label">Result</div>
+          <div class="sg-value">MTTR, business impact contained, SLA outcome. And critically: what prevention did you implement?</div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"About fourteen months ago, I was the on-call lead when we received a PagerDuty alert at 11:40 PM indicating our payment processing API had a 95th-percentile latency spike from 220ms to over 12 seconds. Error rates were climbing toward 8%. We had roughly $400,000 in transaction volume in flight during that window.</p>
+          <p>I jumped on our incident channel immediately and pulled up Datadog. Within five minutes I had narrowed the scope: the latency was isolated to the charge authorization service and the traces showed it concentrated entirely on calls to our Azure SQL database — CPU was at 98%. I could see a full table scan firing on the transactions table every 500 milliseconds. I cross-referenced the deployment log: a developer had shipped a hotfix forty minutes earlier with a LINQ query change. When I examined the generated SQL, it had dropped the covering index hint and was doing a full scan on a 200-million-row table.</p>
+          <p>I had two options: roll back the deployment, or push a targeted hotfix. Because the full rollback would have also reverted an unrelated critical fix that had shipped the same day, I chose a targeted two-line query change. I had another senior engineer review it in Slack in under four minutes, deployed it within twelve minutes of the incident start, and latency dropped back to baseline within 90 seconds. Total user-visible impact: 23 minutes. We sent status updates to stakeholders every 8 minutes via a shared channel.</p>
+          <p>The postmortem the next day was blameless — the developer who introduced the regression was in the room and we were examining the system, not the person. Root cause: our CI pipeline had no query plan analysis step. We added an automated test that runs EF Core's generated SQL through a SQL Server query plan analyzer on every pull request, and we set up an alert for full table scans on high-volume tables in production. Zero recurrences of this class of issue in the fourteen months since."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Clear timeline — shows methodical thinking under pressure</li>
+              <li>Tools named: Datadog, PagerDuty, distributed traces</li>
+              <li>Business context: transaction volume shows you understand stakes</li>
+              <li>Triage logic explained — not just "I fixed it"</li>
+              <li>Blameless postmortem + concrete prevention shipped</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"We had an outage and I fixed a bug"</li>
+              <li>Describing the fix without mentioning stakeholder communication</li>
+              <li>Blaming the developer who introduced the regression</li>
+              <li>No prevention — interviewers want postmortem mindset</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q6 ═══ -->
+  <section class="q-card" id="q6">
+    <div class="q-header">
+      <span class="q-num">06</span>
+      <h2>"How do you conduct code reviews?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Your quality standards and priority ordering</li>
+            <li>Whether you give constructive, educational feedback or just gatekeep</li>
+            <li>Your efficiency — do reviews become delivery bottlenecks?</li>
+            <li>Whether you see code review as a culture and knowledge-sharing activity</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Review Priority Order</div>
+        <table class="pri-table">
+          <thead>
+            <tr><th>#</th><th>Category</th><th>Examples</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="pri-1">1</td><td>Correctness</td><td>Logic errors, edge cases, null handling, concurrency bugs</td></tr>
+            <tr><td class="pri-2">2</td><td>Security</td><td>SQL injection, IDOR, sensitive data in logs, unvalidated input</td></tr>
+            <tr><td class="pri-3">3</td><td>Performance</td><td>N+1 queries, missing indexes, unbounded collections, sync-over-async</td></tr>
+            <tr><td class="pri-4">4</td><td>Architecture</td><td>SRP violations, leaky abstractions, tight coupling</td></tr>
+            <tr><td class="pri-5">5</td><td>Tests</td><td>Missing tests, weak assertions, no edge case coverage</td></tr>
+            <tr><td class="pri-6">6</td><td>Readability</td><td>Naming, dead code, comment quality</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Feedback Labeling Convention</div>
+        <div class="technique-list">
+          <div class="technique-item"><strong style="color:var(--red)">[MUST]</strong> — PR cannot merge without this change. Always include a reason.</div>
+          <div class="technique-item"><strong style="color:var(--orange)">[SUGGESTION]</strong> — Better approach exists, open to discussion. Not a merge blocker.</div>
+          <div class="technique-item"><strong style="color:var(--text-muted)">[NIT]</strong> — Style or naming preference. Would not block on it.</div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"I treat code reviews as one of the highest-leverage activities on the team — it is where quality is actually enforced and where the most organic knowledge transfer happens. My approach has three phases: before I read a line of code, during the review, and after I submit comments.</p>
+          <p>Before I open the diff, I read the PR description. If there is no description, that is my first comment: 'Can you add context on what problem this solves and how you verified it?' I also check the size — if the PR is over 600 lines I ask the author to split it. A review of that size cannot be done well.</p>
+          <p>During the review I work top to bottom and flag items by severity using a simple labeling convention: MUST means the PR cannot merge without this change, SUGGESTION means there is a better approach but I am open to discussion, and NIT means it is a style preference I would not block on. For anything in the MUST category I always explain why — because the goal is that they do not make the same mistake next time, not just that this PR gets fixed.</p>
+          <p>One thing I am deliberate about is converting review findings into team knowledge. If I catch a security issue — say, a LINQ query that bypasses our custom authorization filter — I do not just fix it silently. I write a short note for our team wiki and bring it to the next engineering sync. That turns a one-off correction into a pattern the whole team learns. Since formalizing this practice, we have seen measurable reduction in recurring issues: missing cancellation token threading, EF Core tracking on read-heavy paths, and missing input validation at controller boundaries all appeared significantly less frequently in reviews over the following two quarters."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Read context before code — PR description first</li>
+              <li>Severity labeling so reviewees know what blocks merge</li>
+              <li>Explain reasoning, not just commands</li>
+              <li>Turn review findings into team-wide learning</li>
+              <li>Enforce PR size limits to protect review quality</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I look for anything that looks wrong" — no structure</li>
+              <li>"I mostly focus on style and naming" — wrong priority</li>
+              <li>"I approve quickly to keep the team moving"</li>
+              <li>Describing a process that takes 3 hours per PR</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q7 ═══ -->
+  <section class="q-card" id="q7">
+    <div class="q-header">
+      <span class="q-num">07</span>
+      <h2>"How do you improve code quality in your team?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Do you approach quality as a culture or just a checklist?</li>
+            <li>Your process ownership and ability to implement lasting improvements</li>
+            <li>Whether you balance quality with delivery speed pragmatically</li>
+            <li>Your experience with tooling, standards, and stakeholder alignment</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Three-Layer Approach</div>
+        <div class="technique-list">
+          <div class="technique-item"><strong>Layer 1 — Automated Gates:</strong> SonarQube quality gates in CI (block on new critical issues, not legacy). StyleCop + EditorConfig for style (machine answers style debates). Test coverage floor (fail build if coverage drops below threshold). Snyk / OWASP dependency scanning.</div>
+          <div class="technique-item"><strong>Layer 2 — Process Standards:</strong> PR templates: What, Why, How tested, Rollback plan. Definition of Done includes tests written, no new SonarQube criticals, documentation updated. Tech debt backlog with business-risk labels tracked in Jira/ADO.</div>
+          <div class="technique-item"><strong>Layer 3 — Culture:</strong> 15–20% sprint capacity reserved for quality and debt (negotiate with PM using business risk data). Blameless postmortems feeding prevention items into the backlog. Coding standards owned by the team, not handed down.</div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"When I took on the lead role, we had a codebase that had grown quickly over three years without strong governance. The symptoms were obvious: SonarQube was showing over 600 open issues, test coverage was at 34%, and average PR review time was over two days because reviewers were re-litigating style debates on every PR.</p>
+          <p>I approached it in three layers. The first was automated enforcement. I spent the first two sprints setting up a SonarQube quality gate that blocked merges on new critical or blocking issues — we did not try to fix the legacy issues immediately, we just stopped adding to them. I added a StyleCop ruleset and EditorConfig to the repo so style questions were answered by the machine. That alone cut average review time from two days to under four hours within a month.</p>
+          <p>The second layer was process. I introduced a PR template requiring four things: what the change does, how it was tested, any schema or contract changes, and a rollback plan for production data changes. This sounds bureaucratic but dramatically improved review quality — reviewers understood intent before looking at code.</p>
+          <p>The third layer was culture. I proposed to the team that we reserve 15–20% of every sprint for tech debt, and I built the case for my product manager by framing debt in business risk terms: 'This authentication service has no integration test coverage and processes 50,000 requests per day — a regression here has caused two P2 incidents in the last six months.' That framing got immediate buy-in. Over eight months, we went from 34% test coverage to 71%, from 600 open SonarQube issues to under 40, and our production defect rate in that domain dropped by 55%."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Three-layer approach: automation, process, culture</li>
+              <li>Stakeholder buy-in via business risk framing</li>
+              <li>Specific tools with context for why each was chosen</li>
+              <li>Coverage: 34% → 71%; SonarQube: 600 → 40; defect rate -55%</li>
+              <li>Incremental and pragmatic — did not try to boil the ocean</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I enforce strict coding standards" — vague top-down mandate</li>
+              <li>A process the team would hate and abandon in two months</li>
+              <li>Focusing only on tooling without mentioning culture</li>
+              <li>No quantified before/after results</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q8 ═══ -->
+  <section class="q-card" id="q8">
+    <div class="q-header">
+      <span class="q-num">08</span>
+      <h2>"How do you deal with missed deadlines?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Do you communicate early or hide problems until they explode?</li>
+            <li>Your ability to manage stakeholder expectations proactively</li>
+            <li>Whether you do root cause analysis or just apologize and move on</li>
+            <li>Whether you protect the team while staying fully accountable</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">The Golden Rule</div>
+        <div class="golden-rule">A missed deadline discovered <strong>at the deadline</strong> is a crisis. The same information discovered <strong>a week earlier</strong> is a manageable conversation. Your job is to eliminate surprise.</div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Communication Framework</div>
+        <div class="comm-steps">
+          <div class="comm-step">
+            <div class="cs-num-col"><div class="cs-num">1</div><div class="cs-line"></div></div>
+            <div class="cs-content"><strong>Identify the risk early</strong> — during the sprint, not at the end. Set tripwires at 150% of estimate.</div>
+          </div>
+          <div class="comm-step">
+            <div class="cs-num-col"><div class="cs-num">2</div><div class="cs-line"></div></div>
+            <div class="cs-content"><strong>Quantify it</strong> — What is at risk? By how much? What is the business impact?</div>
+          </div>
+          <div class="comm-step">
+            <div class="cs-num-col"><div class="cs-num">3</div><div class="cs-line"></div></div>
+            <div class="cs-content"><strong>Prepare options</strong> — extend timeline / cut scope / accept known limitation with follow-up ticket. Come with options, not just problems.</div>
+          </div>
+          <div class="comm-step">
+            <div class="cs-num-col"><div class="cs-num">4</div><div class="cs-line"></div></div>
+            <div class="cs-content"><strong>Communicate to stakeholder</strong> — with options, not apologies. Document the decision and rationale.</div>
+          </div>
+          <div class="comm-step">
+            <div class="cs-num-col"><div class="cs-num">5</div></div>
+            <div class="cs-content"><strong>Retrospective</strong> — why was the original estimate wrong? What process change prevents recurrence?</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"My fundamental rule is that no stakeholder should ever be surprised by a missed deadline on the day it is due. I build in checkpoint conversations at the midpoint of significant work, and I set personal tripwires — if a story is tracking at more than 150% of its estimate, I communicate immediately.</p>
+          <p>A concrete example: we had committed to delivering a new document signing integration with a third-party provider by the end of a two-week sprint. On day seven, it became clear their sandbox environment had an undocumented quirk in their webhook signature validation that was taking significantly longer to reverse-engineer than expected. We had three days left and I estimated we needed five.</p>
+          <p>I did not wait. That afternoon I set up a fifteen-minute call with the product manager and engineering manager. I came prepared with three options: push the deadline by three days, ship the integration without retry logic for failed webhooks and add that in a follow-up sprint, or deprioritize two smaller stories and reallocate that time. I recommended option two — the business risk of the missing retry logic was low given the provider's SLA, and I offered to add a monitoring alert so we could catch failures manually in the gap.</p>
+          <p>They chose option two. We shipped on time with a documented limitation, and the retry logic was in production ten days later. In the retrospective, I identified that we had not done a spike on the third-party sandbox before committing the integration to a sprint. Any story that depends on a third-party API we have not integrated with before now requires a preceding spike story — that rule has held for eight months and we have not had a similar surprise since."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Proactive detection — no surprise at the deadline</li>
+              <li>Came with options, not just problems</li>
+              <li>Quantified the risk and trade-offs for stakeholders</li>
+              <li>Protected team credibility while being fully transparent</li>
+              <li>Process change to prevent recurrence</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I just worked extra hours to get it done"</li>
+              <li>"I told the team to push harder"</li>
+              <li>"I apologized and we moved the deadline" — no options</li>
+              <li>Blaming externals without explaining what you did about it</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q9 ═══ -->
+  <section class="q-card" id="q9">
+    <div class="q-header">
+      <span class="q-num">09</span>
+      <h2>"Describe your biggest technical decision."</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Architectural thinking at domain scale, not just feature level</li>
+            <li>Whether you evaluate multiple options or pick what you already know</li>
+            <li>Stakeholder alignment and communication of trade-offs</li>
+            <li>Accountability for outcomes — honest about what did not go perfectly</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">STAR — Monolith to Microservices Migration (Strangler Fig)</div>
+        <div class="star-grid">
+          <div class="sg-label s-label">Situation</div>
+          <div class="sg-value">12-year-old monolith. 40-minute deployments requiring full system freeze. 8 deployments/month, each a team-wide event. Reliability risk growing.</div>
+          <div class="sg-label t-label">Task</div>
+          <div class="sg-value">Evaluate decomposition options, build a defensible decision brief, get VP/CTO alignment, and execute with measurable milestones.</div>
+          <div class="sg-label a-label">Action</div>
+          <div class="sg-value">Documented 4 options (keep, full rewrite, strangler fig, modular monolith) with technical risk, person-months, operational complexity, and business benefit for each. Presented neutrally. Chose strangler fig with 90-day proof-of-value constraint.</div>
+          <div class="sg-label r-label">Result</div>
+          <div class="sg-value">5 services extracted over 18 months. Deployment frequency: 8/month → 60+/month. Deploy time: 40 minutes → 4 minutes with zero downtime. Billing MTTR: hours → under 20 minutes.</div>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"The biggest decision I have led was the decomposition of our core billing domain from a 12-year-old monolithic ASP.NET application into independently deployable services. The monolith was a genuine risk — a single deployment took 40 minutes, required a full system freeze, and a bug in the billing module could trigger rollback of entirely unrelated features. We were doing roughly eight deployments per month and each one was a team-wide event.</p>
+          <p>I spent three weeks building the decision brief. I documented four options: keep the monolith and invest in modularization, a full rewrite into microservices, a strangler fig pattern to extract services incrementally, and a modular monolith with team-owned modules as an intermediate state. For each option I documented the technical risk, estimated person-months to execute, operational complexity added, and business benefits. I was deliberately neutral — I had a preference for the strangler fig approach but I wanted the decision to survive scrutiny, not just advocacy.</p>
+          <p>I presented to the VP of Engineering, two product managers, and the CTO. The strangler fig approach won, but with one important constraint the CTO added: we had to demonstrate value within 90 days by extracting at least one bounded context into a standalone service. That constraint was genuinely valuable — it kept us from over-engineering the infrastructure before proving the pattern.</p>
+          <p>We extracted the invoice generation service first. Within 60 days it was running independently. Deployment time for invoice features dropped from 40 minutes with system freeze to 4 minutes with zero downtime. Over the following 18 months we extracted four more services. Deployment frequency went from 8 per month to over 60, and our MTTR on billing issues dropped from hours to under 20 minutes.</p>
+          <p>What I would do differently: I underestimated the operational overhead of distributed tracing. We spent an unplanned sprint retrofitting OpenTelemetry into services already in production. I now make observability a first-class acceptance criterion on any new service before it ships."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Evaluated multiple options — not just your preference</li>
+              <li>Presented trade-offs neutrally and transparently</li>
+              <li>Got C-level alignment through structured presentation</li>
+              <li>Deploy freq: 8/mo → 60+/mo; MTTR: hours → 20 min</li>
+              <li>Honest about the observability gap — shows growth mindset</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"We moved to microservices because it is the modern approach"</li>
+              <li>A decision with no measurable outcome to share</li>
+              <li>Made the decision alone without stakeholder alignment</li>
+              <li>Nothing about what did not go perfectly — not credible</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q10 ═══ -->
+  <section class="q-card" id="q10">
+    <div class="q-header">
+      <span class="q-num">10</span>
+      <h2>"How do you stay current with technology?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Genuine intellectual curiosity vs just doing the job</li>
+            <li>Whether you will be a source of knowledge and ideas for the team</li>
+            <li>Whether your learning is structured and purposeful or purely reactive</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">.NET-Specific Learning Resources</div>
+        <table class="res-table">
+          <thead>
+            <tr><th>Format</th><th>Resource</th><th>What You Get</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Blog</td><td>devblogs.microsoft.com/dotnet</td><td>Official releases, runtime performance deep dives</td></tr>
+            <tr><td>Blog</td><td>Andrew Lock (andrewlock.net)</td><td>ASP.NET Core internals, production patterns</td></tr>
+            <tr><td>YouTube</td><td>Nick Chapsas</td><td>C# performance, modern .NET idioms</td></tr>
+            <tr><td>Conference</td><td>NDC Talks (YouTube)</td><td>Architecture, DDD, distributed systems, leadership</td></tr>
+            <tr><td>Podcast</td><td>.NET Rocks!</td><td>Broad .NET ecosystem, guests with real-world context</td></tr>
+            <tr><td>GitHub</td><td>dotnet/aspnetcore</td><td>RC release notes, RFC discussions, future roadmap</td></tr>
+            <tr><td>Side Project</td><td>Deliberate sandbox</td><td>Hands-on with what matters to your team in 12 months</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer (60–90 Seconds)</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"I have a few habits that keep me current without making it feel like homework. On the consumption side I follow a small list of high-signal sources: Andrew Lock's blog for deep ASP.NET Core internals, the official dotnet devblog for release notes and performance improvements, and Nick Chapsas on YouTube for practical C# patterns — he does particularly good coverage of performance improvements in each runtime release. For architecture thinking I watch NDC talks, especially anything from Mark Seemann, Udi Dahan, or Jimmy Bogard.</p>
+          <p>On the active side, I maintain a side project I use deliberately as a sandbox. Right now I am building a personal finance aggregation tool with .NET Aspire and Semantic Kernel for a local AI layer. I pick side project technology based on what I think will be relevant to my team's stack in 12 months, not just what is interesting. That project is how I got hands-on with Aspire before it shipped, which meant I could make an informed recommendation when my team was evaluating it.</p>
+          <p>Finally, I make a point of sharing what I learn. I have a brief 'tech radar update' slot in our biweekly engineering sync where I share one thing I learned that might be relevant to the team. It keeps me accountable to distilling what I read into something applicable — if I cannot explain why it matters to us, I probably have not understood it deeply enough yet."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Specific named sources — not generic "I read blogs"</li>
+              <li>Active learning (side project) not just passive consumption</li>
+              <li>Learning targeted to what the team needs in 12 months</li>
+              <li>You share learning with the team — multiplier effect</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I read documentation when I need something" — reactive</li>
+              <li>Generic: "I follow tech news and try new things"</li>
+              <li>Claiming to follow more sources than you can speak to</li>
+              <li>A side project with zero .NET relevance as the lead example</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q11 ═══ -->
+  <section class="q-card" id="q11">
+    <div class="q-header">
+      <span class="q-num">11</span>
+      <h2>"How do you prioritize technical debt vs features?"</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Can you translate technical concerns into business language?</li>
+            <li>Are you pragmatic or a perfectionist who blocks delivery?</li>
+            <li>Do you have a structured approach or just complain about debt?</li>
+            <li>What is your relationship with product management?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Classify Debt by Business Risk</div>
+        <div class="debt-tier t1">
+          <div class="tier-title">Tier 1 — Existential Risk: Stop the Line</div>
+          <p>Security vulnerability, data loss risk, single point of failure with no redundancy. Goes into the next sprint regardless of roadmap.</p>
+        </div>
+        <div class="debt-tier t2">
+          <div class="tier-title">Tier 2 — Operational Risk: Fix Within 1–2 Quarters</div>
+          <p>No alerting on critical path, degraded performance under load, legacy dependency with known CVEs, test coverage below threshold on critical module. Build business case for PM, reserve sprint capacity.</p>
+        </div>
+        <div class="debt-tier t3">
+          <div class="tier-title">Tier 3 — Velocity Drag: Fix When Opportunity Allows</div>
+          <p>Confusing naming, missing documentation, test gaps on low-volume paths. Attach to related feature work or batch into periodic cleanup sprints.</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"My approach is to stop treating tech debt as an engineering concern and start treating it as a business risk conversation. The moment I frame it that way, prioritization becomes much easier because product managers already have a framework for evaluating business risk — they just need the technical translation.</p>
+          <p>I maintain a dedicated tech debt backlog in Azure DevOps, and every item has two mandatory fields beyond the description: the business impact if not addressed, and the current probability that the impact materializes. A logging library with a known CVE that processes authenticated user sessions gets framed as 'this creates potential PII exposure under our data handling obligations' — that is not a technical complaint, that is a compliance and legal risk the business already cares about. Framed that way, it was in the next sprint.</p>
+          <p>On capacity, I have negotiated a standing 15–20% sprint allocation for quality and debt work with my product managers. I got this agreed by showing data: over the quarter before we introduced this allocation, we had three production incidents directly attributable to known tech debt items that had been deprioritized. The cost of those incidents in engineering time and customer impact was measurably higher than addressing the debt would have been. Once you can show that trade-off empirically, the conversation shifts from 'engineering wants to do cleanup' to 'here is the ROI of maintenance.'</p>
+          <p>One thing I try to be pragmatic about: not all debt needs to be paid. Some code is stable, rarely changed, and adequately tested — the cost of refactoring is real and the benefit mostly aesthetic. I am happy to leave that debt in place and focus capacity on debt that is growing or sitting in a high-traffic production path."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Business risk language — not engineering purity</li>
+              <li>Tiered debt classification framework</li>
+              <li>Quantified ROI of debt reduction for stakeholders</li>
+              <li>Pragmatic — not all debt needs to be paid</li>
+              <li>Standing capacity negotiated with PM via data</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I always push for tech debt to be addressed" — not pragmatic</li>
+              <li>"Product never lets us work on debt" — victim mentality</li>
+              <li>Framing purely as a technical concern</li>
+              <li>No quantified outcomes or business framing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ Q12 ═══ -->
+  <section class="q-card" id="q12">
+    <div class="q-header">
+      <span class="q-num">12</span>
+      <h2>"Describe a time you disagreed with your manager."</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">What They Are Assessing</div>
+        <div class="assess-block">
+          <ul>
+            <li>Whether you have professional courage to disagree constructively</li>
+            <li>Whether you use data and reasoning rather than emotion or ego</li>
+            <li>Whether you can accept a decision that goes against your view and still execute faithfully</li>
+            <li>Your ability to influence upward through credibility, not authority</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-star">Disagree and Commit Framework</div>
+        <div class="framework-block">
+          <div class="fw-title">The Disagree and Commit Approach</div>
+          <ol>
+            <li>Understand their position fully first — ask questions before arguing</li>
+            <li>Make your case with evidence, not preference or seniority</li>
+            <li>Raise it in the right setting: 1:1, not a group meeting</li>
+            <li>Make clear you will support the final decision either way</li>
+            <li>If the decision goes against you: execute fully with no passive resistance</li>
+            <li>If you were wrong: acknowledge it — this builds enormous long-term credibility</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-answer">Sample Answer</div>
+        <div class="sample-answer">
+          <div class="quote-label">Say this</div>
+          <p>"About two years ago, my engineering manager made a decision that we would adopt a new internal shared library for authentication, one built by a central platform team, as a mandatory dependency across all our microservices. I had technical concerns — the library was new, had limited documentation, pinned to a version of IdentityModel that was two major versions behind current, and its error handling did not surface enough context for our logging pipeline.</p>
+          <p>I raised it with him in our weekly 1:1 rather than in a team meeting, because I did not want to create a public debate or put him in a defensive position in front of the team. I came prepared: a two-page written comparison of our existing auth implementation versus the library, with specific API differences, the CVE history of the older IdentityModel version it pinned to, and a concrete example of a logging gap that would have made our last production incident significantly harder to diagnose.</p>
+          <p>He listened carefully and acknowledged the CVE concern was legitimate — something he had not been aware of. He then explained context I had not had: the platform team had a roadmap commitment to update IdentityModel within the next sprint, and the standardization decision had been made at the VP level as a cost-of-maintenance argument across thirty-plus services. The scale argument was sound, and the CVE concern was being addressed.</p>
+          <p>We reached an agreement: I would adopt the library, but the platform team would prioritize the IdentityModel update before we shipped to production, and I would provide my logging gap analysis to the platform team as input to a future version. Both happened. The IdentityModel update shipped within three weeks, and a version of my logging feedback ended up in their library's next minor release.</p>
+          <p>What I took from that experience: I was right about the specific technical issues, but my manager was right about the strategic context. Going into disagreements with genuine curiosity about what you do not know is more effective than going in to win."</p>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">Dos vs Don'ts</div>
+        <div class="dos-donts">
+          <div class="dos-block">
+            <div class="block-title">Key Points</div>
+            <ul>
+              <li>Raised privately — shows EQ and professionalism</li>
+              <li>Used evidence and data, not preference</li>
+              <li>Genuinely sought to understand their reasoning</li>
+              <li>Accepted the final decision and executed fully</li>
+              <li>Intellectual humility: "I was right about X, they were right about Y"</li>
+            </ul>
+          </div>
+          <div class="donts-block">
+            <div class="block-title">Avoid These</div>
+            <ul>
+              <li>"I just did what I was told because arguing is not worth it"</li>
+              <li>"I made my case loudly until they saw I was right"</li>
+              <li>"I would never disagree with my manager"</li>
+              <li>A story where the manager was simply wrong and you heroically fixed it</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ BONUS: QUESTIONS TO ASK ═══ -->
+  <section class="bonus-card" id="ask">
+    <div class="q-header">
+      <span class="q-num" style="background:var(--purple)">★</span>
+      <h2>Questions to Ask the Interviewer</h2>
+    </div>
+    <div class="q-body">
+      <p style="color:var(--text-muted);font-size:13.5px;margin-bottom:20px;">Asking sharp questions signals genuine interest, preparation, and strategic thinking. Aim for 3–4. Avoid anything answered on the company website.</p>
+
+      <div class="ask-group">
+        <div class="ask-group-title">Engineering Culture</div>
+        <div class="ask-item">How does the engineering team balance feature delivery velocity with code quality? Is there a standing allocation for tech debt?</div>
+        <div class="ask-item">Can you describe how architectural decisions are made — is it consensus-based, do you have an RFC process, or is there a designated architect?</div>
+        <div class="ask-item">How much autonomy do leads have over technology choices within their domain?</div>
+      </div>
+
+      <div class="ask-group">
+        <div class="ask-group-title">Codebase Health</div>
+        <div class="ask-item">If you had to characterize the health of the codebase honestly — what is the area that new engineers find most surprising or challenging?</div>
+        <div class="ask-item">Is there a tech debt backlog that is actively worked, or is it more of a wish list that rarely gets capacity?</div>
+      </div>
+
+      <div class="ask-group">
+        <div class="ask-group-title">Deployment and Operations</div>
+        <div class="ask-item">What does a typical deployment look like today — frequency, process, and how much manual coordination is involved?</div>
+        <div class="ask-item">What does on-call look like for engineering leads — volume, escalation path, and how incident responsibility is distributed?</div>
+        <div class="ask-item">How mature is your observability stack? Do you have distributed tracing and structured logging in production?</div>
+      </div>
+
+      <div class="ask-group">
+        <div class="ask-group-title">Growth Path</div>
+        <div class="ask-item">What does success look like for this role at 6 months and 12 months?</div>
+        <div class="ask-item">Where have previous people in this role progressed — is there a path to principal or staff engineer, or more toward engineering management?</div>
+        <div class="ask-item">What is the biggest engineering challenge the team is facing right now that I would be expected to help solve?</div>
+      </div>
+
+      <div class="ask-group">
+        <div class="ask-group-title">Team Dynamics</div>
+        <div class="ask-item">How does the team handle disagreements on technical direction? Can you give me an example of a recent one and how it was resolved?</div>
+        <div class="ask-item">What is the current ratio of new feature work to maintenance and stability work?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════ BONUS: RED FLAGS ═══ -->
+  <section class="bonus-card" id="redflags">
+    <div class="q-header">
+      <span class="q-num" style="background:var(--red)">!</span>
+      <h2>Red Flags to Avoid</h2>
+    </div>
+    <div class="q-body">
+
+      <div class="q-section">
+        <div class="section-heading badge-donts">In Your Answers</div>
+        <table class="rf-table">
+          <thead>
+            <tr><th>Red Flag</th><th>Why It Hurts</th><th>Instead</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rf-bad">Blaming a teammate in a STAR story</td>
+              <td>Shows poor EQ and unresolved conflict</td>
+              <td class="rf-good">Focus on the situation and system, not the person</td>
+            </tr>
+            <tr>
+              <td class="rf-bad">Vague results ("it was much better")</td>
+              <td>Not credible at lead level — anyone can say this</td>
+              <td class="rf-good">"Latency dropped 38%," "coverage grew from 34% to 71%"</td>
+            </tr>
+            <tr>
+              <td class="rf-bad">"We never had conflicts"</td>
+              <td>Not credible — signals avoidance or lack of self-awareness</td>
+              <td class="rf-good">"Here is how I handled one constructively…"</td>
+            </tr>
+            <tr>
+              <td class="rf-bad">"I always fight for the best solution"</td>
+              <td>Sounds inflexible, ignores trade-offs and context</td>
+              <td class="rf-good">"I advocate with data and accept decisions I can execute faithfully"</td>
+            </tr>
+            <tr>
+              <td class="rf-bad">Monologue beyond 3 minutes</td>
+              <td>Shows poor self-awareness and inability to prioritize</td>
+              <td class="rf-good">Practice with a timer — know when to stop and invite follow-up</td>
+            </tr>
+            <tr>
+              <td class="rf-bad">"It was a team effort" with no personal contribution</td>
+              <td>Interviewer cannot assess you specifically</td>
+              <td class="rf-good">Use "I" for your actions, "we" for team outcomes</td>
+            </tr>
+            <tr>
+              <td class="rf-bad">Saying you have no weaknesses</td>
+              <td>Not credible and signals low self-awareness</td>
+              <td class="rf-good">Give a real one with what you are actively doing about it</td>
+            </tr>
+            <tr>
+              <td class="rf-bad">Trash-talking a previous employer</td>
+              <td>Raises red flags about your discretion and professionalism</td>
+              <td class="rf-good">"It was a challenging environment and I learned a lot about X"</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="q-section">
+        <div class="section-heading badge-assess">Delivery and Body Language</div>
+        <div class="technique-list">
+          <div class="technique-item"><strong>Do not check notes for every answer</strong> — it signals you memorized scripts, not internalized real experiences. Know your stories.</div>
+          <div class="technique-item"><strong>Pause before answering</strong> — "That is a great question, let me think about the best example" is perfectly acceptable and signals thoughtfulness.</div>
+          <div class="technique-item"><strong>If you do not have a perfect example</strong>, say so and offer the closest relevant experience with a brief explanation of the gap. Honesty > fabrication.</div>
+          <div class="technique-item"><strong>Distribute eye contact</strong> in panel interviews — do not stare at the person who asked the question for the entire 3-minute answer.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    Leadership &amp; Behavioral Interview Prep — Lead .NET Software Engineer &mdash; August 2026
+  </footer>
+
+</div>
+</main>
+
+</body>
+</html>
